@@ -381,6 +381,27 @@ canvas { width: 100% !important; border-radius: 6px; }
 }
 .modal-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
 
+/* Finish workout summary modal */
+.finish-stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.finish-stat-row:last-of-type { border-bottom: none; }
+.finish-stat-label { color: var(--text-dim); }
+.finish-stat-val { color: var(--text); font-weight: 600; font-family: 'DM Mono', monospace; font-size: 12px; }
+.finish-flags { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.finish-flag-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 12px;
+}
+.finish-flag-name { color: var(--text-dim); flex: 1; }
+.finish-flag-type {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 2px;
+}
+.finish-flag-type.skip { background: var(--red-bg); color: var(--red); border: 1px solid #3a1810; }
+.finish-flag-type.sub { background: var(--amber-bg); color: var(--amber); border: 1px solid #3a2c10; }
+
 /* Pain flag modal */
 .pain-modal { max-height: 50vh; }
 .pain-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
@@ -489,6 +510,19 @@ canvas { width: 100% !important; border-radius: 6px; }
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('exportModal')">Close</button>
       <button class="modal-btn primary" onclick="copyExport()">Copy All</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINISH WORKOUT MODAL -->
+<div class="modal-overlay" id="finishModal" onclick="closeModal('finishModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="finishModalTitle">Finish Workout?</div>
+    <div id="finishSummary"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="modal-btn" onclick="closeModal('finishModal')">Keep Going</button>
+      <button class="modal-btn primary" onclick="confirmFinish()">Save & Finish</button>
     </div>
   </div>
 </div>
@@ -1266,8 +1300,51 @@ function backToHome() {
   currentPage = 'home';
 }
 
-async function finishWorkout() {
+function finishWorkout() {
   if (!activeSession || !currentWorkout) return;
+
+  const workout = currentWorkout;
+  const duration = Math.round((Date.now() - activeSession.startTime) / 60000);
+  const durationStr = duration < 1 ? 'Under 1 min' : `${duration} min`;
+
+  // Count done sets
+  let doneSets = 0, totalSets = 0;
+  const flagged = [];
+  workout.blocks.forEach(block => {
+    block.exercises.forEach(ex => {
+      const sets = activeSession.sets[ex.id] || [];
+      sets.forEach(s => { totalSets++; if (s.done) doneSets++; });
+      const flag = activeSession.flags[ex.id];
+      if (flag) flagged.push({ name: ex.name, flag });
+    });
+  });
+
+  const flagHtml = flagged.map(f => `
+    <div class="finish-flag-row">
+      <span class="finish-flag-name">${f.name}</span>
+      <span class="finish-flag-type ${f.flag === 'skipped' ? 'skip' : 'sub'}">${f.flag === 'skipped' ? 'Skipped / Pain' : 'Subbed'}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('finishModalTitle').textContent = `${workout.name} — ${workout.subtitle}`;
+  document.getElementById('finishSummary').innerHTML = `
+    <div class="finish-stat-row">
+      <span class="finish-stat-label">Duration</span>
+      <span class="finish-stat-val">${durationStr}</span>
+    </div>
+    <div class="finish-stat-row">
+      <span class="finish-stat-label">Sets logged</span>
+      <span class="finish-stat-val">${doneSets} / ${totalSets}</span>
+    </div>
+    ${flagged.length ? `<div class="finish-flags">${flagHtml}</div>` : ''}
+  `;
+
+  document.getElementById('finishModal').classList.add('open');
+}
+
+async function confirmFinish() {
+  if (!activeSession || !currentWorkout) return;
+  closeModal('finishModal');
 
   const workout = currentWorkout;
   const now = new Date();
@@ -1300,7 +1377,6 @@ async function finishWorkout() {
     exercises: exData
   };
 
-  // Save log to Supabase
   await saveWorkoutLog(logEntry);
 
   // Update exercise PRs
@@ -1322,7 +1398,7 @@ async function finishWorkout() {
   await saveExLogs(exLogs);
 
   activeSession = null;
-  saveSessionState(); // clears saved session
+  saveSessionState();
   stopRestTimer();
 
   showToast('Workout logged ✓');
