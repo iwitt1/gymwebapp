@@ -70,7 +70,24 @@ restDuration    // default 120s
 restRemaining   // countdown
 restTotal       // for progress bar
 activeProgEx    // exercise ID currently selected in the progress tab
+swapTargetDay   // day index being swapped (set by openSwapModal)
+activityDateStr // ISO date string for the activity log modal
+activityDayLabel // display label for the activity log modal
 ```
+
+### Week Schedule Flexibility
+
+Weekly overrides stored in `localStorage` under key `week_sched_YYYY-MM-DD` (Monday of the current week). Value is an object mapping JS day index → assignment:
+- `'dayA'`–`'dayE'`: overrides to that workout
+- `'active'`: active/rest day with activity logging
+- `'rest'`: rest day, no logging
+- Key absent: falls back to `DEFAULT_DAY_MAP` (or null for Wed/Sun)
+
+Overrides are week-scoped and auto-expire when the week changes (old keys remain in localStorage but are never read).
+
+### Constants
+- `DEFAULT_DAY_MAP` — `{ 1:'dayA', 2:'dayB', 4:'dayC', 5:'dayD', 6:'dayE' }` — base workout schedule
+- `KNEE_EX_IDS` — Set of exercise IDs tagged `knee`, used for the rehab completion chart
 
 `activeSession.completed` is used for non-weighted exercises (warmup/mobility) that have no sets to log — tapping their status circle toggles the entry here instead.
 
@@ -101,6 +118,19 @@ activeProgEx    // exercise ID currently selected in the progress tab
 | `drawCompletionChart(...)` | Custom canvas dot timeline — filled = done, hollow = skipped, for non-weighted exercises |
 | `renderLog()` | Renders recent workout history; tap to expand full exercise breakdown |
 | `openExportModal()` | Builds Claude check-in text: sets, weights, flags, notes, completions, PR summary |
+| `getEffectiveDayAssignment(dayIndex)` | Returns workout ID, `'active'`, `'rest'`, or `null` for a given JS day index, respecting weekly overrides |
+| `getWeekSchedule()` | Reads localStorage week override (keyed by Monday date of current week) |
+| `setWeekScheduleDay(dayIndex, val)` | Writes a day override; `null` removes it (reverts to default) |
+| `openSwapModal(dayIndex, label, dateStr, event)` | Opens the day-swap bottom sheet for a given day card |
+| `applyDaySwap(dayIndex, val)` | Applies a week schedule override and re-renders home |
+| `openActivityModal(dayIndex, label, dateStr, event)` | Opens the activity log input sheet for a rest/active day |
+| `saveActivityEntry()` | Saves a free-text activity to `activity_logs` in Supabase + cache |
+| `renderKneeHealth()` | Draws knee completion % bar chart (last 8 sessions) in the Progress rehab section |
+| `renderHipAbduction()` | Draws a5 weight trend + a6 completion summary in the Progress rehab section |
+| `renderRunSection()` | Renders recent run logs + 10% ramp guard warning in the Progress running section |
+| `openAddRunModal()` / `saveRunEntry()` | Opens and saves run log entries to `run_logs` |
+| `drawBarChart(canvasId, labels, data, color, maxVal)` | Custom canvas bar chart — used for knee completion % |
+| `makeId()` | Generates a UUID (crypto.randomUUID with fallback) for new log entries |
 
 ---
 
@@ -120,6 +150,23 @@ exercises     jsonb — array of:
                   completed: bool,   ← non-weighted done state
                   flag: null|'skipped'|'subbed',
                   note: text }
+```
+
+**`run_logs`** — one row per run entry
+```
+id          uuid (PK — gen_random_uuid())
+date        date
+miles       numeric
+notes       text
+created_at  timestamptz default now()
+```
+
+**`activity_logs`** — one row per active/rest day entry
+```
+id          uuid (PK — gen_random_uuid())
+date        date
+activity    text
+created_at  timestamptz default now()
 ```
 
 **`exercise_logs`** — one row per exercise, updated each session (keyed by `ex_id`)

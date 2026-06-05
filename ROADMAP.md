@@ -44,14 +44,16 @@ Most items shipped. Two remain open.
 
 ---
 
-## Phase 4 — Rehab & Goal Tracking
+## Phase 4 — Rehab & Goal Tracking ✓ Shipped
 
 Tied to the specific goals: PFPS/tendinitis prevention, ski prep by November, hip abduction deficit.
 
-12. **Knee Rehab area chart** — ensure knee-tagged exercises are correctly captured and the trend is meaningful.
-13. **Hip Abduction tracking** — consider a dedicated callout on the progress tab for left-side hip abduction (the PT-assessed deficit).
-14. **Ski season countdown** — a simple "X weeks to ski season" on the home or progress tab to frame training context.
-15. **Running ramp guard** — parking lot idea, see PARKING_LOT.md.
+- ~~**Knee Rehab chart** — "Knee Health" card on Progress tab showing % of knee-tagged exercises completed per session (last 8 sessions), with avg and trend.~~
+- ~~**Hip Abduction callout** — Dedicated card on Progress tab: a5 (Cable Hip Abduction) weight trend line + a6 (Banded) completion. Left-priority note. Reads from exercise_logs + workout_logs.~~
+- ~~**Ski season countdown** — Banner on Home tab counting weeks to November 1, 2026. Auto-hides after that date.~~
+- ~~**Running ramp guard** — "Running" section on Progress tab. Date + miles log form, stored in Supabase `run_logs`. Shows last 4 weeks of runs. Computes current vs prior 7-day mileage — warns if volume up >10%.~~
+- ~~**Active day logging** — Rest/active day cards on Home tap to open a free-text activity log. Stored in Supabase `activity_logs`. Logged activity shown on the day card.~~
+- ~~**Weekly schedule flexibility** — Swap button on every Home day card. Opens a picker (5 workouts + Active Day + Rest). Overrides saved per-week in localStorage, auto-revert next week. Supports travel/rescheduling without changing the default program.~~
 
 ---
 

@@ -6,8 +6,7 @@ Ideas and open questions that aren't scheduled yet. Nothing here is committed. I
 
 ## Feature Ideas
 
-**Running ramp guard**
-A simple tool to flag when weekly running volume is increasing too fast (>10% rule). Would need a separate run logging input. Relevant to the PFPS/tendinitis history when ramping mileage.
+**Running ramp guard** ✓ Shipped in Phase 4 — `run_logs` Supabase table, 10% week-over-week check, displayed on Progress tab.
 
 **Bodyweight logging**
 Periodic weigh-ins to track "lean athletic build" goal over time. Probably just a number + date, shown as a trend line on the progress tab. Low priority — the training data matters more.

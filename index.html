@@ -439,6 +439,90 @@ canvas { width: 100% !important; border-radius: 6px; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ── SKI COUNTDOWN ── */
+.ski-banner {
+  margin: 12px 16px 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.ski-icon { font-size: 20px; }
+.ski-info { flex: 1; }
+.ski-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.ski-count { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.ski-sub { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+
+/* ── SCHEDULE SWAP ── */
+.day-card { position: relative; }
+.swap-btn {
+  width: 26px; height: 26px; border-radius: 4px; flex-shrink: 0;
+  border: 1px solid var(--border2); background: var(--surface2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: all 0.15s;
+}
+.swap-btn:active { border-color: var(--accent-dim); color: var(--accent); }
+.swap-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.activity-logged { font-size: 11px; color: var(--teal); margin-top: 3px; }
+
+/* ── REHAB CARDS (Progress) ── */
+.rehab-section { padding: 0 16px 4px; }
+.rehab-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; margin-bottom: 10px;
+}
+.rehab-card-title {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rehab-card-tag { font-size: 9px; padding: 2px 7px; border-radius: 2px; }
+.knee-tag { background: var(--red-bg); color: var(--red); border: 1px solid #3a1810; }
+.hip-tag { background: #081818; color: var(--teal); border: 1px solid #1a4040; }
+
+/* ── RUNNING SECTION (Progress) ── */
+.run-section { padding: 0 16px 8px; }
+.run-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 0 10px;
+}
+.run-add-btn {
+  padding: 5px 12px; border-radius: 4px;
+  border: 1px solid var(--border2); background: var(--surface2);
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-dim); cursor: pointer; transition: all 0.15s;
+}
+.run-add-btn:active { border-color: var(--accent-dim); color: var(--accent); }
+.run-entries { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.run-entry {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.run-entry-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+.run-entry-miles { font-size: 18px; font-weight: 700; color: var(--text); }
+.run-entry-unit { font-size: 11px; color: var(--text-dim); }
+.run-entry-note { font-size: 11px; color: var(--text-dim); font-style: italic; margin-top: 2px; }
+.ramp-warning {
+  background: #1a1008; border: 1px solid #50380a; border-radius: 6px;
+  padding: 10px 12px; margin-bottom: 10px;
+  font-size: 12px; color: var(--amber); line-height: 1.5;
+}
+.run-empty { font-size: 12px; color: var(--text-muted); padding: 6px 0 10px; }
+
+/* ── SWAP + ACTIVITY MODAL OPTIONS ── */
+.swap-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 55vh; overflow-y: auto; }
+.swap-opt {
+  padding: 11px 14px; border-radius: 6px; border: 1px solid var(--border2);
+  background: var(--surface2); cursor: pointer;
+  display: flex; align-items: center; gap: 12px; transition: border-color 0.15s;
+}
+.swap-opt:active { border-color: var(--accent-dim); }
+.swap-opt-info { flex: 1; }
+.swap-opt-name { font-weight: 600; font-size: 13px; color: var(--text); }
+.swap-opt-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.swap-opt.current-opt { border-color: var(--accent-dim); background: var(--accent-muted); }
+.swap-opt-check { color: var(--accent); font-size: 14px; }
+
 </style>
 </head>
 <body>
@@ -458,7 +542,15 @@ canvas { width: 100% !important; border-radius: 6px; }
       <div class="greeting-label" id="greetingText">Good morning.</div>
       <div class="greeting-sub" id="greetingDay">Loading your week...</div>
     </div>
-    <div class="section-head">This Week</div>
+    <div class="ski-banner" id="skiCountdown" style="display:none">
+      <div class="ski-icon">⛷️</div>
+      <div class="ski-info">
+        <div class="ski-label">Ski Season</div>
+        <div class="ski-count" id="skiCountText"></div>
+        <div class="ski-sub">Nov 1 target — train accordingly</div>
+      </div>
+    </div>
+    <div class="section-head" style="margin-top:16px">This Week</div>
     <div class="day-list" id="dayList"></div>
   </div>
 
@@ -538,6 +630,56 @@ canvas { width: 100% !important; border-radius: 6px; }
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- ACTIVITY LOG MODAL -->
+<div class="modal-overlay" id="activityModal" onclick="closeModal('activityModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="activityModalTitle">Log Activity</div>
+    <div class="modal-sub">What did you do today?</div>
+    <textarea class="ex-notes-area" id="activityInput" placeholder="e.g. Pickleball 45 min, Hiking 3 miles, Easy bike ride..." style="min-height:80px;margin-bottom:12px"></textarea>
+    <div id="activityPrevious" style="margin-bottom:4px"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('activityModal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveActivityEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- SWAP SCHEDULE MODAL -->
+<div class="modal-overlay" id="swapModal" onclick="closeModal('swapModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="swapModalTitle">Change Day</div>
+    <div class="modal-sub">Pick what happens this day this week.</div>
+    <div class="swap-options" id="swapOptions"></div>
+    <button class="modal-btn" onclick="closeModal('swapModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- ADD RUN MODAL -->
+<div class="modal-overlay" id="addRunModal" onclick="closeModal('addRunModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Log a Run</div>
+    <div class="modal-sub">Tracking volume for the 10% ramp guard.</div>
+    <div style="display:flex;gap:10px;margin-bottom:10px">
+      <div style="flex:1">
+        <div class="stat-label" style="margin-bottom:6px">Date</div>
+        <input type="date" id="runDate" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px">
+      </div>
+      <div style="flex:1">
+        <div class="stat-label" style="margin-bottom:6px">Miles</div>
+        <input type="number" id="runMiles" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px" placeholder="3.1" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+    <textarea class="ex-notes-area" id="runNotes" placeholder="Notes — route, pace, how knees felt..." style="margin-bottom:12px"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('addRunModal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveRunEntry()">Save Run</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -929,6 +1071,74 @@ async function saveExLogs(exLogsObj) {
   }
 }
 
+// ── RUN LOGS ──────────────────────────────────
+
+async function getRunLogs() {
+  const cached = cacheGet('run_logs');
+  if (cached) { refreshRunLogs(); return cached; }
+  return await refreshRunLogs();
+}
+
+async function refreshRunLogs() {
+  try {
+    const rows = await db.get('run_logs', { order: 'date.desc', limit: 200 });
+    cacheSet('run_logs', rows);
+    return rows;
+  } catch(e) {
+    console.error('Failed to fetch run logs:', e);
+    return cacheGet('run_logs') || [];
+  }
+}
+
+async function saveRunLog(entry) {
+  const cached = cacheGet('run_logs') || [];
+  cached.unshift(entry);
+  cacheSet('run_logs', cached);
+  try {
+    await db.upsert('run_logs', { id: entry.id, date: entry.date, miles: entry.miles, notes: entry.notes || null });
+  } catch(e) {
+    console.error('Failed to save run log:', e);
+    showToast('⚠ Saved locally — sync failed');
+  }
+}
+
+// ── ACTIVITY LOGS ─────────────────────────────
+
+async function getActivityLogs() {
+  const cached = cacheGet('activity_logs');
+  if (cached) { refreshActivityLogs(); return cached; }
+  return await refreshActivityLogs();
+}
+
+async function refreshActivityLogs() {
+  try {
+    const rows = await db.get('activity_logs', { order: 'date.desc', limit: 200 });
+    cacheSet('activity_logs', rows);
+    return rows;
+  } catch(e) {
+    console.error('Failed to fetch activity logs:', e);
+    return cacheGet('activity_logs') || [];
+  }
+}
+
+async function saveActivityLog(entry) {
+  const cached = cacheGet('activity_logs') || [];
+  cached.unshift(entry);
+  cacheSet('activity_logs', cached);
+  try {
+    await db.upsert('activity_logs', { id: entry.id, date: entry.date, activity: entry.activity });
+  } catch(e) {
+    console.error('Failed to save activity log:', e);
+    showToast('⚠ Saved locally — sync failed');
+  }
+}
+
+function makeId() {
+  return (typeof crypto !== 'undefined' && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
@@ -940,6 +1150,44 @@ let restTimer = null;
 let restDuration = 120;
 let restRemaining = 0;
 let restTotal = 0;
+
+// ═══════════════════════════════════════════════
+// WEEK SCHEDULE FLEXIBILITY
+// ═══════════════════════════════════════════════
+
+// Default mapping: JS day index → workout ID
+const DEFAULT_DAY_MAP = { 1:'dayA', 2:'dayB', 4:'dayC', 5:'dayD', 6:'dayE' };
+
+// Knee & hip exercise ID sets (for rehab cards)
+const KNEE_EX_IDS = new Set(['a3','a7','a8','a10','a11','a12','a13','c2','c3','c5','c6','c7','c8','c9','e8']);
+
+function getWeekKey() {
+  const now = new Date();
+  const daysFromMon = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - daysFromMon);
+  return `week_sched_${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
+}
+
+function getWeekSchedule() {
+  return cacheGet(getWeekKey()) || {};
+}
+
+// val: 'dayA'–'dayE', 'active', 'rest', or null (null = remove override, revert to default)
+function setWeekScheduleDay(dayIndex, val) {
+  const sched = getWeekSchedule();
+  if (val === null) delete sched[dayIndex];
+  else sched[dayIndex] = val;
+  cacheSet(getWeekKey(), sched);
+}
+
+// Returns: workout ID string, 'active', 'rest', or null (null = default rest)
+function getEffectiveDayAssignment(dayIndex) {
+  const sched = getWeekSchedule();
+  if (String(dayIndex) in sched) return sched[String(dayIndex)];
+  if (dayIndex in sched) return sched[dayIndex];
+  return DEFAULT_DAY_MAP[dayIndex] || null;
+}
 
 // ═══════════════════════════════════════════════
 // NAVIGATION
@@ -970,21 +1218,36 @@ async function renderHome() {
   document.getElementById('greetingText').textContent = greet;
 
   const dayIndex = now.getDay();
-  const dayMap = { 1: 'dayA', 2: 'dayB', 4: 'dayC', 5: 'dayD', 6: 'dayE' };
-  const todayId = dayMap[dayIndex];
-
-  if (todayId) {
-    const w = WORKOUT_PLAN.find(d => d.id === todayId);
-    document.getElementById('greetingDay').textContent = `${days[dayIndex]} — ${w.name}: ${w.subtitle}`;
+  const todayAssignment = getEffectiveDayAssignment(dayIndex);
+  const todayWorkout = (todayAssignment && todayAssignment !== 'active' && todayAssignment !== 'rest')
+    ? WORKOUT_PLAN.find(d => d.id === todayAssignment) : null;
+  if (todayWorkout) {
+    document.getElementById('greetingDay').textContent = `${days[dayIndex]} — ${todayWorkout.name}: ${todayWorkout.subtitle}`;
   } else {
-    document.getElementById('greetingDay').textContent = `${days[dayIndex]} — Rest & Mobility Day`;
+    document.getElementById('greetingDay').textContent = `${days[dayIndex]} — ${todayAssignment === 'active' ? 'Active Day' : 'Rest & Recovery'}`;
   }
 
-  const logs = await getWorkoutLogs();
+  // Ski countdown
+  const skiTarget = new Date('2026-11-01T00:00:00');
+  const skiEl = document.getElementById('skiCountdown');
+  const diffMs = skiTarget - now;
+  if (diffMs > 0) {
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffWeeks = Math.floor(diffDays / 7);
+    document.getElementById('skiCountText').textContent =
+      diffWeeks > 0 ? `${diffWeeks} weeks away` : `${diffDays} days away`;
+    skiEl.style.display = 'flex';
+  } else {
+    skiEl.style.display = 'none';
+  }
+
+  const [logs, activityLogs] = await Promise.all([getWorkoutLogs(), getActivityLogs()]);
+
+  // Background refresh — re-render if data changed
   refreshWorkoutLogs().then(fresh => {
     const freshIds = fresh.map(l => l.id).join();
     const cachedIds = logs.map(l => l.id).join();
-    if (freshIds !== cachedIds) renderHome().catch(e => console.error('Init error:', e));
+    if (freshIds !== cachedIds) renderHome().catch(e => console.error('Refresh error:', e));
   });
 
   const completedThisWeek = new Set(logs
@@ -994,21 +1257,40 @@ async function renderHome() {
   const list = document.getElementById('dayList');
   list.innerHTML = '';
 
-  // Show all 7 days in order starting from today
-  const weekDays = [
-    { d: 1, label: 'Monday', workoutId: 'dayA' },
-    { d: 2, label: 'Tuesday', workoutId: 'dayB' },
-    { d: 3, label: 'Wednesday', workoutId: null },
-    { d: 4, label: 'Thursday', workoutId: 'dayC' },
-    { d: 5, label: 'Friday', workoutId: 'dayD' },
-    { d: 6, label: 'Saturday', workoutId: 'dayE' },
-    { d: 0, label: 'Sunday', workoutId: null }
+  // Compute Monday of current week (for date lookups)
+  const daysFromMon = dayIndex === 0 ? 6 : dayIndex - 1;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - daysFromMon);
+  monday.setHours(0, 0, 0, 0);
+
+  const dayOffsets = { 1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 0:6 };
+  const weekDayDefs = [
+    { d:1, label:'Monday' }, { d:2, label:'Tuesday' }, { d:3, label:'Wednesday' },
+    { d:4, label:'Thursday' }, { d:5, label:'Friday' }, { d:6, label:'Saturday' }, { d:0, label:'Sunday' }
   ];
 
-  weekDays.forEach(wd => {
+  weekDayDefs.forEach(wd => {
     const isToday = wd.d === dayIndex;
-    const workout = wd.workoutId ? WORKOUT_PLAN.find(w => w.id === wd.workoutId) : null;
-    const isDone = wd.workoutId && completedThisWeek.has(wd.workoutId);
+    const assignment = getEffectiveDayAssignment(wd.d);
+    const workout = (assignment && assignment !== 'active' && assignment !== 'rest')
+      ? WORKOUT_PLAN.find(w => w.id === assignment) : null;
+    const isDone = workout && completedThisWeek.has(assignment);
+
+    // Date string for this weekday (local time, avoids UTC offset issues)
+    const thisDate = new Date(monday);
+    thisDate.setDate(monday.getDate() + dayOffsets[wd.d]);
+    const y = thisDate.getFullYear();
+    const mo = String(thisDate.getMonth()+1).padStart(2,'0');
+    const da = String(thisDate.getDate()).padStart(2,'0');
+    const dateStr = `${y}-${mo}-${da}`;
+
+    // Activity logs for this day
+    const dayActivities = activityLogs.filter(a => a.date === dateStr);
+    const latestActivity = dayActivities[0];
+
+    const swapBtn = `<button class="swap-btn" onclick="openSwapModal(${wd.d},'${wd.label}','${dateStr}',event)" title="Change this day">
+      <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+    </button>`;
 
     const card = document.createElement('div');
     card.className = `day-card${isToday ? ' today' : ''}${isDone ? ' done' : ''}`;
@@ -1020,22 +1302,32 @@ async function renderHome() {
         <div class="day-info">
           <div class="day-name">${wd.label} — ${workout.name}</div>
           <div class="day-desc">${workout.subtitle}</div>
+          ${latestActivity ? `<div class="activity-logged">+ ${latestActivity.activity}</div>` : ''}
         </div>
         ${isToday ? '<span class="day-badge badge-today">Today</span>' : ''}
         ${isDone ? '<span class="day-badge badge-done">✓ Done</span>' : ''}
+        ${swapBtn}
         <div class="chevron">›</div>
       `;
       card.onclick = () => openWorkout(workout.id);
     } else {
+      // Active or rest day
+      const defaultDesc = wd.d === 3 ? 'Active Recovery — Bike or Walk + Mobility' : 'Rest Day — Easy Walk OK';
+      const displayDesc = latestActivity ? latestActivity.activity : defaultDesc;
+      const extraCount = dayActivities.length > 1 ? `<div class="activity-logged">+${dayActivities.length - 1} more logged</div>` : '';
       card.innerHTML = `
         <div class="day-dot dot-rest"></div>
         <div class="day-info">
           <div class="day-name">${wd.label}</div>
-          <div class="day-desc">${wd.d === 3 ? 'Active Recovery — Bike or Walk + Mobility' : 'Rest Day — Easy Walk OK'}</div>
+          <div class="day-desc" ${latestActivity ? 'style="color:var(--teal)"' : ''}>${displayDesc}</div>
+          ${extraCount}
         </div>
         ${isToday ? '<span class="day-badge badge-today">Today</span>' : ''}
+        ${dayActivities.length > 0 ? '<span class="day-badge badge-done">✓ Active</span>' : ''}
+        ${swapBtn}
+        <span style="font-family:DM Mono,monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.05em;flex-shrink:0">log ›</span>
       `;
-      card.style.cursor = 'default';
+      card.onclick = () => openActivityModal(wd.d, wd.label, dateStr, null);
     }
     list.appendChild(card);
   });
@@ -1309,6 +1601,102 @@ function backToHome() {
   currentPage = 'home';
 }
 
+// ═══════════════════════════════════════════════
+// SCHEDULE SWAP
+// ═══════════════════════════════════════════════
+
+let swapTargetDay = null;
+
+function openSwapModal(dayIndex, dayLabel, dateStr, event) {
+  if (event) event.stopPropagation();
+  swapTargetDay = dayIndex;
+  document.getElementById('swapModalTitle').textContent = `Change ${dayLabel}`;
+
+  const current = getEffectiveDayAssignment(dayIndex);
+  const isOverridden = String(dayIndex) in getWeekSchedule() || dayIndex in getWeekSchedule();
+  const defaultVal = DEFAULT_DAY_MAP[dayIndex] || null;
+  const defaultWorkout = defaultVal ? WORKOUT_PLAN.find(w => w.id === defaultVal) : null;
+
+  const opts = [
+    ...WORKOUT_PLAN.map(w => ({
+      id: w.id,
+      name: w.name,
+      sub: w.subtitle,
+      dotClass: w.type === 'lower' ? 'dot-lower' : w.type === 'upper' ? 'dot-upper' : 'dot-athletic'
+    })),
+    { id: 'active', name: 'Active Day', sub: 'Tap card to log an activity', dotClass: 'dot-rest' },
+    { id: 'rest',   name: 'Rest Day',   sub: 'No logging needed',           dotClass: 'dot-rest' }
+  ];
+
+  let html = opts.map(opt => `
+    <div class="swap-opt ${current === opt.id ? 'current-opt' : ''}" onclick="applyDaySwap(${dayIndex}, '${opt.id}')">
+      <div class="day-dot ${opt.dotClass}" style="flex-shrink:0"></div>
+      <div class="swap-opt-info">
+        <div class="swap-opt-name">${opt.name}</div>
+        <div class="swap-opt-sub">${opt.sub}</div>
+      </div>
+      ${current === opt.id ? '<span class="swap-opt-check">✓</span>' : ''}
+    </div>
+  `).join('');
+
+  if (isOverridden) {
+    const defLabel = defaultWorkout ? defaultWorkout.name : 'Rest';
+    html += `<div class="swap-opt" onclick="applyDaySwap(${dayIndex}, null)" style="border-style:dashed">
+      <div class="swap-opt-info">
+        <div class="swap-opt-name" style="color:var(--text-muted)">Reset to default — ${defLabel}</div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('swapOptions').innerHTML = html;
+  document.getElementById('swapModal').classList.add('open');
+}
+
+function applyDaySwap(dayIndex, val) {
+  setWeekScheduleDay(dayIndex, val);
+  closeModal('swapModal');
+  renderHome();
+}
+
+// ═══════════════════════════════════════════════
+// ACTIVITY LOGGING
+// ═══════════════════════════════════════════════
+
+let activityDateStr = null;
+let activityDayLabel = null;
+
+function openActivityModal(dayIndex, dayLabel, dateStr, event) {
+  if (event) event.stopPropagation();
+  activityDateStr = dateStr;
+  activityDayLabel = dayLabel;
+  document.getElementById('activityModalTitle').textContent = `Log Activity — ${dayLabel}`;
+  document.getElementById('activityInput').value = '';
+
+  getActivityLogs().then(logs => {
+    const existing = logs.filter(a => a.date === dateStr);
+    const prev = document.getElementById('activityPrevious');
+    if (existing.length > 0) {
+      prev.innerHTML = `<div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;margin-bottom:6px">Previously logged</div>` +
+        existing.map(a => `<div style="font-size:12px;color:var(--text-dim);padding:6px 8px;background:var(--surface2);border-radius:4px;margin-bottom:4px">${a.activity}</div>`).join('');
+    } else {
+      prev.innerHTML = '';
+    }
+  });
+
+  document.getElementById('activityModal').classList.add('open');
+  setTimeout(() => document.getElementById('activityInput').focus(), 250);
+}
+
+async function saveActivityEntry() {
+  const text = document.getElementById('activityInput').value.trim();
+  if (!text) { showToast('Enter an activity first'); return; }
+  const entry = { id: makeId(), date: activityDateStr, activity: text };
+  await saveActivityLog(entry);
+  closeModal('activityModal');
+  showToast('Activity logged ✓');
+  renderHome();
+}
+
 function finishWorkout() {
   if (!activeSession || !currentWorkout) return;
 
@@ -1488,12 +1876,41 @@ function renderProgress() {
     return `<optgroup label="${w.name}">${exOpts}</optgroup>`;
   }).join('');
 
-  document.getElementById('progTabs').innerHTML = `
-    <select class="prog-select" onchange="activeProgEx = this.value; renderExerciseProgress(this.value)">
-      ${options}
-    </select>
+  // Clear the legacy progTabs div — structure now lives inside progContent
+  document.getElementById('progTabs').innerHTML = '';
+
+  document.getElementById('progContent').innerHTML = `
+    <div class="section-head" style="margin-top:0">Rehab Focus</div>
+    <div class="rehab-section">
+      <div class="rehab-card">
+        <div class="rehab-card-title">Knee Health — Completion Trend <span class="rehab-card-tag knee-tag">knee</span></div>
+        <div id="kneeHealthCard"><div style="font-size:12px;color:var(--text-muted)">Loading…</div></div>
+      </div>
+      <div class="rehab-card">
+        <div class="rehab-card-title">Hip Abduction <span class="rehab-card-tag hip-tag">hip · left priority</span></div>
+        <div id="hipAbdCard"><div style="font-size:12px;color:var(--text-muted)">Loading…</div></div>
+      </div>
+    </div>
+
+    <div class="section-head">Running</div>
+    <div class="run-section">
+      <div class="run-section-head">
+        <span style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em">Last 4 weeks</span>
+        <button class="run-add-btn" onclick="openAddRunModal()">+ Log Run</button>
+      </div>
+      <div id="runSectionContent"><div style="font-size:12px;color:var(--text-muted)">Loading…</div></div>
+    </div>
+
+    <div class="section-head">By Exercise</div>
+    <div class="prog-tabs" style="border-bottom:none;padding-bottom:0">
+      <select class="prog-select" onchange="activeProgEx = this.value; renderExerciseProgress(this.value)">${options}</select>
+    </div>
+    <div id="exerciseProgContent"></div>
   `;
 
+  renderKneeHealth();
+  renderHipAbduction();
+  renderRunSection();
   renderExerciseProgress(activeProgEx);
 }
 
@@ -1502,7 +1919,8 @@ async function renderExerciseProgress(exId) {
   const ex = all.find(e => e.id === exId);
   if (!ex) return;
 
-  const container = document.getElementById('progContent');
+  const container = document.getElementById('exerciseProgContent');
+  if (!container) return;
   const logs = await getWorkoutLogs();
 
   // Collect sessions containing this exercise, sorted oldest→newest
@@ -1622,14 +2040,13 @@ function drawCompletionChart(canvasId, sessions) {
   }
 }
 
-function drawLineChart(canvasId, labels, data, color) {
+function drawLineChart(canvasId, labels, data, color, chartHeight) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
   const w = canvas.offsetWidth;
-  const h = 180;
+  const h = chartHeight || 180;
   canvas.width = w * dpr;
   canvas.height = h * dpr;
   canvas.style.width = w + 'px';
@@ -1717,6 +2134,249 @@ function drawLineChart(canvasId, labels, data, color) {
     const x = pad.left + (data.length > 1 ? (i / (data.length - 1)) : 0.5) * chartW;
     ctx.fillText(l, x, h - 8);
   });
+}
+
+// ═══════════════════════════════════════════════
+// REHAB CARDS
+// ═══════════════════════════════════════════════
+
+async function renderKneeHealth() {
+  const container = document.getElementById('kneeHealthCard');
+  if (!container) return;
+
+  const logs = await getWorkoutLogs();
+  // Walk logs oldest→newest, compute % of knee exercises done per session
+  const sessions = [];
+  [...logs].reverse().forEach(log => {
+    const kneeExes = (log.exercises || []).filter(e => KNEE_EX_IDS.has(e.exId));
+    if (kneeExes.length === 0) return;
+    let done = 0, total = 0;
+    const workout = WORKOUT_PLAN.find(w => w.id === (log.workout_id || log.workoutId));
+    kneeExes.forEach(ex => {
+      let exDef = null;
+      if (workout) workout.blocks.forEach(b => b.exercises.forEach(e => { if (e.id === ex.exId) exDef = e; }));
+      if (exDef && exDef.targetSets) {
+        total += exDef.targetSets;
+        done += (ex.sets || []).filter(s => s.done).length;
+      } else {
+        total += 1;
+        if (ex.completed) done += 1;
+      }
+    });
+    if (total > 0) sessions.push({ date: new Date(log.date), pct: Math.round((done / total) * 100) });
+  });
+  // sessions is already oldest→newest; take last 8
+  const last8 = sessions.slice(-8);
+
+  if (last8.length === 0) {
+    container.innerHTML = `<div style="font-size:12px;color:var(--text-muted)">No knee exercise data yet — log a Lower A or Lower B session.</div>`;
+    return;
+  }
+
+  const avg = Math.round(last8.reduce((s, r) => s + r.pct, 0) / last8.length);
+  const trend = last8.length >= 2 ? last8[last8.length - 1].pct - last8[0].pct : null;
+  const trendStr = trend === null ? '—' : (trend > 0 ? `+${trend}%` : trend < 0 ? `${trend}%` : '→');
+  const trendColor = trend === null ? 'var(--text-dim)' : trend >= 0 ? 'var(--success)' : 'var(--red)';
+
+  container.innerHTML = `
+    <div class="stat-grid" style="padding:0;margin-bottom:12px">
+      <div class="stat-card">
+        <div class="stat-label">Avg Completion</div>
+        <div class="stat-value">${avg}<span class="stat-unit">%</span></div>
+        <div class="stat-delta" style="color:var(--text-dim)">last ${last8.length} sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Trend</div>
+        <div class="stat-value" style="color:${trendColor};font-size:20px">${trendStr}</div>
+        <div class="stat-delta" style="color:var(--text-dim)">first → last</div>
+      </div>
+    </div>
+    <canvas id="kneeChart" height="70"></canvas>
+  `;
+  drawBarChart('kneeChart', last8.map(r => r.date.toLocaleDateString('en-US', { month:'short', day:'numeric' })), last8.map(r => r.pct), '#e05a3a', 100);
+}
+
+async function renderHipAbduction() {
+  const container = document.getElementById('hipAbdCard');
+  if (!container) return;
+
+  const [logs, exLogs] = await Promise.all([getWorkoutLogs(), getExLogs()]);
+
+  // a5: Cable Hip Abduction (weighted — track max weight per session)
+  const a5Sessions = [];
+  [...logs].reverse().forEach(log => {
+    const entry = (log.exercises || []).find(e => e.exId === 'a5');
+    if (!entry) return;
+    const doneSets = (entry.sets || []).filter(s => s.done && s.weight);
+    if (!doneSets.length) return;
+    a5Sessions.push({ date: new Date(log.date), weight: Math.max(...doneSets.map(s => parseFloat(s.weight))) });
+  });
+  const last5 = a5Sessions.slice(-5);
+
+  // a6: Side-Lying Hip Abduction (completion-only)
+  const a6Sessions = [];
+  [...logs].reverse().forEach(log => {
+    const entry = (log.exercises || []).find(e => e.exId === 'a6');
+    if (!entry) return;
+    a6Sessions.push({ date: new Date(log.date), done: !!entry.completed });
+  });
+  const recentA6 = a6Sessions[a6Sessions.length - 1];
+  const a5Pr = exLogs['a5'];
+  const lastA5 = last5[last5.length - 1];
+
+  if (!lastA5) {
+    container.innerHTML = `<div style="font-size:12px;color:var(--text-muted)">No hip abduction data yet — log a Lower A session.</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="stat-grid" style="padding:0;margin-bottom:${last5.length > 1 ? '12px' : '8px'}">
+      <div class="stat-card">
+        <div class="stat-label">Cable Abd — Last</div>
+        <div class="stat-value">${lastA5.weight}<span class="stat-unit"> lbs</span></div>
+        ${a5Pr?.prWeight ? `<div style="font-size:10px;color:var(--accent);margin-top:3px">PR: ${a5Pr.prWeight} lbs</div>` : ''}
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Banded Abd — Last</div>
+        ${recentA6
+          ? `<div class="stat-value" style="font-size:15px;color:${recentA6.done ? 'var(--success)' : 'var(--text-muted)'}">${recentA6.done ? '✓ Done' : '— Missed'}</div>`
+          : `<div class="stat-value" style="font-size:14px;color:var(--text-muted)">No data</div>`}
+      </div>
+    </div>
+    ${last5.length > 1 ? '<canvas id="hipChart" height="80"></canvas>' : ''}
+    <div style="font-size:10px;color:var(--text-muted);margin-top:8px;font-style:italic">Start with left leg every set — note any side asymmetry.</div>
+  `;
+
+  if (last5.length > 1) {
+    const labels = last5.map(s => s.date.toLocaleDateString('en-US', { month:'short', day:'numeric' }));
+    drawLineChart('hipChart', labels, last5.map(s => s.weight), 'var(--teal)', 80);
+  }
+}
+
+// ── BAR CHART (for knee completion %) ─────────
+
+function drawBarChart(canvasId, labels, data, color, maxVal) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth;
+  const h = 70;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const n = data.length;
+  if (!n) return;
+  const pad = { top: 14, right: 6, bottom: 22, left: 6 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+  const slotW = chartW / n;
+  const barW = Math.max(6, slotW * 0.55);
+
+  data.forEach((val, i) => {
+    const x = pad.left + i * slotW + (slotW - barW) / 2;
+    const barH = (val / (maxVal || 100)) * chartH;
+    const y = pad.top + chartH - barH;
+    ctx.fillStyle = color + '35';
+    ctx.fillRect(x, y, barW, barH);
+    // accent top edge
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, barW, 2);
+    // value label
+    ctx.fillStyle = color;
+    ctx.font = `bold 9px DM Mono`;
+    ctx.textAlign = 'center';
+    ctx.fillText(val + '%', x + barW / 2, y - 2);
+  });
+
+  // x-axis labels (only show some to avoid crowding)
+  ctx.fillStyle = '#444440';
+  ctx.font = '9px DM Mono';
+  ctx.textAlign = 'center';
+  const step = Math.ceil(n / 4);
+  for (let i = 0; i < n; i += step) {
+    const x = pad.left + i * slotW + slotW / 2;
+    ctx.fillText(labels[i], x, h - 4);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RUNNING
+// ═══════════════════════════════════════════════
+
+function openAddRunModal() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,'0');
+  const d = String(today.getDate()).padStart(2,'0');
+  document.getElementById('runDate').value = `${y}-${m}-${d}`;
+  document.getElementById('runMiles').value = '';
+  document.getElementById('runNotes').value = '';
+  document.getElementById('addRunModal').classList.add('open');
+  setTimeout(() => document.getElementById('runMiles').focus(), 250);
+}
+
+async function saveRunEntry() {
+  const date = document.getElementById('runDate').value;
+  const miles = parseFloat(document.getElementById('runMiles').value);
+  const notes = document.getElementById('runNotes').value.trim();
+  if (!date || isNaN(miles) || miles <= 0) { showToast('Enter a valid date and distance'); return; }
+  const entry = { id: makeId(), date, miles, notes: notes || null };
+  await saveRunLog(entry);
+  closeModal('addRunModal');
+  showToast('Run logged ✓');
+  renderRunSection();
+}
+
+async function renderRunSection() {
+  const container = document.getElementById('runSectionContent');
+  if (!container) return;
+
+  const runs = await getRunLogs();
+
+  if (runs.length === 0) {
+    container.innerHTML = `<div class="run-empty">No runs logged yet. Hit "+ Log Run" to add one.</div>`;
+    return;
+  }
+
+  // 10% ramp check: this 7 days vs prior 7 days
+  const now = new Date();
+  const cur7Start = new Date(now); cur7Start.setDate(now.getDate() - 7);
+  const prev7Start = new Date(now); prev7Start.setDate(now.getDate() - 14);
+  const cur7 = runs.filter(r => new Date(r.date+'T12:00') >= cur7Start).reduce((s, r) => s + parseFloat(r.miles), 0);
+  const prev7 = runs.filter(r => { const d = new Date(r.date+'T12:00'); return d >= prev7Start && d < cur7Start; }).reduce((s, r) => s + parseFloat(r.miles), 0);
+
+  let rampHtml = '';
+  if (prev7 > 0 && cur7 > prev7 * 1.1) {
+    const pct = Math.round(((cur7 - prev7) / prev7) * 100);
+    rampHtml = `<div class="ramp-warning">⚠ Volume up ${pct}% this week (${cur7.toFixed(1)} vs ${prev7.toFixed(1)} mi last week). Consider holding or reducing to protect the knee.</div>`;
+  } else if (cur7 > 0 && prev7 > 0) {
+    rampHtml = `<div style="font-size:11px;color:var(--success);margin-bottom:8px">✓ Ramp looks safe — ${cur7.toFixed(1)} mi this week vs ${prev7.toFixed(1)} mi last week.</div>`;
+  }
+
+  // Last 4 weeks
+  const cutoff = new Date(now); cutoff.setDate(now.getDate() - 28);
+  const recent = runs.filter(r => new Date(r.date+'T12:00') >= cutoff);
+
+  const entries = recent.map(r => {
+    const d = new Date(r.date+'T12:00');
+    const dateStr = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    return `<div class="run-entry">
+      <div>
+        <div class="run-entry-date">${dateStr}</div>
+        ${r.notes ? `<div class="run-entry-note">${r.notes}</div>` : ''}
+      </div>
+      <div style="text-align:right">
+        <span class="run-entry-miles">${parseFloat(r.miles).toFixed(1)}</span>
+        <span class="run-entry-unit"> mi</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `${rampHtml}<div class="run-entries">${entries || '<div class="run-empty">No runs in the last 4 weeks.</div>'}</div>`;
 }
 
 // ═══════════════════════════════════════════════
