@@ -1034,9 +1034,12 @@ async function openWorkout(workoutId) {
     });
   }
 
-  showPage('workout');
-  document.getElementById('nav-home').classList.add('active'); // keep home active
-  document.getElementById('nav-workout') && document.getElementById('nav-workout').classList.remove('active');
+  // Workout is a sub-page of home — not a nav destination, so don't use showPage()
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-workout').classList.add('active');
+  document.getElementById('nav-home').classList.add('active');
+  currentPage = 'workout';
 
   renderWorkout(workout);
 }
