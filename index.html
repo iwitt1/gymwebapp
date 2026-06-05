@@ -787,6 +787,21 @@ function cacheSet(key, val) {
   try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
 }
 
+// Active session persistence — survives browser close mid-workout
+function saveSessionState() {
+  if (activeSession) {
+    cacheSet('active_session', activeSession);
+  } else {
+    try { localStorage.removeItem('active_session'); } catch(e) {}
+  }
+}
+function loadSessionState() {
+  const saved = cacheGet('active_session');
+  if (!saved) return null;
+  if (!WORKOUT_PLAN.find(w => w.id === saved.workoutId)) return null; // workout no longer exists
+  return saved;
+}
+
 async function getWorkoutLogs() {
   // Return cache immediately, then refresh from DB in background
   const cached = cacheGet('workout_logs');
@@ -1005,33 +1020,42 @@ async function openWorkout(workoutId) {
 
   // Start or resume session
   if (!activeSession || activeSession.workoutId !== workoutId) {
-    activeSession = {
-      workoutId,
-      startTime: Date.now(),
-      sets: {},
-      flags: {},
-      notes: {}
-    };
-    // Load previous logs for pre-fill
-    const exLogs = await getExLogs();
-    workout.blocks.forEach(block => {
-      block.exercises.forEach(ex => {
-        if (ex.targetSets) {
-          const prev = exLogs[ex.id];
-          const setCount = ex.targetSets || 3;
-          activeSession.sets[ex.id] = Array.from({length: setCount}, (_, i) => ({
-            weight: prev ? prev.lastWeight : '',
-            reps: prev ? prev.lastReps : '',
-            done: false,
-            prevWeight: prev ? prev.lastWeight : null,
-            prevReps: prev ? prev.lastReps : null,
-            prWeight: prev ? prev.prWeight : null,
-            prReps: prev ? prev.prReps : null,
-            target: ex.sets
-          }));
-        }
+    // Check for a saved in-progress session for this workout
+    const saved = loadSessionState();
+    if (saved && saved.workoutId === workoutId) {
+      activeSession = saved;
+      showToast('Session resumed');
+    } else {
+      activeSession = {
+        workoutId,
+        startTime: Date.now(),
+        sets: {},
+        completed: {}, // non-weighted exercise completion
+        flags: {},
+        notes: {}
+      };
+      // Load previous logs for pre-fill
+      const exLogs = await getExLogs();
+      workout.blocks.forEach(block => {
+        block.exercises.forEach(ex => {
+          if (ex.targetSets) {
+            const prev = exLogs[ex.id];
+            const setCount = ex.targetSets || 3;
+            activeSession.sets[ex.id] = Array.from({length: setCount}, (_, i) => ({
+              weight: prev ? prev.lastWeight : '',
+              reps: prev ? prev.lastReps : '',
+              done: false,
+              prevWeight: prev ? prev.lastWeight : null,
+              prevReps: prev ? prev.lastReps : null,
+              prWeight: prev ? prev.prWeight : null,
+              prReps: prev ? prev.prReps : null,
+              target: ex.sets
+            }));
+          }
+        });
       });
-    });
+      saveSessionState();
+    }
   }
 
   // Workout is a sub-page of home — not a nav destination, so don't use showPage()
@@ -1072,7 +1096,9 @@ function renderExerciseCard(ex) {
   const tags = ex.tags || [];
   const tagHtml = tags.map(t => `<span class="ex-tag-pill tag-${t}">${t}</span>`).join('');
   const sessionSets = activeSession ? (activeSession.sets[ex.id] || null) : null;
-  const isDone = sessionSets && sessionSets.every(s => s.done);
+  const isDone = sessionSets
+    ? sessionSets.every(s => s.done)
+    : (activeSession ? !!activeSession.completed?.[ex.id] : false);
   const flag = activeSession ? activeSession.flags[ex.id] : null;
 
   let expandHtml = '';
@@ -1135,10 +1161,15 @@ function renderExerciseCard(ex) {
       onchange="updateNotes('${ex.id}', this.value)">${activeSession && activeSession.notes[ex.id] ? activeSession.notes[ex.id] : ''}</textarea>
   `;
 
+  // Non-weighted exercises: tapping the circle marks them done (stops propagation so card doesn't also expand)
+  const statusAttrs = !ex.targetSets
+    ? `onclick="event.stopPropagation(); toggleNonWeightedDone('${ex.id}')" style="cursor:pointer"`
+    : '';
+
   return `
     <div class="ex-card" id="excard-${ex.id}">
       <div class="ex-card-header" onclick="toggleExExpand('${ex.id}')">
-        <div class="ex-status ${isDone ? 'done' : ''}" id="exstatus-${ex.id}">
+        <div class="ex-status ${isDone ? 'done' : ''}" id="exstatus-${ex.id}" ${statusAttrs}>
           <svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
         </div>
         <div class="ex-info">
@@ -1160,9 +1191,18 @@ function toggleExExpand(exId) {
   el.classList.toggle('open');
 }
 
+function toggleNonWeightedDone(exId) {
+  if (!activeSession) return;
+  if (!activeSession.completed) activeSession.completed = {};
+  activeSession.completed[exId] = !activeSession.completed[exId];
+  refreshExerciseCard(exId);
+  saveSessionState();
+}
+
 function updateSet(exId, setIndex, field, value) {
   if (!activeSession || !activeSession.sets[exId]) return;
   activeSession.sets[exId][setIndex][field] = value;
+  saveSessionState();
 }
 
 function toggleSetDone(exId, setIndex) {
@@ -1175,6 +1215,7 @@ function toggleSetDone(exId, setIndex) {
   // Re-render this exercise card is simpler
   refreshExerciseCard(exId);
 
+  saveSessionState();
   if (set.done) startRestTimer();
 }
 
@@ -1208,11 +1249,13 @@ function setFlag(exId, flag) {
     activeSession.flags[exId] = flag;
   }
   refreshExerciseCard(exId);
+  saveSessionState();
 }
 
 function updateNotes(exId, val) {
   if (!activeSession) return;
   activeSession.notes[exId] = val;
+  saveSessionState();
 }
 
 function backToHome() {
@@ -1277,6 +1320,7 @@ async function finishWorkout() {
   await saveExLogs(exLogs);
 
   activeSession = null;
+  saveSessionState(); // clears saved session
   stopRestTimer();
 
   showToast('Workout logged ✓');
