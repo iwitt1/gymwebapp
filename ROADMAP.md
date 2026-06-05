@@ -39,9 +39,8 @@ Most items shipped. Two remain open.
 
 **Focus area feedback (e.g. knee rehab trend, hip abduction deficit) deferred to Phase 5** — will be done as a periodic Claude Cowork review and the summary pushed as a note into the app, rather than auto-computed charts.
 
-**Still open:**
-- Log view — verify recent workouts display correctly with expandable details
-- Export for Claude check-in — verify the generated text includes all relevant data (sets, weights, flags, notes, duration)
+- ~~Log view — tap to expand each entry showing full exercise breakdown, sets, flags, notes, and completion status~~
+- ~~Export for Claude check-in — includes sets, weights, flags, notes, duration, non-weighted completions, and a PR summary section~~
 
 ---
 

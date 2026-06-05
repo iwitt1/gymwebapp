@@ -333,7 +333,7 @@ canvas { width: 100% !important; border-radius: 6px; }
 .log-list { padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; }
 .log-entry {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 6px; padding: 14px;
+  border-radius: 6px; padding: 14px; cursor: pointer;
 }
 .log-entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .log-entry-day { font-weight: 600; font-size: 13px; color: var(--text); }
@@ -341,6 +341,13 @@ canvas { width: 100% !important; border-radius: 6px; }
 .log-entry-stats { display: flex; gap: 12px; flex-wrap: wrap; }
 .log-stat { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); }
 .log-stat span { color: var(--text); }
+.log-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.log-entry.open .log-detail { display: block; }
+.log-detail-ex { font-size: 12px; color: var(--text); margin-bottom: 8px; }
+.log-detail-ex-name { font-weight: 600; margin-bottom: 2px; }
+.log-detail-sets { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); padding-left: 8px; }
+.log-detail-flag { font-size: 10px; padding-left: 8px; }
+.log-detail-note { font-size: 11px; color: var(--text-dim); padding-left: 8px; font-style: italic; margin-top: 2px; }
 .log-export-btn {
   width: calc(100% - 32px); margin: 8px 16px;
   padding: 12px; border-radius: 6px;
@@ -1731,16 +1738,40 @@ async function renderLog() {
     return;
   }
 
-  list.innerHTML = logs.map(log => {
+  list.innerHTML = logs.map((log, idx) => {
     const d = new Date(log.date);
     const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const doneExes = log.exercises.filter(e => e.sets && e.sets.some(s => s.done)).length;
-    const skipped = log.exercises.filter(e => e.flag === 'skipped').length;
-    const subbed = log.exercises.filter(e => e.flag === 'subbed').length;
-    const hasPain = log.exercises.some(e => e.flag === 'skipped' || (e.note && e.note.match(/pain|hurt|knee|sore/i)));
+    const exercises = log.exercises || [];
+    const doneSets = exercises.reduce((sum, e) => sum + (e.sets ? e.sets.filter(s => s.done).length : 0), 0);
+    const doneNonWeighted = exercises.filter(e => e.completed === true).length;
+    const skipped = exercises.filter(e => e.flag === 'skipped').length;
+    const subbed = exercises.filter(e => e.flag === 'subbed').length;
+    const hasPain = exercises.some(e => e.flag === 'skipped' || (e.note && e.note.match(/pain|hurt|knee|sore/i)));
+
+    const detailRows = exercises.map(e => {
+      const setLines = e.sets ? e.sets.filter(s => s.done && (s.weight || s.reps)).map(s =>
+        `${s.weight ? s.weight + ' lbs' : ''}${s.weight && s.reps ? ' × ' : ''}${s.reps ? s.reps + ' reps' : ''}`.trim()
+      ) : [];
+      const flagHtml = e.flag === 'skipped'
+        ? `<div class="log-detail-flag" style="color:var(--red)">⚠ Skipped / Pain</div>`
+        : e.flag === 'subbed'
+          ? `<div class="log-detail-flag" style="color:var(--blue)">↻ Substituted</div>`
+          : '';
+      const completedHtml = e.completed ? `<div class="log-detail-sets">✓ Completed</div>` : '';
+      const noteHtml = e.note ? `<div class="log-detail-note">"${e.note}"</div>` : '';
+      if (!setLines.length && !flagHtml && !completedHtml && !noteHtml) return '';
+      return `
+        <div class="log-detail-ex">
+          <div class="log-detail-ex-name">${e.name}</div>
+          ${flagHtml}
+          ${completedHtml}
+          ${setLines.map(s => `<div class="log-detail-sets">${s}</div>`).join('')}
+          ${noteHtml}
+        </div>`;
+    }).join('');
 
     return `
-      <div class="log-entry">
+      <div class="log-entry" onclick="this.classList.toggle('open')">
         <div class="log-entry-header">
           <div>
             <div class="log-entry-day">${log.workout_name || log.workoutName} ${hasPain ? '⚠️' : ''}</div>
@@ -1748,11 +1779,13 @@ async function renderLog() {
           <div class="log-entry-date">${dateStr}</div>
         </div>
         <div class="log-entry-stats">
-          <div class="log-stat"><span>${doneExes}</span> sets logged</div>
+          ${doneSets > 0 ? `<div class="log-stat"><span>${doneSets}</span> sets</div>` : ''}
+          ${doneNonWeighted > 0 ? `<div class="log-stat"><span>${doneNonWeighted}</span> completed</div>` : ''}
           ${log.duration ? `<div class="log-stat"><span>${log.duration}</span> min</div>` : ''}
           ${skipped > 0 ? `<div class="log-stat" style="color:var(--red)"><span>${skipped}</span> skipped</div>` : ''}
           ${subbed > 0 ? `<div class="log-stat" style="color:var(--blue)"><span>${subbed}</span> subbed</div>` : ''}
         </div>
+        <div class="log-detail">${detailRows}</div>
       </div>
     `;
   }).join('');
@@ -1771,6 +1804,8 @@ async function openExportModal() {
     return;
   }
 
+  const exLogs = await getExLogs();
+
   let text = `WEEKLY WORKOUT LOG — CLAUDE CHECK-IN\n`;
   text += `Week of ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}\n`;
   text += `${'─'.repeat(40)}\n\n`;
@@ -1785,19 +1820,43 @@ async function openExportModal() {
     const exercises = log.exercises || [];
     exercises.forEach(ex => {
       const doneSets = ex.sets ? ex.sets.filter(s => s.done && s.weight && s.reps) : [];
-      if (doneSets.length === 0 && !ex.flag && !ex.note) return;
+      const isCompletion = ex.completed === true;
+      if (doneSets.length === 0 && !isCompletion && !ex.flag && !ex.note) return;
       text += `  ${ex.name}\n`;
       if (ex.flag === 'skipped') text += `    ⚠ SKIPPED/PAIN\n`;
       if (ex.flag === 'subbed') text += `    ↻ SUBSTITUTED\n`;
-      doneSets.forEach((s, i) => {
-        text += `    Set ${i + 1}: ${s.weight} lbs × ${s.reps} reps\n`;
-      });
+      if (isCompletion && doneSets.length === 0) {
+        text += `    ✓ Completed\n`;
+      } else {
+        doneSets.forEach((s, i) => {
+          const pr = exLogs[ex.exId];
+          const isPR = pr && parseFloat(s.weight) >= parseFloat(pr.prWeight);
+          text += `    Set ${i + 1}: ${s.weight} lbs × ${s.reps} reps${isPR ? ' 🏆 PR' : ''}\n`;
+        });
+      }
       if (ex.note) text += `    Note: ${ex.note}\n`;
       text += `\n`;
     });
 
     text += `\n`;
   });
+
+  // PR summary for this week
+  const weekPRs = [];
+  thisWeek.forEach(log => {
+    (log.exercises || []).forEach(ex => {
+      const doneSets = ex.sets ? ex.sets.filter(s => s.done && s.weight) : [];
+      if (!doneSets.length) return;
+      const maxWeight = Math.max(...doneSets.map(s => parseFloat(s.weight)));
+      const pr = exLogs[ex.exId];
+      if (pr && maxWeight >= parseFloat(pr.prWeight)) {
+        weekPRs.push(`  ${ex.name}: ${maxWeight} lbs`);
+      }
+    });
+  });
+  if (weekPRs.length > 0) {
+    text += `PRs THIS WEEK\n${weekPRs.join('\n')}\n\n`;
+  }
 
   text += `${'─'.repeat(40)}\n`;
   text += `Paste this into Claude and ask:\n"Review my week. How am I progressing? Should I adjust any weights or scale any exercises next week? Any concerns given my PFPS history?"`;
