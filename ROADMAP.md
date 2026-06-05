@@ -29,9 +29,10 @@ Once the app works end-to-end, tighten the experience.
 
 ## Phase 3 — Progress & History
 
-9. **Progress charts — verify data pipeline** — confirm volume is calculated and charted correctly per area. Check that `exercise_logs` tags map correctly to chart areas.
-10. **Log view** — verify recent workouts display correctly with expandable details.
-11. **Export for Claude check-in** — verify the generated text includes all relevant data (sets, weights, flags, notes, duration).
+9. **Progress charts — verify data pipeline** — confirm volume is calculated and charted correctly per area. Check that exercise tags map correctly to chart areas.
+10. **Reassess progress charts entirely** — the current design shows aggregate volume over time, which may not be the most useful view. Candidates: per-exercise weight progression, side-by-side left/right comparisons for single-leg work, session completion streaks. Decide what's actually useful to look at before investing in the chart code.
+11. **Log view** — verify recent workouts display correctly with expandable details.
+12. **Export for Claude check-in** — verify the generated text includes all relevant data (sets, weights, flags, notes, duration).
 
 ---
 

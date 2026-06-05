@@ -1034,8 +1034,8 @@ async function openWorkout(workoutId) {
         flags: {},
         notes: {}
       };
-      // Load previous logs for pre-fill
-      const exLogs = await getExLogs();
+      // Load previous logs for pre-fill — always fetch fresh, never trust cache here
+      const exLogs = await refreshExLogs();
       workout.blocks.forEach(block => {
         block.exercises.forEach(ex => {
           if (ex.targetSets) {
