@@ -439,6 +439,31 @@ canvas { width: 100% !important; border-radius: 6px; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ── TOP BAR GEAR ── */
+.topbar-gear {
+  width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border);
+  background: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: all 0.15s;
+}
+.topbar-gear:active { border-color: var(--accent-dim); color: var(--accent); }
+
+/* ── COACHING NOTE ── */
+.coaching-note-block {
+  margin: 12px 16px 0;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent-dim);
+  border-radius: 8px; padding: 12px 14px; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.coaching-note-block:active { border-color: var(--accent-dim); }
+.coaching-note-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+}
+.coaching-note-week { color: var(--accent-dim); }
+.coaching-note-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
 /* ── SKI COUNTDOWN ── */
 .ski-banner {
   margin: 12px 16px 0;
@@ -533,6 +558,9 @@ canvas { width: 100% !important; border-radius: 6px; }
     <div class="topbar-title">Isaac / Training</div>
     <div class="topbar-right">
       <div class="topbar-date" id="todayDateLabel"></div>
+      <button class="topbar-gear" onclick="openSettings()" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
 
@@ -549,6 +577,13 @@ canvas { width: 100% !important; border-radius: 6px; }
         <div class="ski-count" id="skiCountText"></div>
         <div class="ski-sub">Nov 1 target — train accordingly</div>
       </div>
+    </div>
+    <div class="coaching-note-block" id="coachingNoteBlock" style="display:none" onclick="openSettings()">
+      <div class="coaching-note-label">
+        <span>Coaching Note</span>
+        <span class="coaching-note-week" id="coachingWeekLabel"></span>
+      </div>
+      <div class="coaching-note-text" id="coachingNoteText"></div>
     </div>
     <div class="section-head" style="margin-top:16px">This Week</div>
     <div class="day-list" id="dayList"></div>
@@ -603,10 +638,13 @@ canvas { width: 100% !important; border-radius: 6px; }
 
 <!-- EXPORT MODAL -->
 <div class="modal-overlay" id="exportModal" onclick="closeModal('exportModal')">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="max-height:92vh">
     <div class="modal-handle"></div>
     <div class="modal-title">Export for Claude</div>
-    <div class="modal-sub">Copy this and paste it into a new Claude chat for your check-in.</div>
+    <div class="modal-sub">Add any qualitative notes, then copy and paste into Claude.</div>
+    <div class="stat-label" style="margin-bottom:6px">Your notes for Claude</div>
+    <textarea class="ex-notes-area" id="exportQualNotes" placeholder="Anything Claude should know: pain, missed sessions, equipment issues, wanting to add running, taking next week easy, etc." style="min-height:80px;margin-bottom:12px"></textarea>
+    <div class="stat-label" style="margin-bottom:6px">Export text</div>
     <div class="export-text" id="exportText"></div>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('exportModal')">Close</button>
@@ -630,6 +668,28 @@ canvas { width: 100% !important; border-radius: 6px; }
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal" onclick="closeModal('settingsModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="max-height:90vh">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Settings</div>
+    <div class="modal-sub">Coaching note and program config.</div>
+
+    <div class="stat-label" style="margin-bottom:6px">Coaching Note</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Paste Claude's weekly guidance here. Tap the note on the home screen to edit.</div>
+    <textarea class="ex-notes-area" id="settingsCoachingNote" placeholder="Paste your coaching note from Claude here..." style="min-height:120px;margin-bottom:16px"></textarea>
+
+    <div class="stat-label" style="margin-bottom:6px">Program Start Date</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Used to compute your current week number.</div>
+    <input type="date" id="settingsStartDate" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px;margin-bottom:20px">
+
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('settingsModal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
 
 <!-- ACTIVITY LOG MODAL -->
 <div class="modal-overlay" id="activityModal" onclick="closeModal('activityModal')">
@@ -1139,6 +1199,59 @@ function makeId() {
     : Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
+// ── APP CONFIG ────────────────────────────────
+// Supabase app_config table: { key text PK, value text, updated_at timestamptz }
+// Keys used: 'program_start_date' (ISO date), 'coaching_note' (text)
+
+let appConfigCache = null;
+
+async function getAppConfig() {
+  if (appConfigCache) return appConfigCache;
+  const cached = cacheGet('app_config');
+  if (cached) {
+    appConfigCache = cached;
+    refreshAppConfig(); // background sync
+    return cached;
+  }
+  return await refreshAppConfig();
+}
+
+async function refreshAppConfig() {
+  try {
+    const rows = await db.get('app_config');
+    const obj = {};
+    rows.forEach(r => { obj[r.key] = r.value; });
+    cacheSet('app_config', obj);
+    appConfigCache = obj;
+    return obj;
+  } catch(e) {
+    console.error('Failed to fetch app_config:', e);
+    return cacheGet('app_config') || {};
+  }
+}
+
+async function saveAppConfigKey(key, value) {
+  const config = await getAppConfig();
+  config[key] = value;
+  appConfigCache = config;
+  cacheSet('app_config', config);
+  try {
+    await db.upsert('app_config', { key, value, updated_at: new Date().toISOString() });
+  } catch(e) {
+    console.error('Failed to save app_config:', e);
+    showToast('⚠ Saved locally — sync failed');
+  }
+}
+
+function getProgramWeek(config) {
+  const startStr = config.program_start_date || '2026-06-09';
+  const start = new Date(startStr + 'T00:00:00');
+  const now = new Date();
+  const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return null; // hasn't started yet
+  return Math.floor(diffDays / 7) + 1;
+}
+
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
@@ -1239,6 +1352,22 @@ async function renderHome() {
     skiEl.style.display = 'flex';
   } else {
     skiEl.style.display = 'none';
+  }
+
+  // Week counter + coaching note
+  const config = await getAppConfig();
+  const week = getProgramWeek(config);
+  if (week !== null) {
+    document.getElementById('greetingDay').textContent += ` · Week ${week}`;
+  }
+  const coachingNote = config.coaching_note;
+  const noteBlock = document.getElementById('coachingNoteBlock');
+  if (coachingNote) {
+    document.getElementById('coachingNoteText').textContent = coachingNote;
+    document.getElementById('coachingWeekLabel').textContent = week ? `Week ${week}` : '';
+    noteBlock.style.display = 'block';
+  } else {
+    noteBlock.style.display = 'none';
   }
 
   const [logs, activityLogs] = await Promise.all([getWorkoutLogs(), getActivityLogs()]);
@@ -1694,6 +1823,31 @@ async function saveActivityEntry() {
   await saveActivityLog(entry);
   closeModal('activityModal');
   showToast('Activity logged ✓');
+  renderHome();
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════
+
+async function openSettings() {
+  const config = await getAppConfig();
+  document.getElementById('settingsCoachingNote').value = config.coaching_note || '';
+  document.getElementById('settingsStartDate').value = config.program_start_date || '2026-06-09';
+  document.getElementById('settingsModal').classList.add('open');
+  setTimeout(() => document.getElementById('settingsCoachingNote').focus(), 250);
+}
+
+async function saveSettings() {
+  const note = document.getElementById('settingsCoachingNote').value.trim();
+  const startDate = document.getElementById('settingsStartDate').value;
+  appConfigCache = null; // bust cache so next read is fresh
+  await Promise.all([
+    saveAppConfigKey('coaching_note', note),
+    saveAppConfigKey('program_start_date', startDate || '2026-06-09')
+  ]);
+  closeModal('settingsModal');
+  showToast('Settings saved ✓');
   renderHome();
 }
 
@@ -2456,17 +2610,24 @@ async function renderLog() {
 // ═══════════════════════════════════════════════
 
 async function openExportModal() {
-  const logs = await getWorkoutLogs();
-  const thisWeek = logs.filter(l => isThisWeek(new Date(l.date)));
+  const [logs, exLogs, activityLogs, runLogs, config] = await Promise.all([
+    getWorkoutLogs(), getExLogs(), getActivityLogs(), getRunLogs(), getAppConfig()
+  ]);
 
-  if (thisWeek.length === 0) {
-    showToast('No workouts logged this week yet');
+  const thisWeek = logs.filter(l => isThisWeek(new Date(l.date)));
+  const thisWeekActivities = activityLogs.filter(a => isThisWeek(new Date(a.date + 'T12:00')));
+  const thisWeekRuns = runLogs.filter(r => isThisWeek(new Date(r.date + 'T12:00')));
+
+  if (thisWeek.length === 0 && thisWeekActivities.length === 0 && thisWeekRuns.length === 0) {
+    showToast('No activity logged this week yet');
     return;
   }
 
-  const exLogs = await getExLogs();
+  const week = getProgramWeek(config);
+  const weekLabel = week ? `Week ${week} — Phase I (Foundation)` : 'Week unknown';
 
-  let text = `WEEKLY WORKOUT LOG — CLAUDE CHECK-IN\n`;
+  let text = `WORKOUT LOG — CLAUDE CHECK-IN\n`;
+  text += `${weekLabel}\n`;
   text += `Week of ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}\n`;
   text += `${'─'.repeat(40)}\n\n`;
 
@@ -2518,16 +2679,49 @@ async function openExportModal() {
     text += `PRs THIS WEEK\n${weekPRs.join('\n')}\n\n`;
   }
 
+  // Activity logs this week
+  if (thisWeekActivities.length > 0) {
+    text += `ACTIVE DAYS\n`;
+    thisWeekActivities.forEach(a => {
+      const d = new Date(a.date + 'T12:00');
+      const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      text += `  ${dateStr}: ${a.activity}\n`;
+    });
+    text += `\n`;
+  }
+
+  // Run logs this week
+  if (thisWeekRuns.length > 0) {
+    text += `RUNS THIS WEEK\n`;
+    let totalMiles = 0;
+    thisWeekRuns.forEach(r => {
+      const d = new Date(r.date + 'T12:00');
+      const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      text += `  ${dateStr}: ${parseFloat(r.miles).toFixed(1)} miles${r.notes ? ` — ${r.notes}` : ''}\n`;
+      totalMiles += parseFloat(r.miles);
+    });
+    text += `  Total: ${totalMiles.toFixed(1)} miles\n\n`;
+  }
+
   text += `${'─'.repeat(40)}\n`;
-  text += `Paste this into Claude and ask:\n"Review my week. How am I progressing? Should I adjust any weights or scale any exercises next week? Any concerns given my PFPS history?"`;
+  text += `Review my week. How am I progressing on the knee rehab goals? Should I adjust weights, sets, or exercises? Any red flags given my PFPS history? Update the coaching note if anything should change.`;
+
+  // Pre-populate qualitative notes field if empty
+  const qualField = document.getElementById('exportQualNotes');
+  if (!qualField.value) qualField.value = '';
 
   document.getElementById('exportText').textContent = text;
   document.getElementById('exportModal').classList.add('open');
 }
 
 function copyExport() {
-  const text = document.getElementById('exportText').textContent;
-  navigator.clipboard.writeText(text).then(() => {
+  const qualNotes = document.getElementById('exportQualNotes').value.trim();
+  const exportBody = document.getElementById('exportText').textContent;
+  const qualSection = qualNotes
+    ? `NOTES FROM ISAAC\n${qualNotes}\n\n${'─'.repeat(40)}\n\n`
+    : '';
+  const full = qualSection + exportBody;
+  navigator.clipboard.writeText(full).then(() => {
     showToast('Copied to clipboard ✓');
     closeModal('exportModal');
   }).catch(() => {

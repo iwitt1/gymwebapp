@@ -131,6 +131,10 @@ Overrides are week-scoped and auto-expire when the week changes (old keys remain
 | `openAddRunModal()` / `saveRunEntry()` | Opens and saves run log entries to `run_logs` |
 | `drawBarChart(canvasId, labels, data, color, maxVal)` | Custom canvas bar chart — used for knee completion % |
 | `makeId()` | Generates a UUID (crypto.randomUUID with fallback) for new log entries |
+| `getAppConfig()` / `refreshAppConfig()` | Reads `app_config` table into a keyed object; cached in localStorage |
+| `saveAppConfigKey(key, value)` | Upserts a single key in `app_config` and updates cache |
+| `getProgramWeek(config)` | Computes current week number from `program_start_date` |
+| `openSettings()` / `saveSettings()` | Settings modal — edit coaching note and program start date |
 
 ---
 
@@ -151,6 +155,14 @@ exercises     jsonb — array of:
                   flag: null|'skipped'|'subbed',
                   note: text }
 ```
+
+**`app_config`** — key-value store for single-value app settings
+```
+key         text (PK)
+value       text
+updated_at  timestamptz default now()
+```
+Current keys: `program_start_date` (ISO date, e.g. `2026-06-09`), `coaching_note` (free text from Claude check-in)
 
 **`run_logs`** — one row per run entry
 ```

@@ -57,7 +57,24 @@ Tied to the specific goals: PFPS/tendinitis prevention, ski prep by November, hi
 
 ---
 
-## Phase 5 — Claude-Driven Program Adaptation
+## Phase 5 — Claude-Driven Program Adaptation (In Progress)
+
+**Shipped so far:**
+- ~~`app_config` Supabase table (key-value: program_start_date, coaching_note)~~
+- ~~Week counter on home screen ("Week X · Phase I")~~
+- ~~Coaching note block on home screen — tap to edit via Settings modal~~
+- ~~Settings modal (gear icon in top bar) — edit coaching note + start date~~
+- ~~Enhanced export — qualitative notes textarea, week number, activity logs, run logs included~~
+- ~~`TRAINING_PLAN.md` — living plan document updated at each check-in~~
+
+**Remaining / deferred:**
+- Exercise parameter overrides (per-exercise set/rep target changes without full plan rewrite)
+- Phase II readiness detection / phase transition UI
+- Deload week scheduling
+
+---
+
+## Phase 5 — Claude-Driven Program Adaptation (original spec)
 
 The goal: weekly Claude check-in → Claude suggests workout adjustments → app applies them to future sessions.
 
