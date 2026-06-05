@@ -300,14 +300,16 @@ html, body {
 /* ── PROGRESS PAGE ── */
 .progress-page { padding: 0 0 80px; }
 
-.prog-tabs { display: flex; padding: 12px 16px; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--border); }
-.prog-tab {
-  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em;
-  text-transform: uppercase; padding: 7px 12px; border-radius: 4px;
-  border: 1px solid var(--border2); background: none; cursor: pointer;
-  color: var(--text-dim); white-space: nowrap; transition: all 0.15s;
+.prog-tabs { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.prog-select {
+  display: block; width: 100%; padding: 10px 36px 10px 12px;
+  background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--text); font-size: 14px; font-family: inherit;
+  -webkit-appearance: none; appearance: none; cursor: pointer;
 }
-.prog-tab.active { background: var(--accent-muted); border-color: var(--accent-dim); color: var(--accent); }
+.prog-pr { font-size: 11px; font-weight: normal; color: var(--accent); margin-left: 8px; }
+.prog-stat { font-size: 13px; color: var(--text-dim); padding: 0 16px 16px; }
 
 .chart-container { padding: 16px; }
 .chart-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
@@ -1356,11 +1358,13 @@ async function confirmFinish() {
       const sets = activeSession.sets[ex.id] || [];
       const flag = activeSession.flags[ex.id];
       const note = activeSession.notes[ex.id] || '';
-      if (sets.length > 0 || flag || note) {
+      const nonWeightedDone = !ex.targetSets && !!activeSession.completed?.[ex.id];
+      if (sets.length > 0 || flag || note || nonWeightedDone) {
         exData.push({
           exId: ex.id,
           name: ex.name,
           sets: sets.map(s => ({ weight: s.weight, reps: s.reps, done: s.done })),
+          completed: nonWeightedDone || undefined,
           flag: flag || null,
           note
         });
@@ -1452,129 +1456,163 @@ function addRestTime(seconds) {
 // PROGRESS
 // ═══════════════════════════════════════════════
 
-const PROGRESS_AREAS = [
-  {
-    id: 'lower',
-    label: 'Lower Body',
-    exIds: ['a5','a7','a8','a9','c5','c6','c7','c9','c11'],
-    color: '#40c0a8'
-  },
-  {
-    id: 'upper_push',
-    label: 'Upper Push',
-    exIds: ['d4','d5','d7','d8','d10','d11'],
-    color: '#60a8e0'
-  },
-  {
-    id: 'upper_pull',
-    label: 'Upper Pull',
-    exIds: ['b4','b5','b6','b8','b9'],
-    color: '#a080d8'
-  },
-  {
-    id: 'power',
-    label: 'Power & Athletic',
-    exIds: ['e4','e5','e6','e7','e9','e10'],
-    color: '#e0a030'
-  },
-  {
-    id: 'knee_rehab',
-    label: 'Knee Rehab',
-    exIds: ['a11','a12','a13','a10','c8'],
-    color: '#e05a3a'
-  }
-];
+let activeProgEx = null;
 
-let activeProgArea = 'lower';
+function getAllExercises() {
+  const all = [];
+  WORKOUT_PLAN.forEach(w => {
+    w.blocks.forEach(b => {
+      b.exercises.forEach(e => {
+        all.push({ ...e, workoutName: w.name, workoutId: w.id });
+      });
+    });
+  });
+  return all;
+}
 
 function renderProgress() {
-  const tabs = document.getElementById('progTabs');
-  tabs.innerHTML = PROGRESS_AREAS.map(a => `
-    <button class="prog-tab ${a.id === activeProgArea ? 'active' : ''}" onclick="switchProgArea('${a.id}')">${a.label}</button>
-  `).join('');
+  const all = getAllExercises();
+  if (!activeProgEx) activeProgEx = all.find(e => e.targetSets)?.id || all[0]?.id;
 
-  renderProgArea(activeProgArea);
+  const options = WORKOUT_PLAN.map(w => {
+    const exOpts = w.blocks.flatMap(b => b.exercises).map(e =>
+      `<option value="${e.id}" ${e.id === activeProgEx ? 'selected' : ''}>${e.name}</option>`
+    ).join('');
+    return `<optgroup label="${w.name}">${exOpts}</optgroup>`;
+  }).join('');
+
+  document.getElementById('progTabs').innerHTML = `
+    <select class="prog-select" onchange="activeProgEx = this.value; renderExerciseProgress(this.value)">
+      ${options}
+    </select>
+  `;
+
+  renderExerciseProgress(activeProgEx);
 }
 
-function switchProgArea(id) {
-  activeProgArea = id;
-  document.querySelectorAll('.prog-tab').forEach(t => {
-    t.classList.toggle('active', t.textContent === PROGRESS_AREAS.find(a => a.id === id).label);
-  });
-  renderProgArea(id);
-}
+async function renderExerciseProgress(exId) {
+  const all = getAllExercises();
+  const ex = all.find(e => e.id === exId);
+  if (!ex) return;
 
-async function renderProgArea(areaId) {
-  const area = PROGRESS_AREAS.find(a => a.id === areaId);
-  const logs = await getWorkoutLogs();
   const container = document.getElementById('progContent');
+  const logs = await getWorkoutLogs();
 
-  // Get all relevant exercise data
-  const allExIds = area.exIds;
-  const allNames = {};
-  WORKOUT_PLAN.forEach(w => w.blocks.forEach(b => b.exercises.forEach(e => { allNames[e.id] = e.name; })));
-
-  // Aggregate volume over time (total weight × reps per session that had any of these exercises)
-  const sessionData = {};
+  // Collect sessions containing this exercise, sorted oldest→newest
+  const sessions = [];
   logs.forEach(log => {
-    const date = new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const exercises = log.exercises || [];
-    exercises.forEach(ex => {
-      if (!allExIds.includes(ex.exId)) return;
-      const vol = ex.sets.filter(s => s.done && s.weight && s.reps)
-        .reduce((sum, s) => sum + (parseFloat(s.weight) * parseFloat(s.reps)), 0);
-      if (!sessionData[date]) sessionData[date] = 0;
-      sessionData[date] += vol;
-    });
+    const entry = (log.exercises || []).find(e => e.exId === exId);
+    if (!entry) return;
+    const date = new Date(log.date);
+    if (!ex.targetSets) {
+      sessions.push({ date, done: entry.completed === true });
+    } else {
+      const doneSets = (entry.sets || []).filter(s => s.done && s.weight);
+      if (doneSets.length === 0) return;
+      const maxWeight = Math.max(...doneSets.map(s => parseFloat(s.weight)));
+      sessions.push({ date, weight: maxWeight });
+    }
   });
+  sessions.sort((a, b) => a.date - b.date);
 
-  const dates = Object.keys(sessionData).slice(-10).reverse();
-  const volumes = dates.map(d => Math.round(sessionData[d]));
-
-  // Stats
-  const exLogs = await getExLogs();
-  const relevantExLogs = allExIds.map(id => ({ id, name: allNames[id], data: exLogs[id] })).filter(e => e.data);
-
-  let statsHtml = '';
-  if (relevantExLogs.length > 0) {
-    statsHtml = `<div class="stat-grid">`;
-    relevantExLogs.slice(0, 4).forEach(e => {
-      const pr = e.data.prWeight ? `${e.data.prWeight} lbs × ${e.data.prReps}` : '—';
-      const last = e.data.lastWeight ? `${e.data.lastWeight} lbs × ${e.data.lastReps}` : '—';
-      statsHtml += `
-        <div class="stat-card">
-          <div class="stat-label">${e.name.length > 22 ? e.name.substring(0,22)+'…' : e.name}</div>
-          <div class="stat-value" style="font-size:16px">${last}</div>
-          <div class="stat-delta up" style="font-size:10px">PR: ${pr}</div>
-        </div>
-      `;
-    });
-    statsHtml += `</div>`;
-  }
-
-  if (dates.length === 0) {
+  if (sessions.length === 0) {
     container.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" style="margin-top:32px">
         <div class="empty-icon">📈</div>
         <div class="empty-title">No data yet</div>
-        <div class="empty-text">Complete some workouts and your progress will appear here.</div>
+        <div class="empty-text">Log some sessions with this exercise to see progress.</div>
       </div>
-      ${statsHtml}
     `;
     return;
   }
 
-  container.innerHTML = `
-    <div class="chart-container">
-      <div class="chart-title">${area.label} — Volume Over Time</div>
-      <div class="chart-sub">Total weight × reps across all ${area.label.toLowerCase()} exercises</div>
-      <canvas id="progChart" height="180"></canvas>
-    </div>
-    ${statsHtml}
-  `;
+  if (!ex.targetSets) {
+    // Completion-only exercise
+    const totalDone = sessions.filter(s => s.done).length;
+    const spanWeeks = Math.max(1, (sessions[sessions.length-1].date - sessions[0].date) / (7*24*60*60*1000));
+    const avgPerWeek = (totalDone / spanWeeks).toFixed(1);
 
-  // Draw chart
-  drawLineChart('progChart', dates, volumes, area.color);
+    container.innerHTML = `
+      <div class="chart-container">
+        <div class="chart-title">${ex.name}</div>
+        <div class="chart-sub">● done &nbsp; ○ skipped</div>
+        <canvas id="progChart" height="100"></canvas>
+      </div>
+      <div class="prog-stat">${totalDone} of ${sessions.length} sessions completed · ${avgPerWeek}×/week avg</div>
+    `;
+    drawCompletionChart('progChart', sessions);
+  } else {
+    // Weighted exercise — max weight over time
+    const exLogs = await getExLogs();
+    const pr = exLogs[exId];
+    const prLabel = pr?.prWeight ? `<span class="prog-pr">PR: ${pr.prWeight} lbs × ${pr.prReps} reps</span>` : '';
+
+    const labels = sessions.map(s => s.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const weights = sessions.map(s => s.weight);
+
+    container.innerHTML = `
+      <div class="chart-container">
+        <div class="chart-title">${ex.name}${prLabel}</div>
+        <div class="chart-sub">Max weight per session (lbs)</div>
+        <canvas id="progChart" height="180"></canvas>
+      </div>
+    `;
+    drawLineChart('progChart', labels, weights, '#40c0a8');
+  }
+}
+
+function drawCompletionChart(canvasId, sessions) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth;
+  const h = 100;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const pad = { top: 16, right: 16, bottom: 32, left: 16 };
+  const chartW = w - pad.left - pad.right;
+  const midY = pad.top + (h - pad.top - pad.bottom) / 2;
+  const n = sessions.length;
+  const r = 7;
+
+  // Baseline
+  ctx.beginPath();
+  ctx.strokeStyle = '#252525';
+  ctx.lineWidth = 1;
+  ctx.moveTo(pad.left, midY);
+  ctx.lineTo(pad.left + chartW, midY);
+  ctx.stroke();
+
+  sessions.forEach((s, i) => {
+    const x = pad.left + (n > 1 ? (i / (n - 1)) : 0.5) * chartW;
+    ctx.beginPath();
+    ctx.arc(x, midY, r, 0, Math.PI * 2);
+    if (s.done) {
+      ctx.fillStyle = '#40c0a8';
+      ctx.fill();
+    } else {
+      ctx.strokeStyle = '#444440';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  });
+
+  // X labels — up to 6 evenly spaced
+  ctx.fillStyle = '#444440';
+  ctx.font = '10px DM Mono';
+  ctx.textAlign = 'center';
+  const labelCount = Math.min(6, n);
+  for (let i = 0; i < labelCount; i++) {
+    const idx = labelCount > 1 ? Math.round(i / (labelCount - 1) * (n - 1)) : 0;
+    const x = pad.left + (n > 1 ? (idx / (n - 1)) : 0.5) * chartW;
+    const label = sessions[idx].date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    ctx.fillText(label, x, h - 6);
+  }
 }
 
 function drawLineChart(canvasId, labels, data, color) {

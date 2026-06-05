@@ -8,31 +8,40 @@ Priority order within each phase. Items move here from the Parking Lot once they
 
 All three bugs had the same root cause: `openWorkout()` called `showPage('workout')`, which tried to call `.classList.add()` on the non-existent `nav-workout` element, throwing a TypeError that aborted execution before `renderWorkout()` ever ran. Fixed by replacing `showPage('workout')` with direct page-switching that doesn't reference the missing element.
 
-~~1. Day cards not all clickable~~
-~~2. Workout views not loading when a day is tapped~~
-~~3. Exercise navigation not working~~
+- ~~Day cards not all clickable~~
+- ~~Workout views not loading when a day is tapped~~
+- ~~Exercise navigation not working~~
 
 ---
 
 ## Phase 2 — Core Workout Experience Polish
 
-Once the app works end-to-end, tighten the experience.
+Most items shipped. Two remain open.
 
-4. **Non-weighted exercise completion** — warmup and mobility exercises (stationary bike, 90/90 stretches, etc.) have no sets to log. Tapping the status circle should mark them done.
-5. **Session persistence** — if the browser closes mid-workout, `activeSession` is lost. Persist it to localStorage on every change; auto-restore when the same workout is tapped.
-6. **Pre-fill weight/reps from last session** — verify this is pulling from `exercise_logs` correctly and displaying in set inputs.
-7. **PR display** — confirm PR is shown per-exercise and updates correctly on finish.
-8. **Rest timer feel** — verify auto-start on set complete works; test +30s and Done buttons; consider haptic feedback on mobile (Vibration API).
-9. **Finish workout confirmation** — brief summary before saving: sets logged, duration, flagged exercises.
+**Shipped:**
+- ~~Non-weighted exercise completion — warmup and mobility exercises (stationary bike, 90/90 stretches, etc.) tap the status circle to mark done~~
+- ~~Session persistence — persists to localStorage on every change; auto-restores when the same workout is tapped~~
+- ~~Pre-fill weight/reps from last session — uses `refreshExLogs()` on new session to bypass stale cache~~
+- ~~Set hint cleanup — prev/PR shown once per exercise above set rows; per-set targets removed~~
+- ~~Finish workout confirmation — summary modal before saving: sets logged, duration, flagged exercises~~
+
+**Still open:**
+- PR display — confirm PR is shown per-exercise and updates correctly on finish
+- Rest timer feel — verify auto-start on set complete works; test +30s and Done buttons; consider haptic feedback on mobile (Vibration API)
 
 ---
 
 ## Phase 3 — Progress & History
 
-9. **Progress charts — verify data pipeline** — confirm volume is calculated and charted correctly per area. Check that exercise tags map correctly to chart areas.
-10. **Reassess progress charts entirely** — the current design shows aggregate volume over time, which may not be the most useful view. Candidates: per-exercise weight progression, side-by-side left/right comparisons for single-leg work, session completion streaks. Decide what's actually useful to look at before investing in the chart code.
-11. **Log view** — verify recent workouts display correctly with expandable details.
-12. **Export for Claude check-in** — verify the generated text includes all relevant data (sets, weights, flags, notes, duration).
+**Shipped:**
+- ~~Progress charts redesigned — exercise dropdown (grouped by workout day) replaces area tabs. Weighted exercises show max weight per session over time. Completion-only exercises show a dot timeline (filled = done, hollow = skipped) with sessions/week average.~~
+- ~~Non-weighted completions now saved to Supabase on workout finish (previously lost on session end).~~
+
+**Focus area feedback (e.g. knee rehab trend, hip abduction deficit) deferred to Phase 5** — will be done as a periodic Claude Cowork review and the summary pushed as a note into the app, rather than auto-computed charts.
+
+**Still open:**
+- Log view — verify recent workouts display correctly with expandable details
+- Export for Claude check-in — verify the generated text includes all relevant data (sets, weights, flags, notes, duration)
 
 ---
 
