@@ -1104,13 +1104,15 @@ function renderExerciseCard(ex) {
   let expandHtml = '';
   if (ex.targetSets && sessionSets) {
     // Set logger
+    // Prev + PR shown once above the set rows (same value for every set)
+    const ref = sessionSets[0];
+    const refHints = [
+      ref.prevWeight ? `prev: ${ref.prevWeight}×${ref.prevReps}` : '',
+      ref.prWeight   ? `pr: ${ref.prWeight}×${ref.prReps}`       : ''
+    ].filter(Boolean).join(' · ');
+
     let setsHtml = '';
     sessionSets.forEach((set, i) => {
-      const prevHint = set.prevWeight ? `prev: ${set.prevWeight}×${set.prevReps}` : '';
-      const prHint = set.prWeight ? `pr: ${set.prWeight}×${set.prReps}` : '';
-      const targetHint = set.target ? `target: ${set.target}` : '';
-      const hints = [prevHint, prHint, targetHint].filter(Boolean).join(' · ');
-
       setsHtml += `
         <div class="set-row">
           <span class="set-num">${i + 1}</span>
@@ -1127,7 +1129,6 @@ function renderExerciseCard(ex) {
             <svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
           </button>
         </div>
-        ${hints ? `<div class="set-hint">${hints}</div>` : ''}
       `;
     });
 
@@ -1135,9 +1136,10 @@ function renderExerciseCard(ex) {
       <div class="ex-cue-box">${ex.cue}</div>
       <div class="set-logger">
         <div class="set-logger-head">
-          <span>Sets — ${ex.sets}</span>
+          <span>${ex.sets}</span>
           <span style="color:var(--accent-dim)">Tempo: ${ex.tempo}</span>
         </div>
+        ${refHints ? `<div class="set-hint">${refHints}</div>` : ''}
         ${setsHtml}
       </div>
     `;
