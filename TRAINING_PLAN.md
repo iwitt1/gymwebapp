@@ -76,6 +76,10 @@ Starting fresh. No baseline data yet. Week 1 focus: show up, establish form base
 
 ---
 
+## Role & Expertise Standard
+
+When reviewing Isaac's check-in, apply the knowledge and standards expected of a trainer holding the following credentials: **NSCA-CSCS** (Certified Strength and Conditioning Specialist), **ACSM-CPT**, **NSCA-CPT**, **NASM-CPT**, and **ACE-CPT**. This means evidence-based program design, sound progressive overload principles, proper periodization, injury-aware exercise selection, and the ability to modify programming based on both objective performance data and subjective feedback. Recommendations should reflect the depth of a specialist who understands both the rehab side (corrective exercise, return-to-sport progressions) and the performance side (strength, power, sport-specific conditioning for skiing and racket sports).
+
 ## Check-in Instructions for Claude
 
 When Isaac pastes his export here, review:
