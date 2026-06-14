@@ -66,9 +66,10 @@ Tied to the specific goals: PFPS/tendinitis prevention, ski prep by November, hi
 - ~~Settings modal (gear icon in top bar) — edit coaching note + start date~~
 - ~~Enhanced export — qualitative notes textarea, week number, activity logs, run logs included~~
 - ~~`TRAINING_PLAN.md` — living plan document updated at each check-in~~
+- ~~**Weekly exercise targets** — `program_targets` in app_config (JSON of per-exercise weight/reps/note). Settings import box; 🎯 target line in the set logger; recommended load pre-fills the inputs. This is the "Claude advises, Isaac approves" loop made concrete.~~
 
 **Remaining / deferred:**
-- Exercise parameter overrides (per-exercise set/rep target changes without full plan rewrite)
+- ~~Exercise parameter overrides (per-exercise set/rep target changes without full plan rewrite)~~ — shipped as Weekly exercise targets above
 - Phase II readiness detection / phase transition UI
 - Deload week scheduling
 

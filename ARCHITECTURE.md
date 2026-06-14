@@ -73,6 +73,7 @@ activeProgEx    // exercise ID currently selected in the progress tab
 swapTargetDay   // day index being swapped (set by openSwapModal)
 activityDateStr // ISO date string for the activity log modal
 activityDayLabel // display label for the activity log modal
+weekTargets     // parsed program_targets map for the currently open workout
 ```
 
 ### Week Schedule Flexibility
@@ -134,6 +135,7 @@ Overrides are week-scoped and auto-expire when the week changes (old keys remain
 | `getAppConfig()` / `refreshAppConfig()` | Reads `app_config` table into a keyed object; cached in localStorage |
 | `saveAppConfigKey(key, value)` | Upserts a single key in `app_config` and updates cache |
 | `getProgramWeek(config)` | Computes current week number from `program_start_date` |
+| `parseTargets(config)` | Parses `program_targets` JSON from app_config into a `{exId: {weight,reps,note}}` map; returns `{}` on missing/invalid. Result held in the `weekTargets` global, loaded in `openWorkout` |
 | `openSettings()` / `saveSettings()` | Settings modal — edit coaching note and program start date |
 
 ---
@@ -162,7 +164,14 @@ key         text (PK)
 value       text
 updated_at  timestamptz default now()
 ```
-Current keys: `program_start_date` (ISO date, e.g. `2026-06-09`), `coaching_note` (free text from Claude check-in)
+Current keys: `program_start_date` (ISO date, e.g. `2026-06-09`), `coaching_note` (free text from Claude check-in), `program_targets` (JSON string of weekly per-exercise targets — see below)
+
+**`program_targets`** (stored as a value in `app_config`) — Claude's weekly load/rep recommendations:
+```
+{ week: int, updated: "YYYY-MM-DD",
+  targets: { <exId>: { weight?: string, reps?: string, note?: string } } }
+```
+Set via Settings → "Weekly Targets" (paste JSON). On a new session, `weight`/`reps` pre-fill the set inputs (reps only when a plain number); the `note` and weight×reps render as a 🎯 line above the set rows. Keyed by `WORKOUT_PLAN` exercise id.
 
 **`run_logs`** — one row per run entry
 ```

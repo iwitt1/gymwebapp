@@ -28,6 +28,13 @@ Push or local notifications to remind on workout days. Requires a service worker
 
 ---
 
+## Bugs (found, not yet fixed)
+
+**Workout duration is wildly inflated**
+`finishWorkout()` computes duration as wall-clock from `activeSession.startTime`, which is set when the workout is first opened. Because sessions persist across a browser close and auto-resume, leaving a workout open for hours/days produces nonsense durations (Week 1 logged 2694 min and 1451 min). Options: (a) cap at a sane max, (b) track active time only, or (c) prompt to confirm/edit duration at finish. Low urgency — doesn't affect training data — but it pollutes the log and any future volume math.
+
+---
+
 ## Technical Debt & Open Questions
 
 **Anon key in source**

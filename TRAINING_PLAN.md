@@ -1,7 +1,7 @@
 # Isaac's Training Plan
 
 **Living document — updated at each Claude check-in.**
-Last updated: June 5, 2026 (pre-Week 1)
+Last updated: June 13, 2026 (Week 1 review → Week 2 plan)
 
 ---
 
@@ -58,6 +58,18 @@ Before progressing to Phase II (more loaded, some impact work):
 
 ---
 
+## Conditioning / Stamina (added Week 2)
+
+Knee isn't ready for impact, so we build the aerobic base on the **bike** (zero/low impact) plus the pool as a backup. Isaac already rides real distance (25 mi on Jun 12), so this is base-*building*, not starting from zero.
+
+- **Modality:** mostly stationary/road bike. Garmin auto HR zones.
+- **Intensity:** strict **Zone 2** for the base block — conversational pace, nasal-breathing possible, RPE 3–4/10. If HR drifts into Zone 3, ease off. Hold pure Zone 2 for ~2–3 weeks before introducing any intervals.
+- **Knee protection on the bike:** high cadence (85–95 rpm), saddle high enough that the knee stays only slightly bent at the bottom, no grinding big gears / steep climbs yet.
+- **Frequency (Week 2):** 3–4 sessions — one long ride (Sun, 75–90 min), short easy spins after upper days (Tue/Fri, 25–30 min), and a steady 45 min on Wed.
+- **Progression:** keep weekly volume increases sane (~10% guideline). Recomposition benefit comes from consistency in Zone 2, not from going harder.
+
+---
+
 ## Running Integration
 
 Start conservatively. 10% week-over-week rule enforced by the app.
@@ -70,6 +82,19 @@ Start conservatively. 10% week-over-week rule enforced by the app.
 ## Coaching Notes History
 
 *(Newest at top — this section updated at each check-in)*
+
+**Week 1 review → Week 2 (June 13, 2026)**
+
+*Knee:* Progressing well, no pain flags on any knee work — single-leg press/extension, eccentric step-downs, and the 60° shallow wall sit all clean. The one issue is *control*, not pain: left knee rocks/wobbles on step-downs = a left glute-med / frontal-plane deficit. Fix is the monster walk (c10), which kept getting skipped for lack of bands.
+
+*Main red flag — left distal triceps tendon:* pain on wide-grip overhead press and overhead tricep extension, none on pushdowns. Classic tendon-in-stretch pattern. Week 2: neutral/hammer-grip pressing only, OMIT overhead tricep extension (d11) until pain-free, keep pushdowns (and they can progress).
+
+*Load:* PR'd nearly everything Week 1 → starting loads were conservative. Week 2 = consolidate, RIR 2–3, small bumps only where last week was easy AND pain-free. Specific per-exercise targets pushed via the new in-app Targets feature (see WEEK2_TARGETS.json).
+
+*Action items:* buy mini-bands (unlocks band pull-apart, monster walk c10, lateral band walk e7); don't skip the RDL (c11) again; lead with the left side on all single-leg/arm work; add Zone 2 bike conditioning (see Conditioning section).
+
+**Coaching note (in-app, Week 2):**
+> Week 2 — consolidate, don't chase PRs (RIR 2–3). Priority: protect the left tricep tendon — neutral/hammer-grip pressing only, OMIT overhead tricep extension until pain-free; pushdowns are fine to push. Get mini-bands and actually do the monster walks (c10) — your left-knee wobble is a glute-med issue, not a quad one. Lead with the left side on all single-leg/arm work, and don't skip the RDL again. Cardio: 3–4 easy Zone-2 bike rides (long ride Sun + after upper days/Wed) — conversational pace, 85–95 rpm to spare the knee.
 
 **Pre-Week 1 (June 5, 2026)**
 Starting fresh. No baseline data yet. Week 1 focus: show up, establish form baselines, note any pain honestly in the exercise notes. Don't push load — let the program introduce it.

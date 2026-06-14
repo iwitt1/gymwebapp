@@ -11,6 +11,7 @@ A personal mobile-first workout tracking web app. Built to support a PT-assessed
 - Shows the week's 5-day training plan, with today highlighted and completed days marked
 - Tap a day to open the full workout — exercise list, sets/reps, tempo, and coaching cues
 - Log weight and reps per set, pre-filled from your last session and PR
+- Weekly targets: a 🎯 recommended load/reps per exercise (imported from your Claude check-in) shown in the set logger and pre-filled into the inputs
 - Tap the status circle on non-weighted exercises (warmup, mobility) to mark them done
 - Flag exercises as Subbed or Skipped/Pain with one tap; add per-exercise notes
 - Rest timer auto-starts after each logged set (2 min default, +30s, Done)

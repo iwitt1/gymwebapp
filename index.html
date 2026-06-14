@@ -240,6 +240,13 @@ html, body {
 }
 .hint-prev { color: var(--text-muted); }
 .hint-target { color: var(--accent-dim); }
+.set-target {
+  font-family: 'DM Mono', monospace; font-size: 11px; line-height: 1.45;
+  color: var(--accent); background: var(--accent-muted);
+  border: 1px solid var(--accent-dim); border-radius: 4px;
+  padding: 6px 8px; margin-bottom: 8px;
+}
+.set-target strong { color: var(--accent); font-weight: 600; }
 
 /* Flag row */
 .flag-row { display: flex; gap: 6px; margin-bottom: 10px; }
@@ -682,7 +689,12 @@ canvas { width: 100% !important; border-radius: 6px; }
 
     <div class="stat-label" style="margin-bottom:6px">Program Start Date</div>
     <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Used to compute your current week number.</div>
-    <input type="date" id="settingsStartDate" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px;margin-bottom:20px">
+    <input type="date" id="settingsStartDate" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px;margin-bottom:16px">
+
+    <div class="stat-label" style="margin-bottom:6px">Weekly Targets (from Claude)</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Paste the targets JSON Claude gives you. Shows a 🎯 target on each exercise and pre-fills the recommended load. Leave blank to keep the current targets.</div>
+    <div id="settingsTargetsStatus" style="font-size:11px;color:var(--accent-dim);margin-bottom:6px"></div>
+    <textarea class="ex-notes-area" id="settingsTargets" placeholder='{"week":2,"targets":{"b4":{"weight":"100","reps":"12","note":"..."}}}' style="min-height:100px;margin-bottom:20px;font-family:DM Mono,monospace;font-size:11px"></textarea>
 
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('settingsModal')">Cancel</button>
@@ -1243,6 +1255,21 @@ async function saveAppConfigKey(key, value) {
   }
 }
 
+// Weekly exercise targets (from Claude check-in). Stored in app_config under
+// 'program_targets' as a JSON string: { week, updated, targets: { exId: {weight, reps, note} } }.
+// weekTargets holds the parsed targets map for the open workout.
+function parseTargets(config) {
+  try {
+    const raw = config && config.program_targets;
+    if (!raw) return {};
+    const obj = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    return (obj && obj.targets) ? obj.targets : {};
+  } catch (e) {
+    console.error('Bad program_targets JSON:', e);
+    return {};
+  }
+}
+
 function getProgramWeek(config) {
   const startStr = config.program_start_date || '2026-06-09';
   const start = new Date(startStr + 'T00:00:00');
@@ -1257,6 +1284,7 @@ function getProgramWeek(config) {
 // ═══════════════════════════════════════════════
 
 let currentPage = 'home';
+let weekTargets = {};  // parsed program_targets for the currently open workout
 let currentWorkout = null;
 let activeSession = null; // { workoutId, startTime, sets: {exId: [{weight, reps, done}]}, flags: {}, notes: {} }
 let restTimer = null;
@@ -1482,6 +1510,9 @@ async function openWorkout(workoutId) {
   if (!workout) return;
   currentWorkout = workout;
 
+  // Load this week's Claude-set targets (used for the 🎯 line and load pre-fill)
+  weekTargets = parseTargets(await getAppConfig());
+
   // Start or resume session
   if (!activeSession || activeSession.workoutId !== workoutId) {
     // Check for a saved in-progress session for this workout
@@ -1504,10 +1535,17 @@ async function openWorkout(workoutId) {
         block.exercises.forEach(ex => {
           if (ex.targetSets) {
             const prev = exLogs[ex.id];
+            const tgt = weekTargets[ex.id];
             const setCount = ex.targetSets || 3;
+            // Pre-fill from this week's target if set, else repeat last session.
+            // reps only pre-fill from a target when it's a plain number (ranges stay as guidance).
+            const fillW = (tgt && tgt.weight != null && tgt.weight !== '') ? String(tgt.weight)
+                        : (prev ? prev.lastWeight : '');
+            const fillR = (tgt && /^\d+$/.test(String(tgt.reps || ''))) ? String(tgt.reps)
+                        : (prev ? prev.lastReps : '');
             activeSession.sets[ex.id] = Array.from({length: setCount}, (_, i) => ({
-              weight: prev ? prev.lastWeight : '',
-              reps: prev ? prev.lastReps : '',
+              weight: fillW,
+              reps: fillR,
               done: false,
               prevWeight: prev ? prev.lastWeight : null,
               prevReps: prev ? prev.lastReps : null,
@@ -1575,6 +1613,14 @@ function renderExerciseCard(ex) {
       ref.prWeight   ? `pr: ${ref.prWeight}×${ref.prReps}`       : ''
     ].filter(Boolean).join(' · ');
 
+    // This week's target (from Claude), shown above the set rows
+    const tgt = weekTargets[ex.id];
+    let targetHtml = '';
+    if (tgt && (tgt.weight || tgt.reps || tgt.note)) {
+      const wr = [tgt.weight, tgt.reps].filter(v => v != null && v !== '').join('×');
+      targetHtml = `<div class="set-target">🎯 ${wr ? `<strong>${wr}</strong>` : ''}${tgt.note ? `${wr ? ' · ' : ''}${tgt.note}` : ''}</div>`;
+    }
+
     let setsHtml = '';
     sessionSets.forEach((set, i) => {
       setsHtml += `
@@ -1603,6 +1649,7 @@ function renderExerciseCard(ex) {
           <span>${ex.sets}</span>
           <span style="color:var(--accent-dim)">Tempo: ${ex.tempo}</span>
         </div>
+        ${targetHtml}
         ${refHints ? `<div class="set-hint">${refHints}</div>` : ''}
         ${setsHtml}
       </div>
@@ -1834,6 +1881,25 @@ async function openSettings() {
   const config = await getAppConfig();
   document.getElementById('settingsCoachingNote').value = config.coaching_note || '';
   document.getElementById('settingsStartDate').value = config.program_start_date || '2026-06-09';
+
+  // Targets: show a status summary, keep the textarea blank (blank = keep current)
+  const statusEl = document.getElementById('settingsTargetsStatus');
+  document.getElementById('settingsTargets').value = '';
+  if (config.program_targets) {
+    try {
+      const o = JSON.parse(config.program_targets);
+      const n = Object.keys(o.targets || {}).length;
+      statusEl.textContent = `Loaded: Week ${o.week ?? '?'} · ${n} exercise target${n === 1 ? '' : 's'}`;
+      statusEl.style.color = 'var(--accent-dim)';
+    } catch (e) {
+      statusEl.textContent = '⚠ Current targets JSON is invalid';
+      statusEl.style.color = 'var(--warn, #e0a030)';
+    }
+  } else {
+    statusEl.textContent = 'No targets loaded yet';
+    statusEl.style.color = 'var(--text-muted)';
+  }
+
   document.getElementById('settingsModal').classList.add('open');
   setTimeout(() => document.getElementById('settingsCoachingNote').focus(), 250);
 }
@@ -1841,11 +1907,31 @@ async function openSettings() {
 async function saveSettings() {
   const note = document.getElementById('settingsCoachingNote').value.trim();
   const startDate = document.getElementById('settingsStartDate').value;
+  const tgtText = document.getElementById('settingsTargets').value.trim();
+
+  // Validate targets JSON before saving anything, so a typo can't wipe other settings
+  let tgtToSave = null;
+  if (tgtText) {
+    try {
+      const parsed = JSON.parse(tgtText);
+      if (!parsed.targets || typeof parsed.targets !== 'object') {
+        throw new Error('Missing "targets" object');
+      }
+      tgtToSave = JSON.stringify(parsed);
+    } catch (e) {
+      showToast('⚠ Targets JSON invalid — nothing saved');
+      return; // leave modal open so it can be fixed
+    }
+  }
+
   appConfigCache = null; // bust cache so next read is fresh
-  await Promise.all([
+  const saves = [
     saveAppConfigKey('coaching_note', note),
     saveAppConfigKey('program_start_date', startDate || '2026-06-09')
-  ]);
+  ];
+  if (tgtToSave) saves.push(saveAppConfigKey('program_targets', tgtToSave));
+  await Promise.all(saves);
+
   closeModal('settingsModal');
   showToast('Settings saved ✓');
   renderHome();
