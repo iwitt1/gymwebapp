@@ -1,7 +1,7 @@
 # Isaac's Training Plan
 
 **Living document — updated at each Claude check-in.**
-Last updated: June 13, 2026 (Week 1 review → Week 2 plan)
+Last updated: July 6, 2026 (return-from-layoff review → Week 3 plan)
 
 ---
 
@@ -82,6 +82,23 @@ Start conservatively. 10% week-over-week rule enforced by the app.
 ## Coaching Notes History
 
 *(Newest at top — this section updated at each check-in)*
+
+**Return from layoff → Week 3 (July 6, 2026)**
+
+*Context:* ~2.5 weeks off (travel) after two solid training weeks (last session June 19). At this training age, strength detraining over 2–3 weeks is minimal — but tendon load tolerance and work capacity drop faster than muscle strength. Return week = ~85–90% of last working loads across the board, RIR 2–3, no PR attempts. Loads return to prior levels next week if everything is pain-free.
+
+*Knee:* Excellent through Weeks 1–2 — zero pain flags on any knee-tagged work. Wall sits progressed 40→45s, single-leg press 70→80. Remaining issue is left-knee frontal-plane wobble on step-downs (glute med control). Monster walks (c10) finally done in the last Lower B with the yellow mini-band — keep treating c10 as a main lift.
+
+*Left tricep tendon (still the red flag):* Wide-grip overhead pressing and overhead extensions both aggravated it; neutral grip at 40 lbs was better ("elbows felt better this week"). d11 stays OMITTED. d4 (incline press) produced a "very slight" tendon signal at 32.5 — dropped to 30 for return week, done first in the block. Reintroduce d11 only after 2+ weeks of fully pain-free pressing.
+
+*Asymmetries (consistent pattern, matches PT assessment):* left shoulder weaker/shrugs on lateral raises (d7, d9), left hip fatigues first as stance leg (a5), left knee less stable (c7), left-side low-back soreness on kickstand RDL (a7 — cue bracing). Lead LEFT on all unilateral work.
+
+*Plan changes shipped (equipment-driven, per Isaac's notes):* b4 → Lat Pulldown (diverging machine); b5 → Single-Arm Row (diverging low-row machine); d8 → Shoulder Press (converging machine, neutral grip — tendon-protective and matches actual equipment); b2/d1 → Band Pull-Apart / PVC Pass-Over. b6 target set to 35 lbs elbows-out per Isaac's logged request.
+
+*Housekeeping:* `app_config` was empty in Supabase — Week 2 targets and program start date were never imported. Action: Settings → set start date (2026-06-09) and paste WEEK3_TARGETS.json. Day E (Athletic) has never been logged — Week 3 goal: run it once as a light baseline session. Cardio: restart Zone 2 bike 2–3× this week (~10% below the pre-break volume), now loggable via the new multi-modality cardio feature.
+
+**Coaching note (in-app, Week 3):**
+> Return week after 2.5 off — all loads cut ~10–15%, RIR 2–3, zero PR chasing; back to prior loads next week if pain-free. Tendon first: neutral-grip pressing only, d11 stays out, stop any set at the first tendon signal. Lead LEFT on all single-leg/arm work. Do the monster walks and the RDL — they keep getting cut. Get one baseline Athletic day in this week.
 
 **Week 1 review → Week 2 (June 13, 2026)**
 

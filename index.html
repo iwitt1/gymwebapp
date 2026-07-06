@@ -540,6 +540,13 @@ canvas { width: 100% !important; border-radius: 6px; }
   font-size: 12px; color: var(--amber); line-height: 1.5;
 }
 .run-empty { font-size: 12px; color: var(--text-muted); padding: 6px 0 10px; }
+.cardio-type-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.cardio-type-chip {
+  padding: 7px 12px; border-radius: 16px;
+  border: 1px solid var(--border2); background: var(--surface2);
+  font-size: 12px; color: var(--text-dim); cursor: pointer; transition: all 0.15s;
+}
+.cardio-type-chip.selected { border-color: var(--accent-dim); color: var(--accent); background: transparent; }
 
 /* ── SWAP + ACTIVITY MODAL OPTIONS ── */
 .swap-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 55vh; overflow-y: auto; }
@@ -729,26 +736,32 @@ canvas { width: 100% !important; border-radius: 6px; }
   </div>
 </div>
 
-<!-- ADD RUN MODAL -->
-<div class="modal-overlay" id="addRunModal" onclick="closeModal('addRunModal')">
+<!-- ADD CARDIO MODAL -->
+<div class="modal-overlay" id="addCardioModal" onclick="closeModal('addCardioModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-title">Log a Run</div>
-    <div class="modal-sub">Tracking volume for the 10% ramp guard.</div>
+    <div class="modal-title">Log Cardio</div>
+    <div class="modal-sub">Any modality, any day. Runs feed the 10% ramp guard.</div>
+    <div class="stat-label" style="margin-bottom:6px">Type</div>
+    <div class="cardio-type-grid" id="cardioTypeGrid"></div>
     <div style="display:flex;gap:10px;margin-bottom:10px">
       <div style="flex:1">
         <div class="stat-label" style="margin-bottom:6px">Date</div>
-        <input type="date" id="runDate" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px">
+        <input type="date" id="cardioDate" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px">
       </div>
       <div style="flex:1">
-        <div class="stat-label" style="margin-bottom:6px">Miles</div>
-        <input type="number" id="runMiles" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px" placeholder="3.1" step="0.1" inputmode="decimal">
+        <div class="stat-label" style="margin-bottom:6px">Minutes</div>
+        <input type="number" id="cardioMinutes" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px" placeholder="30" step="1" inputmode="numeric">
+      </div>
+      <div style="flex:1">
+        <div class="stat-label" style="margin-bottom:6px">Miles <span style="text-transform:none;letter-spacing:0">(opt.)</span></div>
+        <input type="number" id="cardioMiles" class="set-input" style="width:100%;text-align:left;padding:10px;font-size:13px" placeholder="3.1" step="0.1" inputmode="decimal">
       </div>
     </div>
-    <textarea class="ex-notes-area" id="runNotes" placeholder="Notes — route, pace, how knees felt..." style="margin-bottom:12px"></textarea>
+    <textarea class="ex-notes-area" id="cardioNotes" placeholder="Notes — intensity, how knees felt..." style="margin-bottom:12px"></textarea>
     <div class="modal-actions">
-      <button class="modal-btn" onclick="closeModal('addRunModal')">Cancel</button>
-      <button class="modal-btn primary" onclick="saveRunEntry()">Save Run</button>
+      <button class="modal-btn" onclick="closeModal('addCardioModal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveCardioEntry()">Save</button>
     </div>
   </div>
 </div>
@@ -823,15 +836,15 @@ const WORKOUT_PLAN = [
         label: 'Warmup — 8 min',
         exercises: [
           { id:'b1', name:'Wall Slide (overhead)', sets:'2×10', tempo:'slow', tags:['mob'], cue:'Keep low back flat on wall. Don\'t let ribs flare. Notice where shoulder breaks contact — that\'s your restriction. Push 1 inch further each week.' },
-          { id:'b2', name:'Band Pull-Apart', sets:'2×15', tempo:'1-2-1', tags:['upper'], cue:'Hold at full stretch for 2 sec. Pinch shoulder blades together. Don\'t shrug.' },
+          { id:'b2', name:'Band Pull-Apart / PVC Pass-Over', sets:'2×15', tempo:'1-2-1', tags:['upper'], cue:'Band: hold at full stretch 2 sec, pinch shoulder blades, don\'t shrug. No long band at gym? PVC pass-over front-to-back works the same posterior shoulder prep.' },
           { id:'b3', name:'Cat-Cow + Thoracic Extension (foam roller)', sets:'1×10 + 30sec hold', tempo:'breathe', tags:['mob'], cue:'Foam roller perpendicular to spine at upper-mid back. Arms crossed or behind head. Let gravity do the work. Key unlock for overhead range.' }
         ]
       },
       {
         label: 'Block 1 — Vertical Pull',
         exercises: [
-          { id:'b4', name:'Lat Pulldown (wide or neutral grip)', sets:'4×10–12', tempo:'2-1-3', tags:['upper'], targetSets:4, cue:'3-count slow on the way up (eccentric). Pull elbows to pockets. Slight lean back is fine, not 45°. Neutral grip is easier on shoulders early on.' },
-          { id:'b5', name:'Single-Arm Cable Row', sets:'3×12/side', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Drive elbow back and in. Full shoulder blade retraction at end. Don\'t rotate your torso to help. Match sides — left to right.' }
+          { id:'b4', name:'Lat Pulldown (diverging machine)', sets:'4×10–12', tempo:'2-1-3', tags:['upper'], targetSets:4, cue:'3-count slow on the way up (eccentric). Pull elbows to pockets. Slight lean back is fine, not 45°. Gym\'s diverging machine — weights logged here are on this machine.' },
+          { id:'b5', name:'Single-Arm Row (diverging low-row machine)', sets:'3×12/side', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Precor diverging low-row. Drive elbow back and in. Full shoulder blade retraction at end. Don\'t rotate your torso to help. Match sides — left to right.' }
         ]
       },
       {
@@ -906,7 +919,7 @@ const WORKOUT_PLAN = [
       {
         label: 'Warmup — 8 min',
         exercises: [
-          { id:'d1', name:'Band Pull-Apart', sets:'2×15', tempo:'controlled', tags:['upper'], cue:'Always warm up the posterior shoulder before pushing. Prevents impingement.' },
+          { id:'d1', name:'Band Pull-Apart / PVC Pass-Over', sets:'2×15', tempo:'controlled', tags:['upper'], cue:'Always warm up the posterior shoulder before pushing. Prevents impingement. No long band? PVC pass-over front-to-back.' },
           { id:'d2', name:'Thoracic Foam Roller Extension', sets:'3 positions, 30 sec each', tempo:'passive', tags:['mob'], cue:'Move roller from mid-to-upper back in 3 spots. Extension ROM here directly affects how high you can press overhead comfortably.' },
           { id:'d3', name:'Arm Circle Progression', sets:'1×10 each direction', tempo:'medium pace', tags:[], cue:'Small → large, forward and backward. Feel for any catching. Note your range — it should increase over weeks.' }
         ]
@@ -923,7 +936,7 @@ const WORKOUT_PLAN = [
         label: 'Block 2 — Shoulder Development',
         exercises: [
           { id:'d7', name:'DB Lateral Raise', sets:'4×15', tempo:'2-1-2', tags:['upper'], targetSets:4, cue:'Slight forward lean puts load on side delt rather than front. Lead with the elbow, not the wrist. Pinky slightly higher than thumb at top. Don\'t shrug. #1 exercise for shoulder width.' },
-          { id:'d8', name:'DB Seated Overhead Press', sets:'3×10', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Start with a range you can do without arching your low back or shrugging. As thoracic mobility improves you\'ll be able to press higher. Elbows slightly in front of shoulder plane.' },
+          { id:'d8', name:'Shoulder Press (converging machine, neutral grip)', sets:'3×10', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'NEUTRAL/hammer grip only — protects the left tricep tendon. Weight shown is the machine\'s combined load. Don\'t arch the low back or shrug. DB seated press is the alternative if the machine is taken (still neutral grip).' },
           { id:'d9', name:'Cable Lateral Raise (single arm)', sets:'3×12/side', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Constant tension version — harder at the bottom where DB version has no tension. Keep elbow slightly bent throughout.' }
         ]
       },
@@ -1047,10 +1060,37 @@ function cacheSet(key, val) {
 // Active session persistence — survives browser close mid-workout
 function saveSessionState() {
   if (activeSession) {
+    touchSession();
     cacheSet('active_session', activeSession);
   } else {
     try { localStorage.removeItem('active_session'); } catch(e) {}
   }
+}
+
+// Accumulate active time. Called on every session mutation — the gap since
+// the last event counts toward duration only if under 15 min, so a session
+// left open overnight (or resumed days later) doesn't inflate the log.
+function touchSession() {
+  if (!activeSession) return;
+  const now = Date.now();
+  if (activeSession.lastEventTs) {
+    const gap = now - activeSession.lastEventTs;
+    if (gap > 0 && gap < 15 * 60 * 1000) {
+      activeSession.activeMs = (activeSession.activeMs || 0) + gap;
+    }
+  }
+  activeSession.lastEventTs = now;
+}
+
+// Real session duration in minutes. Falls back to wall-clock capped at 3h
+// for legacy sessions saved before active-time tracking existed.
+function computeSessionDuration() {
+  if (!activeSession) return 0;
+  touchSession();
+  if (activeSession.activeMs != null) {
+    return Math.max(1, Math.round(activeSession.activeMs / 60000));
+  }
+  return Math.min(Math.round((Date.now() - activeSession.startTime) / 60000), 180);
 }
 function loadSessionState() {
   const saved = cacheGet('active_session');
@@ -1143,33 +1183,38 @@ async function saveExLogs(exLogsObj) {
   }
 }
 
-// ── RUN LOGS ──────────────────────────────────
+// ── CARDIO LOGS (run_logs table, generalized) ──
+// Legacy rows have no `type`/`minutes` — treat missing type as 'run'.
 
-async function getRunLogs() {
+async function getCardioLogs() {
   const cached = cacheGet('run_logs');
-  if (cached) { refreshRunLogs(); return cached; }
-  return await refreshRunLogs();
+  if (cached) { refreshCardioLogs(); return cached; }
+  return await refreshCardioLogs();
 }
 
-async function refreshRunLogs() {
+async function refreshCardioLogs() {
   try {
     const rows = await db.get('run_logs', { order: 'date.desc', limit: 200 });
     cacheSet('run_logs', rows);
     return rows;
   } catch(e) {
-    console.error('Failed to fetch run logs:', e);
+    console.error('Failed to fetch cardio logs:', e);
     return cacheGet('run_logs') || [];
   }
 }
 
-async function saveRunLog(entry) {
+async function saveCardioLog(entry) {
   const cached = cacheGet('run_logs') || [];
   cached.unshift(entry);
   cacheSet('run_logs', cached);
   try {
-    await db.upsert('run_logs', { id: entry.id, date: entry.date, miles: entry.miles, notes: entry.notes || null });
+    await db.upsert('run_logs', {
+      id: entry.id, date: entry.date, type: entry.type,
+      miles: entry.miles ?? null, minutes: entry.minutes ?? null,
+      notes: entry.notes || null
+    });
   } catch(e) {
-    console.error('Failed to save run log:', e);
+    console.error('Failed to save cardio log:', e);
     showToast('⚠ Saved locally — sync failed');
   }
 }
@@ -1221,9 +1266,9 @@ async function getAppConfig() {
   if (appConfigCache) return appConfigCache;
   const cached = cacheGet('app_config');
   if (cached) {
-    appConfigCache = cached;
+    appConfigCache = mergeProgramJson(cached);
     refreshAppConfig(); // background sync
-    return cached;
+    return appConfigCache;
   }
   return await refreshAppConfig();
 }
@@ -1233,12 +1278,46 @@ async function refreshAppConfig() {
     const rows = await db.get('app_config');
     const obj = {};
     rows.forEach(r => { obj[r.key] = r.value; });
-    cacheSet('app_config', obj);
-    appConfigCache = obj;
-    return obj;
+    cacheSet('app_config', obj); // raw Supabase values
+    appConfigCache = mergeProgramJson(obj);
+    return appConfigCache;
   } catch(e) {
     console.error('Failed to fetch app_config:', e);
-    return cacheGet('app_config') || {};
+    return mergeProgramJson(cacheGet('app_config') || {});
+  }
+}
+
+// ── PROGRAM.JSON (repo-hosted program config) ──
+// Claude commits program.json at each check-in; git push deploys it with the
+// app. On load the app fetches it (same origin, cache-busted) and its values
+// win for program_start_date / coaching_note / program_targets. Settings
+// edits still apply immediately but are overridden on next load — program.json
+// is the source of truth for these three keys.
+
+function mergeProgramJson(obj) {
+  const p = cacheGet('program_json');
+  if (!p) return obj;
+  const merged = { ...obj };
+  if (p.start_date) merged.program_start_date = p.start_date;
+  if (p.coaching_note != null) merged.coaching_note = p.coaching_note;
+  if (p.targets) merged.program_targets = JSON.stringify({ week: p.week, updated: p.updated, targets: p.targets });
+  return merged;
+}
+
+async function loadProgramJson() {
+  try {
+    const res = await fetch('program.json?v=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const p = await res.json();
+    if (!p || !p.updated) return;
+    const prev = cacheGet('program_json');
+    if (prev && prev.updated === p.updated) return; // unchanged
+    cacheSet('program_json', p);
+    appConfigCache = null; // force re-merge on next getAppConfig
+    if (currentPage === 'home') renderHome();
+    if (prev) showToast(`Program updated — Week ${p.week}`);
+  } catch (e) {
+    console.error('program.json load failed:', e); // offline or local file — cache still works
   }
 }
 
@@ -1398,7 +1477,7 @@ async function renderHome() {
     noteBlock.style.display = 'none';
   }
 
-  const [logs, activityLogs] = await Promise.all([getWorkoutLogs(), getActivityLogs()]);
+  const [logs, activityLogs, cardioLogs] = await Promise.all([getWorkoutLogs(), getActivityLogs(), getCardioLogs()]);
 
   // Background refresh — re-render if data changed
   refreshWorkoutLogs().then(fresh => {
@@ -1441,9 +1520,13 @@ async function renderHome() {
     const da = String(thisDate.getDate()).padStart(2,'0');
     const dateStr = `${y}-${mo}-${da}`;
 
-    // Activity logs for this day
+    // Activity + cardio logs for this day
     const dayActivities = activityLogs.filter(a => a.date === dateStr);
     const latestActivity = dayActivities[0];
+    const dayCardio = cardioLogs.filter(c => c.date === dateStr);
+    const cardioHtml = dayCardio.map(c =>
+      `<div class="activity-logged">+ ${cardioTypeLabel(c)}${cardioAmount(c) ? ' — ' + cardioAmount(c) : ''}</div>`
+    ).join('');
 
     const swapBtn = `<button class="swap-btn" onclick="openSwapModal(${wd.d},'${wd.label}','${dateStr}',event)" title="Change this day">
       <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
@@ -1460,6 +1543,7 @@ async function renderHome() {
           <div class="day-name">${wd.label} — ${workout.name}</div>
           <div class="day-desc">${workout.subtitle}</div>
           ${latestActivity ? `<div class="activity-logged">+ ${latestActivity.activity}</div>` : ''}
+          ${cardioHtml}
         </div>
         ${isToday ? '<span class="day-badge badge-today">Today</span>' : ''}
         ${isDone ? '<span class="day-badge badge-done">✓ Done</span>' : ''}
@@ -1478,9 +1562,10 @@ async function renderHome() {
           <div class="day-name">${wd.label}</div>
           <div class="day-desc" ${latestActivity ? 'style="color:var(--teal)"' : ''}>${displayDesc}</div>
           ${extraCount}
+          ${cardioHtml}
         </div>
         ${isToday ? '<span class="day-badge badge-today">Today</span>' : ''}
-        ${dayActivities.length > 0 ? '<span class="day-badge badge-done">✓ Active</span>' : ''}
+        ${(dayActivities.length + dayCardio.length) > 0 ? '<span class="day-badge badge-done">✓ Active</span>' : ''}
         ${swapBtn}
         <span style="font-family:DM Mono,monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.05em;flex-shrink:0">log ›</span>
       `;
@@ -1524,6 +1609,8 @@ async function openWorkout(workoutId) {
       activeSession = {
         workoutId,
         startTime: Date.now(),
+        activeMs: 0,           // accumulated active time (idle gaps >15 min don't count)
+        lastEventTs: Date.now(),
         sets: {},
         completed: {}, // non-weighted exercise completion
         flags: {},
@@ -1815,6 +1902,15 @@ function openSwapModal(dayIndex, dayLabel, dateStr, event) {
     </div>
   `).join('');
 
+  // Log cardio on any day — doesn't change the day's assignment
+  html += `<div class="swap-opt" onclick="closeModal('swapModal'); openAddCardioModal('${dateStr}')">
+    <div class="day-dot dot-athletic" style="flex-shrink:0"></div>
+    <div class="swap-opt-info">
+      <div class="swap-opt-name">Log Cardio</div>
+      <div class="swap-opt-sub">Run, cycle, stairs, row… — logs to this day</div>
+    </div>
+  </div>`;
+
   if (isOverridden) {
     const defLabel = defaultWorkout ? defaultWorkout.name : 'Rest';
     html += `<div class="swap-opt" onclick="applyDaySwap(${dayIndex}, null)" style="border-style:dashed">
@@ -1941,8 +2037,7 @@ function finishWorkout() {
   if (!activeSession || !currentWorkout) return;
 
   const workout = currentWorkout;
-  const duration = Math.round((Date.now() - activeSession.startTime) / 60000);
-  const durationStr = duration < 1 ? 'Under 1 min' : `${duration} min`;
+  const duration = computeSessionDuration();
 
   // Count done sets
   let doneSets = 0, totalSets = 0;
@@ -1967,7 +2062,7 @@ function finishWorkout() {
   document.getElementById('finishSummary').innerHTML = `
     <div class="finish-stat-row">
       <span class="finish-stat-label">Duration</span>
-      <span class="finish-stat-val">${durationStr}</span>
+      <span class="finish-stat-val"><input type="number" id="finishDuration" class="set-input" value="${duration}" min="1" step="1" inputmode="numeric" style="width:64px;text-align:right;padding:6px 8px;font-size:13px"> min</span>
     </div>
     <div class="finish-stat-row">
       <span class="finish-stat-label">Sets logged</span>
@@ -1981,11 +2076,16 @@ function finishWorkout() {
 
 async function confirmFinish() {
   if (!activeSession || !currentWorkout) return;
+
+  // Read the (possibly user-edited) duration from the finish modal
+  const durInput = document.getElementById('finishDuration');
+  const inputVal = durInput ? parseInt(durInput.value, 10) : NaN;
+  const duration = (!isNaN(inputVal) && inputVal > 0) ? inputVal : computeSessionDuration();
+
   closeModal('finishModal');
 
   const workout = currentWorkout;
   const now = new Date();
-  const duration = Math.round((Date.now() - activeSession.startTime) / 60000);
 
   const exData = [];
   workout.blocks.forEach(block => {
@@ -2132,13 +2232,13 @@ function renderProgress() {
       </div>
     </div>
 
-    <div class="section-head">Running</div>
+    <div class="section-head">Cardio</div>
     <div class="run-section">
       <div class="run-section-head">
         <span style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em">Last 4 weeks</span>
-        <button class="run-add-btn" onclick="openAddRunModal()">+ Log Run</button>
+        <button class="run-add-btn" onclick="openAddCardioModal()">+ Log Cardio</button>
       </div>
-      <div id="runSectionContent"><div style="font-size:12px;color:var(--text-muted)">Loading…</div></div>
+      <div id="cardioSectionContent"><div style="font-size:12px;color:var(--text-muted)">Loading…</div></div>
     </div>
 
     <div class="section-head">By Exercise</div>
@@ -2150,7 +2250,7 @@ function renderProgress() {
 
   renderKneeHealth();
   renderHipAbduction();
-  renderRunSection();
+  renderCardioSection();
   renderExerciseProgress(activeProgEx);
 }
 
@@ -2544,45 +2644,100 @@ function drawBarChart(canvasId, labels, data, color, maxVal) {
 }
 
 // ═══════════════════════════════════════════════
-// RUNNING
+// CARDIO
 // ═══════════════════════════════════════════════
 
-function openAddRunModal() {
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = String(today.getMonth()+1).padStart(2,'0');
-  const d = String(today.getDate()).padStart(2,'0');
-  document.getElementById('runDate').value = `${y}-${m}-${d}`;
-  document.getElementById('runMiles').value = '';
-  document.getElementById('runNotes').value = '';
-  document.getElementById('addRunModal').classList.add('open');
-  setTimeout(() => document.getElementById('runMiles').focus(), 250);
+const CARDIO_TYPES = [
+  { id: 'run',          label: 'Run' },
+  { id: 'cycle',        label: 'Cycle' },
+  { id: 'stair',        label: 'Stair Stepper' },
+  { id: 'row',          label: 'Row' },
+  { id: 'elliptical',   label: 'Elliptical' },
+  { id: 'incline_walk', label: 'Incline Walk' },
+  { id: 'swim',         label: 'Swim' },
+  { id: 'other',        label: 'Other' }
+];
+
+let selectedCardioType = 'run';
+
+function cardioTypeLabel(entry) {
+  const t = CARDIO_TYPES.find(c => c.id === (entry.type || 'run'));
+  return t ? t.label : (entry.type || 'Run');
 }
 
-async function saveRunEntry() {
-  const date = document.getElementById('runDate').value;
-  const miles = parseFloat(document.getElementById('runMiles').value);
-  const notes = document.getElementById('runNotes').value.trim();
-  if (!date || isNaN(miles) || miles <= 0) { showToast('Enter a valid date and distance'); return; }
-  const entry = { id: makeId(), date, miles, notes: notes || null };
-  await saveRunLog(entry);
-  closeModal('addRunModal');
-  showToast('Run logged ✓');
-  renderRunSection();
+// One-line amount string: "30 min · 3.1 mi", "30 min", or "3.1 mi"
+function cardioAmount(entry) {
+  const parts = [];
+  if (entry.minutes) parts.push(`${Math.round(entry.minutes)} min`);
+  if (entry.miles) parts.push(`${parseFloat(entry.miles).toFixed(1)} mi`);
+  return parts.join(' · ');
 }
 
-async function renderRunSection() {
-  const container = document.getElementById('runSectionContent');
+function renderCardioTypeGrid() {
+  document.getElementById('cardioTypeGrid').innerHTML = CARDIO_TYPES.map(t =>
+    `<div class="cardio-type-chip${t.id === selectedCardioType ? ' selected' : ''}" onclick="selectCardioType('${t.id}')">${t.label}</div>`
+  ).join('');
+}
+
+function selectCardioType(id) {
+  selectedCardioType = id;
+  renderCardioTypeGrid();
+}
+
+// dateStr optional — pre-fills a specific day (from the Home day-card sheet)
+function openAddCardioModal(dateStr) {
+  let val = dateStr;
+  if (!val) {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth()+1).padStart(2,'0');
+    const d = String(today.getDate()).padStart(2,'0');
+    val = `${y}-${m}-${d}`;
+  }
+  document.getElementById('cardioDate').value = val;
+  document.getElementById('cardioMinutes').value = '';
+  document.getElementById('cardioMiles').value = '';
+  document.getElementById('cardioNotes').value = '';
+  selectedCardioType = 'run';
+  renderCardioTypeGrid();
+  document.getElementById('addCardioModal').classList.add('open');
+  setTimeout(() => document.getElementById('cardioMinutes').focus(), 250);
+}
+
+async function saveCardioEntry() {
+  const date = document.getElementById('cardioDate').value;
+  const minutes = parseFloat(document.getElementById('cardioMinutes').value);
+  const miles = parseFloat(document.getElementById('cardioMiles').value);
+  const notes = document.getElementById('cardioNotes').value.trim();
+  const hasMinutes = !isNaN(minutes) && minutes > 0;
+  const hasMiles = !isNaN(miles) && miles > 0;
+  if (!date || (!hasMinutes && !hasMiles)) { showToast('Enter a date and minutes or miles'); return; }
+  const entry = {
+    id: makeId(), date, type: selectedCardioType,
+    minutes: hasMinutes ? minutes : null,
+    miles: hasMiles ? miles : null,
+    notes: notes || null
+  };
+  await saveCardioLog(entry);
+  closeModal('addCardioModal');
+  showToast('Cardio logged ✓');
+  renderCardioSection();
+  if (currentPage === 'home') renderHome();
+}
+
+async function renderCardioSection() {
+  const container = document.getElementById('cardioSectionContent');
   if (!container) return;
 
-  const runs = await getRunLogs();
+  const entries = await getCardioLogs();
 
-  if (runs.length === 0) {
-    container.innerHTML = `<div class="run-empty">No runs logged yet. Hit "+ Log Run" to add one.</div>`;
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="run-empty">No cardio logged yet. Hit "+ Log Cardio" to add one.</div>`;
     return;
   }
 
-  // 10% ramp check: this 7 days vs prior 7 days
+  // 10% ramp check on RUNNING miles only: this 7 days vs prior 7 days
+  const runs = entries.filter(e => (e.type || 'run') === 'run' && e.miles);
   const now = new Date();
   const cur7Start = new Date(now); cur7Start.setDate(now.getDate() - 7);
   const prev7Start = new Date(now); prev7Start.setDate(now.getDate() - 14);
@@ -2592,31 +2747,30 @@ async function renderRunSection() {
   let rampHtml = '';
   if (prev7 > 0 && cur7 > prev7 * 1.1) {
     const pct = Math.round(((cur7 - prev7) / prev7) * 100);
-    rampHtml = `<div class="ramp-warning">⚠ Volume up ${pct}% this week (${cur7.toFixed(1)} vs ${prev7.toFixed(1)} mi last week). Consider holding or reducing to protect the knee.</div>`;
+    rampHtml = `<div class="ramp-warning">⚠ Run volume up ${pct}% this week (${cur7.toFixed(1)} vs ${prev7.toFixed(1)} mi last week). Consider holding or reducing to protect the knee.</div>`;
   } else if (cur7 > 0 && prev7 > 0) {
-    rampHtml = `<div style="font-size:11px;color:var(--success);margin-bottom:8px">✓ Ramp looks safe — ${cur7.toFixed(1)} mi this week vs ${prev7.toFixed(1)} mi last week.</div>`;
+    rampHtml = `<div style="font-size:11px;color:var(--success);margin-bottom:8px">✓ Run ramp looks safe — ${cur7.toFixed(1)} mi this week vs ${prev7.toFixed(1)} mi last week.</div>`;
   }
 
   // Last 4 weeks
   const cutoff = new Date(now); cutoff.setDate(now.getDate() - 28);
-  const recent = runs.filter(r => new Date(r.date+'T12:00') >= cutoff);
+  const recent = entries.filter(r => new Date(r.date+'T12:00') >= cutoff);
 
-  const entries = recent.map(r => {
+  const entriesHtml = recent.map(r => {
     const d = new Date(r.date+'T12:00');
     const dateStr = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
     return `<div class="run-entry">
       <div>
-        <div class="run-entry-date">${dateStr}</div>
+        <div class="run-entry-date">${dateStr} · ${cardioTypeLabel(r)}</div>
         ${r.notes ? `<div class="run-entry-note">${r.notes}</div>` : ''}
       </div>
       <div style="text-align:right">
-        <span class="run-entry-miles">${parseFloat(r.miles).toFixed(1)}</span>
-        <span class="run-entry-unit"> mi</span>
+        <span class="run-entry-miles" style="font-size:14px">${cardioAmount(r) || '—'}</span>
       </div>
     </div>`;
   }).join('');
 
-  container.innerHTML = `${rampHtml}<div class="run-entries">${entries || '<div class="run-empty">No runs in the last 4 weeks.</div>'}</div>`;
+  container.innerHTML = `${rampHtml}<div class="run-entries">${entriesHtml || '<div class="run-empty">No cardio in the last 4 weeks.</div>'}</div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -2696,15 +2850,15 @@ async function renderLog() {
 // ═══════════════════════════════════════════════
 
 async function openExportModal() {
-  const [logs, exLogs, activityLogs, runLogs, config] = await Promise.all([
-    getWorkoutLogs(), getExLogs(), getActivityLogs(), getRunLogs(), getAppConfig()
+  const [logs, exLogs, activityLogs, cardioLogs, config] = await Promise.all([
+    getWorkoutLogs(), getExLogs(), getActivityLogs(), getCardioLogs(), getAppConfig()
   ]);
 
   const thisWeek = logs.filter(l => isThisWeek(new Date(l.date)));
   const thisWeekActivities = activityLogs.filter(a => isThisWeek(new Date(a.date + 'T12:00')));
-  const thisWeekRuns = runLogs.filter(r => isThisWeek(new Date(r.date + 'T12:00')));
+  const thisWeekCardio = cardioLogs.filter(r => isThisWeek(new Date(r.date + 'T12:00')));
 
-  if (thisWeek.length === 0 && thisWeekActivities.length === 0 && thisWeekRuns.length === 0) {
+  if (thisWeek.length === 0 && thisWeekActivities.length === 0 && thisWeekCardio.length === 0) {
     showToast('No activity logged this week yet');
     return;
   }
@@ -2777,16 +2931,17 @@ async function openExportModal() {
   }
 
   // Run logs this week
-  if (thisWeekRuns.length > 0) {
-    text += `RUNS THIS WEEK\n`;
-    let totalMiles = 0;
-    thisWeekRuns.forEach(r => {
+  if (thisWeekCardio.length > 0) {
+    text += `CARDIO THIS WEEK\n`;
+    let totalRunMiles = 0;
+    thisWeekCardio.forEach(r => {
       const d = new Date(r.date + 'T12:00');
       const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-      text += `  ${dateStr}: ${parseFloat(r.miles).toFixed(1)} miles${r.notes ? ` — ${r.notes}` : ''}\n`;
-      totalMiles += parseFloat(r.miles);
+      text += `  ${dateStr}: ${cardioTypeLabel(r)} — ${cardioAmount(r) || 'logged'}${r.notes ? ` — ${r.notes}` : ''}\n`;
+      if ((r.type || 'run') === 'run' && r.miles) totalRunMiles += parseFloat(r.miles);
     });
-    text += `  Total: ${totalMiles.toFixed(1)} miles\n\n`;
+    if (totalRunMiles > 0) text += `  Running total: ${totalRunMiles.toFixed(1)} miles\n`;
+    text += `\n`;
   }
 
   text += `${'─'.repeat(40)}\n`;
@@ -2836,7 +2991,7 @@ function showToast(msg) {
 // INIT
 // ═══════════════════════════════════════════════
 
-renderHome();
+loadProgramJson().then(() => renderHome());
 </script>
 </body>
 </html>

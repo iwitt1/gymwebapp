@@ -24,6 +24,8 @@ Single-file web app — all HTML, CSS, and JavaScript live in `index.html` (~190
 ```
 gymwebapp/
 ├── index.html          # The entire app
+├── program.json        # Repo-hosted program config — Claude writes it at each check-in, app fetches it on load
+├── TRAINING_PLAN.md    # Living training plan, updated at each check-in
 ├── README.md
 ├── ARCHITECTURE.md     # This file
 ├── ROADMAP.md
@@ -64,7 +66,7 @@ Four pages toggled by `showPage(name)`:
 ```js
 currentPage     // which page is visible
 currentWorkout  // the WORKOUT_PLAN entry currently open
-activeSession   // { workoutId, startTime, sets: {exId: [{weight, reps, done}]}, flags: {}, notes: {}, completed: {exId: bool} }
+activeSession   // { workoutId, startTime, activeMs, lastEventTs, sets: {exId: [{weight, reps, done}]}, flags: {}, notes: {}, completed: {exId: bool} }
 restTimer       // setInterval handle
 restDuration    // default 120s
 restRemaining   // countdown
@@ -74,6 +76,7 @@ swapTargetDay   // day index being swapped (set by openSwapModal)
 activityDateStr // ISO date string for the activity log modal
 activityDayLabel // display label for the activity log modal
 weekTargets     // parsed program_targets map for the currently open workout
+selectedCardioType // modality chip selected in the Log Cardio modal (default 'run')
 ```
 
 ### Week Schedule Flexibility
@@ -108,7 +111,10 @@ Overrides are week-scoped and auto-expire when the week changes (old keys remain
 | `toggleNonWeightedDone(exId)` | Toggles completion on exercises with no sets (warmup/mobility); updates `activeSession.completed` |
 | `refreshExerciseCard(exId)` | Re-renders a single card in-place (avoids full re-render) |
 | `setFlag(exId, flag)` | Sets Subbed/Skipped flag on an exercise |
-| `saveSessionState()` | Writes `activeSession` to localStorage so in-progress sessions survive a browser close |
+| `saveSessionState()` | Calls `touchSession()`, then writes `activeSession` to localStorage so in-progress sessions survive a browser close |
+| `touchSession()` | Accumulates active time into `activeSession.activeMs` — gaps >15 min since the last mutation don't count (fixes the inflated-duration bug) |
+| `computeSessionDuration()` | Returns real session minutes from `activeMs`; legacy sessions fall back to wall-clock capped at 180 min |
+| `loadProgramJson()` / `mergeProgramJson(obj)` | Fetches repo-hosted `program.json` on startup and overlays it onto app_config reads (start date, coaching note, targets) |
 | `loadSessionState()` | Restores `activeSession` from localStorage if the same workout is opened |
 | `finishWorkout()` | Computes summary (duration, sets, flags) and shows confirmation modal |
 | `confirmFinish()` | Saves session to Supabase + localStorage, clears `activeSession`, navigates back |
@@ -128,8 +134,10 @@ Overrides are week-scoped and auto-expire when the week changes (old keys remain
 | `saveActivityEntry()` | Saves a free-text activity to `activity_logs` in Supabase + cache |
 | `renderKneeHealth()` | Draws knee completion % bar chart (last 8 sessions) in the Progress rehab section |
 | `renderHipAbduction()` | Draws a5 weight trend + a6 completion summary in the Progress rehab section |
-| `renderRunSection()` | Renders recent run logs + 10% ramp guard warning in the Progress running section |
-| `openAddRunModal()` / `saveRunEntry()` | Opens and saves run log entries to `run_logs` |
+| `renderCardioSection()` | Renders recent cardio logs + 10% run ramp guard in the Progress cardio section |
+| `openAddCardioModal(dateStr?)` / `saveCardioEntry()` | Opens and saves cardio entries (type/minutes/miles) to `run_logs`; optional `dateStr` pre-fills a day (used from the Home day sheet) |
+| `getCardioLogs()` / `saveCardioLog(entry)` | Cached read/write for the `run_logs` table (cache key `run_logs`) |
+| `cardioTypeLabel(entry)` / `cardioAmount(entry)` | Display helpers — modality label and "30 min · 3.1 mi" string |
 | `drawBarChart(canvasId, labels, data, color, maxVal)` | Custom canvas bar chart — used for knee completion % |
 | `makeId()` | Generates a UUID (crypto.randomUUID with fallback) for new log entries |
 | `getAppConfig()` / `refreshAppConfig()` | Reads `app_config` table into a keyed object; cached in localStorage |
@@ -166,6 +174,8 @@ updated_at  timestamptz default now()
 ```
 Current keys: `program_start_date` (ISO date, e.g. `2026-06-09`), `coaching_note` (free text from Claude check-in), `program_targets` (JSON string of weekly per-exercise targets — see below)
 
+**`program.json` (repo file, July 2026)** — the primary delivery path for program config. Shape: `{ start_date, week, updated, coaching_note, targets }`. Claude commits it at each check-in; `git push` deploys it with the app. On startup `loadProgramJson()` fetches it same-origin (cache-busted), caches it in localStorage (`program_json`), and `mergeProgramJson()` overlays its values onto app_config reads — so `program_start_date`, `coaching_note`, and `program_targets` come from program.json when present. Settings edits still apply immediately (and write to Supabase) but are overridden on next load; program.json is the source of truth for these three keys. app_config remains the store for anything else.
+
 **`program_targets`** (stored as a value in `app_config`) — Claude's weekly load/rep recommendations:
 ```
 { week: int, updated: "YYYY-MM-DD",
@@ -173,14 +183,17 @@ Current keys: `program_start_date` (ISO date, e.g. `2026-06-09`), `coaching_note
 ```
 Set via Settings → "Weekly Targets" (paste JSON). On a new session, `weight`/`reps` pre-fill the set inputs (reps only when a plain number); the `note` and weight×reps render as a 🎯 line above the set rows. Keyed by `WORKOUT_PLAN` exercise id.
 
-**`run_logs`** — one row per run entry
+**`run_logs`** — one row per cardio entry (generalized July 2026; name kept for backward compatibility)
 ```
 id          uuid (PK — gen_random_uuid())
 date        date
-miles       numeric
+type        text not null default 'run'  (run|cycle|stair|row|elliptical|incline_walk|swim|other)
+miles       numeric  (optional — distance modalities)
+minutes     numeric  (optional — at least one of miles/minutes required by the UI)
 notes       text
 created_at  timestamptz default now()
 ```
+Legacy rows predate `type`/`minutes`; code treats missing `type` as `'run'`. The 10% ramp guard runs on `type='run'` miles only.
 
 **`activity_logs`** — one row per active/rest day entry
 ```

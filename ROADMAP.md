@@ -124,4 +124,6 @@ create table program_config (
 
 ## Completed
 
-_(items move here when shipped)_
+- ~~**Repo-hosted program.json** (July 2026) — weekly targets, coaching note, and start date now ship via `program.json` in the repo; the app fetches it on load. Replaces the manual Settings JSON paste (which remains as an override). "Claude advises, Isaac approves" = Isaac reviews and pushes.~~
+- ~~**Duration bug fixed** (July 2026) — active-time tracking with 15-min idle cutoff + editable duration in the finish modal.~~
+- ~~**Generalized cardio logging** (July 2026) — run-only logging replaced with multi-modality cardio (run, cycle, stair stepper, row, elliptical, incline walk, swim, other). `run_logs` extended with `type` + `minutes` columns. Loggable from the Progress tab and from any Home day card's swap sheet; entries display on day cards. Ramp guard unchanged (running miles only).~~

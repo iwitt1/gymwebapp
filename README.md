@@ -19,6 +19,7 @@ A personal mobile-first workout tracking web app. Built to support a PT-assessed
 - Finish workout confirmation: shows sets logged, duration, and flagged exercises before saving
 - Progress tab: exercise dropdown with per-exercise charts — max weight over time for weighted exercises, dot completion timeline for non-weighted
 - Log tab: recent workout history with tap-to-expand exercise breakdown
+- Cardio logging on any day: pick a modality (run, cycle, stair stepper, row, elliptical, incline walk, swim, other), log minutes and optional miles — from the Progress tab or any Home day card's swap sheet. Runs still feed the 10% weekly ramp guard.
 - Export for Claude check-in: weekly summary with sets, PRs hit, flags, and notes
 
 ---

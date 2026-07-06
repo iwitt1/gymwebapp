@@ -1,0 +1,153 @@
+{
+  "start_date": "2026-06-09",
+  "week": 3,
+  "updated": "2026-07-06",
+  "coaching_note": "Return week after 2.5 off — all loads cut ~10–15%, RIR 2–3, zero PR chasing; back to prior loads next week if pain-free. Tendon first: neutral-grip pressing only, d11 stays out, stop any set at the first tendon signal. Lead LEFT on all single-leg/arm work. Do the monster walks and the RDL — they keep getting cut. Get one baseline Athletic day in this week.",
+  "targets": {
+    "a5": {
+      "weight": "20",
+      "reps": "12",
+      "note": "Lead LEFT every set. The standing leg is doing the stability work — that's the point."
+    },
+    "a6": {
+      "note": "Medium band, hips stacked, toes forward. Don't rush these."
+    },
+    "a7": {
+      "weight": "30",
+      "reps": "10",
+      "note": "Same load. BRACE before each rep — left-side low-back soreness last time = hinge form, not load. Soft standing knee."
+    },
+    "a8": {
+      "weight": "35",
+      "reps": "10",
+      "note": "Down from 40 for the return week. 3-sec eccentric. Back to 40 next week if clean."
+    },
+    "a9": {
+      "weight": "40",
+      "reps": "10",
+      "note": "Down from 45. Start left leg."
+    },
+    "a10": {
+      "note": "Eccentric-only, 2x5, ~30deg range. Rebuild slowly — hamstring tendons lose tolerance fastest during time off."
+    },
+    "a11": {
+      "note": "TKE — 2-sec hold at full extension. Don't skip (missed last session)."
+    },
+    "a12": {
+      "note": "Step-down 4-sec lower, knee over 2nd toe. Don't skip (missed last session)."
+    },
+    "b4": {
+      "weight": "100",
+      "reps": "11",
+      "note": "Down from 110 for return week. All 4 sets clean at 100 → back to 110 next week."
+    },
+    "b5": {
+      "weight": "100",
+      "reps": "12",
+      "note": "Down from 110. Lead left, full retraction."
+    },
+    "b6": {
+      "weight": "35",
+      "reps": "10",
+      "note": "YOUR REQUEST: drop to 35 and ELBOWS OUT (wide) — it's a rear-delt row, not a lat row. Grind reps at 45 with elbows in defeats the purpose."
+    },
+    "b7": {
+      "weight": "50",
+      "reps": "15",
+      "note": "Down from 55. 2-sec hold at the ears."
+    },
+    "b8": {
+      "weight": "60",
+      "reps": "12",
+      "note": "Down from 70. Machine only reaches shoulder height — fine, start there; do the lat stretch (b10) right after for the overhead range."
+    },
+    "b9": {
+      "weight": "20",
+      "reps": "12",
+      "note": "Stay 20. Brace the core (back twinge at 25). Seated if it helps."
+    },
+    "c5": {
+      "weight": "70",
+      "reps": "10",
+      "note": "Down from 80 for return week. 3-sec eccentric, stay at/under 90deg, lead left. Back to 80 next week if pain-free."
+    },
+    "c6": {
+      "weight": "45",
+      "reps": "12",
+      "note": "Down from 50. 2-sec hold at top, toe slightly out, lead left."
+    },
+    "c7": {
+      "weight": "0",
+      "reps": "8",
+      "note": "18in bodyweight. Priority is killing the left-knee wobble — slow is the goal, not load."
+    },
+    "c8": {
+      "weight": "0",
+      "reps": "40",
+      "note": "60deg x 40s x3. Hold the depth you had — don't go deeper on the return week."
+    },
+    "c9": {
+      "weight": "0",
+      "reps": "10",
+      "note": "Bodyweight this week. Add 10s/hand next week if the knee is quiet."
+    },
+    "c10": {
+      "note": "Yellow band, 3x12 steps/side. This is the fix for the left-knee wobble — treat it as a main lift, not an afterthought."
+    },
+    "c11": {
+      "weight": "20",
+      "reps": "10",
+      "note": "Conventional DB RDL, 20/hand. Don't skip and don't sub — it keeps getting cut for time; move it before c10 if needed."
+    },
+    "d4": {
+      "weight": "30",
+      "reps": "10",
+      "note": "Down from 32.5 — you felt the tendon 'very slightly' here. Do it FIRST in the block, fresh. Stop the set at any tendon signal."
+    },
+    "d5": {
+      "weight": "30",
+      "reps": "12",
+      "note": "Down from 35/arm."
+    },
+    "d6": {
+      "weight": "0",
+      "reps": "10",
+      "note": "2 sets, feet elevated."
+    },
+    "d7": {
+      "weight": "10",
+      "reps": "15",
+      "note": "Drop to 10 and fix the left shrug — long neck, lead with the elbow. Load comes after control."
+    },
+    "d8": {
+      "weight": "35",
+      "reps": "10",
+      "note": "Converging machine, NEUTRAL grip only, combined weight. Down from 40 — tendon tolerance drops during time off even when strength doesn't."
+    },
+    "d9": {
+      "weight": "15",
+      "reps": "10",
+      "note": "Lead LEFT (weaker side), match reps right to left."
+    },
+    "d10": {
+      "weight": "40",
+      "reps": "12",
+      "note": "Down from 45. Pain-free here historically — this can progress again next week."
+    },
+    "d11": {
+      "note": "STILL OMITTED — tendon twinged both attempts. Reintroduce only after 2+ weeks of pain-free pressing. Use the Skipped/Pain flag."
+    },
+    "e4": {
+      "note": "First Athletic day ever logged? Go light everywhere — baseline session. Goblet squat 4-sec down, explode up, pain-free depth only."
+    },
+    "e7": {
+      "note": "Mini-bands work here. Most ski-specific pattern in the program. Toes forward, full tripod."
+    },
+    "e8": {
+      "note": "Balance reaches — LEFT leg priority."
+    },
+    "e9": {
+      "note": "Lateral step-up 4-6in, slow lower. Baseline only."
+    }
+  }
+}
