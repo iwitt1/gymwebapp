@@ -124,6 +124,7 @@ create table program_config (
 
 ## Completed
 
+- ~~**4-day restructure + session re-sequencing** (July 2026, Week 7) — dropped from 5 to 4 default days: the never-trained Saturday Athletic day (`dayE`) was removed and its ski-relevant work folded into Thursday (`dayC` → "Lower B + Power"), with leftovers in a Thursday Optional block. Every session re-ordered by equipment station with supersets flagged in the cues; Lower A's knee rehab moved to the front and `a6` banded abduction into the warmup so it stops getting skipped. Nordic curl swapped to an accentuated-eccentric machine curl. `DEFAULT_DAY_MAP` now 4 days.~~
 - ~~**Repo-hosted program.json** (July 2026) — weekly targets, coaching note, and start date now ship via `program.json` in the repo; the app fetches it on load. Replaces the manual Settings JSON paste (which remains as an override). "Claude advises, Isaac approves" = Isaac reviews and pushes.~~
 - ~~**Duration bug fixed** (July 2026) — active-time tracking with 15-min idle cutoff + editable duration in the finish modal.~~
 - ~~**Generalized cardio logging** (July 2026) — run-only logging replaced with multi-modality cardio (run, cycle, stair stepper, row, elliptical, incline walk, swim, other). `run_logs` extended with `type` + `minutes` columns. Loggable from the Progress tab and from any Home day card's swap sheet; entries display on day cards. Ramp guard unchanged (running miles only).~~

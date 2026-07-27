@@ -59,7 +59,7 @@ Four pages toggled by `showPage(name)`:
 
 ### Key Constants
 
-- `WORKOUT_PLAN` — the full 5-day program, hardcoded. Each day has `id`, `name`, `subtitle`, `type`, `focus`, and `blocks` (exercise groups). Each exercise has `id`, `name`, `sets`, `tempo`, `tags`, `targetSets`, and `cue`. **Do not simplify or replace this data — it was built from a PT assessment.**
+- `WORKOUT_PLAN` — the program, hardcoded. **4 default days** as of Jul 2026: `dayA` Lower A, `dayB` Upper A, `dayC` Lower B + Power, `dayD` Upper B. (`dayE` Athletic was removed when the program went 5→4 days — its exercises were folded into `dayC`, mostly a new Optional block; `dayE`'s only fully-dropped exercise was `e2` Hip 90/90, a duplicate of `a2`.) Each day has `id`, `name`, `subtitle`, `type`, `focus`, and `blocks` (exercise groups). Each exercise has `id`, `name`, `sets`, `tempo`, `tags`, `targetSets`, and `cue`. Blocks are sequenced by equipment station, with supersets flagged in the block labels/cues. **Do not simplify or replace this data — it was built from a PT assessment.**
 
 ### Global State
 
@@ -90,7 +90,7 @@ Weekly overrides stored in `localStorage` under key `week_sched_YYYY-MM-DD` (Mon
 Overrides are week-scoped and auto-expire when the week changes (old keys remain in localStorage but are never read).
 
 ### Constants
-- `DEFAULT_DAY_MAP` — `{ 1:'dayA', 2:'dayB', 4:'dayC', 5:'dayD', 6:'dayE' }` — base workout schedule
+- `DEFAULT_DAY_MAP` — `{ 1:'dayA', 2:'dayB', 4:'dayC', 5:'dayD' }` — base workout schedule (4 days; Sat/Sun default to rest/active)
 - `KNEE_EX_IDS` — Set of exercise IDs tagged `knee`, used for the rehab completion chart
 
 `activeSession.completed` is used for non-weighted exercises (warmup/mobility) that have no sets to log — tapping their status circle toggles the entry here instead.
@@ -236,15 +236,16 @@ Same pattern for `getExLogs()` / `saveExLogs()`. The app always feels fast; Supa
 
 ## Workout Program
 
-5-day split, days keyed by JS `getDay()` index:
+4-day split (was 5-day through Jul 2026), days keyed by JS `getDay()` index:
 
 | Key | Day | Name | Focus |
 |---|---|---|---|
-| `dayA` | Monday (1) | Lower A | Posterior chain, hip abduction |
+| `dayA` | Monday (1) | Lower A | Posterior chain, hip abduction, knee rehab (front-loaded) |
 | `dayB` | Tuesday (2) | Upper A | Pull, rear delt |
-| `dayC` | Thursday (4) | Lower B | Quad emphasis, knee conditioning |
+| `dayC` | Thursday (4) | Lower B + Power | Quad/knee strength merged with tempo power + lateral stability (ski) |
 | `dayD` | Friday (5) | Upper B | Push, chest, shoulders |
-| `dayE` | Saturday (6) | Athletic | Full body, power, core |
+
+`dayE` (Saturday Athletic) removed Jul 2026 — folded into `dayC`. Saturday now defaults to rest/active. Since `dayE` is gone from `WORKOUT_PLAN`, it is no longer a swap option (the swap picker maps over `WORKOUT_PLAN`); re-add `dayE` if a dedicated Athletic day is wanted again.
 
 Exercise tags: `knee`, `hip`, `upper`, `power`, `mob`, `core`
 

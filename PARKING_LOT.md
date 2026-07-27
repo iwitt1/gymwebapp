@@ -53,6 +53,12 @@ Currently single-user, no auth. If this were ever shared or made multi-user, the
 
 ---
 
+## Parked from the 4-day restructure (July 2026)
+
+- **`e2` Hip 90/90 Rotation Sequence** — the one exercise fully dropped when Athletic (`dayE`) was folded into Thursday. It duplicated `a2` (90/90 Hip Rotation), so nothing unique was lost. Definition is in git history if it's ever wanted back.
+- **Thursday "Optional / rotate" block** holds the parked-but-not-deleted movements: `c8` Wall Sit, `c9` Reverse Lunge, `c10` Monster Walk, `e6` Med Ball Slam, `e10` Pallof Press, `e12` Stir the Pot. Revisit whether any should be promoted back into the main flow as ski season nears.
+- **Bonus 5th day** — `dayE` was removed, so there's no separate Athletic swap option anymore. Open question: if Isaac consistently wants a 5th day, add a proper Phase II power/plyometric day (as a new `dayE`) rather than resurrecting the old Phase I Athletic template.
+
 ## Deferred Decisions
 
 **Chart library**

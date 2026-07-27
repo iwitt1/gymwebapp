@@ -1,7 +1,7 @@
 # Isaac's Training Plan
 
 **Living document — updated at each Claude check-in.**
-Last updated: July 6, 2026 (return-from-layoff review → Week 3 plan)
+Last updated: July 27, 2026 (Week 7 check-in → move to 4 days/week + session re-sequencing)
 
 ---
 
@@ -21,20 +21,23 @@ Primary objectives this phase:
 
 ---
 
-## Phase I Structure (Weeks 1–8)
+## Phase I Structure
 
-### Weekly split (default)
+### Weekly split (default — 4 days, as of Week 7 / Jul 27, 2026)
 | Day | Session | Focus |
 |-----|---------|-------|
-| Monday | Lower A | Posterior chain, hip abduction priority, knee eccentric loading |
+| Monday | Lower A | Posterior chain, hip abduction, knee rehab (re-sequenced to the front) |
 | Tuesday | Upper A | Pull, rear delt, shoulder health |
 | Wednesday | Active recovery | Easy bike or walk, mobility — log in app |
-| Thursday | Lower B | Quad emphasis, eccentric knee conditioning |
+| Thursday | Lower B + Power | Quad/knee strength **merged with** tempo-contrast power + lateral stability (ski prep) |
 | Friday | Upper B | Push, chest, shoulder development |
-| Saturday | Athletic | Power (tempo contrast), lateral stability, core |
-| Sunday | Rest | |
+| Sat / Sun | Rest / Active | Off, or an easy bike/walk — log if active |
 
-Schedule is flexible week-to-week — use the swap feature in the app if travel or life requires it.
+**Change from the original 5-day split:** the standalone Saturday Athletic day (never trained in 7 weeks) was dissolved. Its ski-relevant pieces — tempo-contrast power (goblet squat, DB deadlift), lateral step-up, lateral band walk, balance reach, Copenhagen — were folded into Thursday. The remaining Athletic movements (med ball slam, Pallof, stir-the-pot, wall sit, reverse lunge, monster walk) live in Thursday's "Optional / rotate" block so nothing is lost.
+
+**Session re-sequencing (all days):** exercises are now grouped by equipment station so setup happens once — supersets are marked in the app cues ("work X + Y in together"): cable rack, box/step, DBs+bench, leg machines. Mat/floor work is clustered (Lower A opens and closes on the mat; a6 banded abduction moved into the warmup so it stops getting skipped). Nordic curl swapped for an accentuated-eccentric machine leg curl (no anchor needed at the gym).
+
+Schedule is flexible week-to-week — use the swap feature in the app if travel or life requires it. (The Athletic day was fully dissolved into Thursday, so it's no longer a separate swap option — if a dedicated 5th day is ever wanted, re-add `dayE`.)
 
 ### Phase I progressive overload targets
 - **Weeks 1–2**: Establish baseline weights. Prioritize form and pain-free range over load.
@@ -50,11 +53,13 @@ Drop all set volumes by ~40%. No new PRs — just move. Then assess Phase II.
 ## Key Rehab Benchmarks (Phase I → II gate)
 
 Before progressing to Phase II (more loaded, some impact work):
-- [ ] Step-Down: 3×8/side pain-free at full height (8–10" box)
-- [ ] Nordic Hamstring Curl: lowering to ~60° under control
-- [ ] Single-Leg Leg Press: 4×10/side at bodyweight equivalent load, pain-free
-- [ ] Hip Abduction: left side cable abduction ≥ right side weight (symmetry)
-- [ ] 4+ consecutive weeks with no knee pain flags in workouts
+- [ ] Step-Down: 3×8/side pain-free at full height (8–10" box) — *inconsistent; keeps getting skipped, now moved to front of Lower A*
+- [ ] Nordic / eccentric hamstring: controlled full-range lowering — *swapped to accentuated-eccentric machine curl for equipment; rebuild range*
+- [x] Single-Leg Leg Press: 4×10/side pain-free — **met** (80×10 clean, Jul 10)
+- [ ] Hip Abduction: left ≥ right symmetry — *not yet; left still fatigues first as stance leg*
+- [x] 4+ consecutive weeks, no knee **pain** flags — **met** (skips have been time/fatigue, not pain)
+
+**Gate read (Week 7):** the blockers are no longer pain — they're the rehab work (step-downs, eccentric curl, banded abduction) getting cut at the end of long sessions, and left/right hip symmetry. The 4-day restructure exists to *guarantee* that work happens (front-loaded + supersetted), which is the real path to the Phase II gate.
 
 ---
 
@@ -82,6 +87,23 @@ Start conservatively. 10% week-over-week rule enforced by the app.
 ## Coaching Notes History
 
 *(Newest at top — this section updated at each check-in)*
+
+**Week 7 → 4-day restructure (July 27, 2026)**
+
+*Context:* Covers ~3 training weeks since the Jul 6 plan (sessions Jul 9, 10, 14, 17, 21 — the two missing exports were pulled via SQL). Decision this check-in: drop from 5 to 4 days/week and re-sequence every session for gym efficiency.
+
+*What the data showed:* No pain flags in weeks — the tendon and knee are quiet. Wins: Kickstand RDL 30→32.5×10 clean, SL hamstring curl held 45, calf raise added load (25×12), incline press 32.5×10 with no tendon signal (~4 weeks pain-free pressing). The problem: the **knee rehab and hip work is exactly what's being skipped** — TKE (a11), the Nordic (a10), dead bug/side plank logged `false` across all three Lower A sessions; banded abduction (a6) uncompleted twice; step-down (a12) hit once of three. The Athletic day (e-block) was never trained in 7 weeks. So Phase II is gated by skipped work + hip asymmetry, not pain.
+
+*Changes shipped:*
+- **4-day split:** Mon Lower A, Tue Upper A, Thu Lower B + Power, Fri Upper B. Saturday Athletic dissolved into Thursday (power/lateral/core); leftovers parked in a Thursday "Optional" block. Athletic still selectable via swap for a bonus day.
+- **Protect the rehab work:** Lower A re-ordered so TKE + step-down are done fresh (Blocks 1–2, at the cable rack and box); a6 banded abduction moved into the warmup as activation.
+- **Equipment supersets** marked in every session (cable rack / box / DBs+bench / leg machines) to cut gym time; mat work clustered.
+- **Nordic → accentuated-eccentric machine leg curl** (a10) — no anchor needed at the gym; ball/slider curl is the mat alternative.
+- **b6** stays at 35 elbows-out (your call). **d11 overhead tricep extension reintroduced** — light cable, stop at the first tendon signal (earned by ~4 pain-free weeks).
+- **PRs refreshed** from the full export (see `exercise_logs_pr_update.sql`); d5 cable-fly PR kept at cable 35×13 (machine sub not counted, per your note).
+
+**Coaching note (in-app, Week 7):**
+> Now 4 days: Mon Lower A (rehab), Tue Upper A, Thu Lower B + power/ski, Fri Upper B — Sat/Sun off. Big fix: your knee rehab (TKE, step-downs, eccentric curl) and banded hip abduction moved to the FRONT of Lower A (a6 is now warmup activation), because those skips — not pain — are what's holding you out of Phase II. Zero pain flags in weeks, nice. Confirm 32.5 on the RDL before 35. Pressing's been quiet ~4 weeks, so Friday we carefully test-drive the overhead tricep extension (d11) again — light cable, stop at the FIRST tendon signal and flag it. Sessions are re-sequenced by station: superset same-equipment moves and keep Thursday under ~75 min.
 
 **Return from layoff → Week 3 (July 6, 2026)**
 

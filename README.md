@@ -38,15 +38,16 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for full technical detail.
 
 ## Training Program
 
-5-day split, hardcoded from a PT assessment. Do not simplify or replace the exercise data.
+4-day split (moved from 5-day in Jul 2026), hardcoded from a PT assessment. Do not simplify or replace the exercise data.
 
 | Day | Workout | Focus |
 |---|---|---|
-| Monday | Lower A | Posterior chain, hip abduction |
+| Monday | Lower A | Posterior chain, hip abduction, knee rehab |
 | Tuesday | Upper A | Pull, rear delt |
-| Thursday | Lower B | Quad emphasis, knee conditioning |
+| Thursday | Lower B + Power | Quad/knee strength + tempo power & lateral stability (ski prep) |
 | Friday | Upper B | Push, chest, shoulders |
-| Saturday | Athletic | Full body, power, core |
+
+The former Saturday Athletic day was folded into Thursday (its power/lateral/core work is now in the Thursday session and its Optional block).
 
 ---
 
