@@ -777,7 +777,7 @@ const WORKOUT_PLAN = [
     name: 'Lower A',
     subtitle: 'Posterior Chain & Hip',
     day: 'Mon',
-    duration: '75–90 min',
+    duration: '55–70 min',
     type: 'lower',
     focus: 'Posterior chain dominance to load the knee with minimal patellofemoral stress. All single-leg emphasis to address left hip abduction deficit. This is the most injury-prevention-critical session of the week.',
     blocks: [
@@ -792,17 +792,17 @@ const WORKOUT_PLAN = [
         ]
       },
       {
-        label: 'Block 1 — Cable Rack (work a5 + a11 in together)',
+        label: 'Block 1 — Cable Hip Abduction',
         exercises: [
-          { id:'a5', name:'Cable Hip Abduction', sets:'3×12–15/side', tempo:'2-1-2', tags:['hip'], targetSets:3, cue:'Start with the LEFT leg every set — it\'s the weak stance leg. Light load, perfect arc, don\'t hitch. Stand tall. Alternate sets with a11 at the same rack instead of resting.' },
-          { id:'a11', name:'Terminal Knee Extension (TKE)', sets:'3×15/side', tempo:'1-2-1', tags:['knee'], targetSets:3, cue:'MOVED UP — do it fresh. Band or ankle strap at the cable rack. Loads the VMO and retrains patellar tracking. 2-sec hold at full extension, foot tripod. Key exercise — DO NOT SKIP.' }
+          { id:'a5', name:'Cable Hip Abduction', sets:'3×12–15/side', tempo:'2-1-2', tags:['hip'], targetSets:3, cue:'Start with the LEFT leg every set — it\'s the weak stance leg. Light load, perfect arc, don\'t hitch. Stand tall. Quick — finish all sets (you\'ve been leaving this incomplete).' }
         ]
       },
       {
-        label: 'Block 2 — Box/Step (work a12 + a13 in together)',
+        label: 'Block 2 — Knee (box/bench, work a11 + a12 + a13 in together)',
         exercises: [
-          { id:'a12', name:'Step-Down (Slow Eccentric)', sets:'3×8/side', tempo:'4-sec lower', tags:['knee'], targetSets:3, cue:'MOVED UP — do it fresh. 4-second count down, knee tracks over the 2nd toe, no valgus collapse. Watch the left knee in a mirror. Mimics the movement that caused your pain, at low load. DO NOT SKIP.' },
-          { id:'a13', name:'Single-Leg Calf Raise', sets:'3×12/side', tempo:'2-1-3', tags:['knee'], targetSets:3, cue:'Same box/step as a12. 3-count slow lower, below platform if pain-free. Loads the Achilles + patellar tendon for running prep.' }
+          { id:'a11', name:'Short-Arc Quad (VMO) — TKE alt', sets:'2×15/side', tempo:'2-sec hold', tags:['knee'], targetSets:2, cue:'Replaces the band TKE (no post needed). Sit on a bench, knee bent over a rolled towel/foam roller, straighten to full lockout, 2-sec hold, slow lower. Add an ankle weight or loop a light DB over your foot. Machine alt: leg-extension TOP-THIRD only with a 2-sec hold. Loads the VMO / patellar tracking — DO these (the old TKE kept getting skipped).' },
+          { id:'a12', name:'Step-Down (Slow Eccentric)', sets:'3×8/side', tempo:'4-sec lower', tags:['knee'], targetSets:3, cue:'Do it fresh. 4-second count down, knee tracks over the 2nd toe, no valgus collapse. Watch the left knee in a mirror. Mimics the movement that caused your pain, at low load. DO NOT SKIP.' },
+          { id:'a13', name:'Single-Leg Calf Raise', sets:'3×12/side', tempo:'2-1-3', tags:['knee'], targetSets:3, cue:'Same box/step. 3-count slow lower, below platform if pain-free. Add the 25 back if a loaded step is free. Loads the Achilles + patellar tendon for running prep.' }
         ]
       },
       {
@@ -833,7 +833,7 @@ const WORKOUT_PLAN = [
     name: 'Upper A',
     subtitle: 'Pull & Rear Delt',
     day: 'Tue',
-    duration: '70–80 min',
+    duration: '55–70 min',
     type: 'upper',
     focus: 'Pull-dominant day: builds upper back and rear deltoids essential for shoulder health, posture, and the broad-shouldered look. Strong pulling also protects the shoulder joint for overhead mobility work.',
     blocks: [
@@ -880,12 +880,12 @@ const WORKOUT_PLAN = [
     name: 'Lower B',
     subtitle: 'Quad, Knee & Power (Ski)',
     day: 'Thu',
-    duration: '70–80 min',
+    duration: '55–75 min',
     type: 'lower',
-    focus: 'Quad strength for the PT torque goal (leg press + single-leg extension) merged with tempo-contrast power and lateral stability from the old Athletic day — your ski-prep lower session. Keep it moving (superset by station) to stay under ~75 min. The Optional block holds the parked movements; do 1–2 or skip.',
+    focus: 'Quad strength for the PT torque goal (leg press) + tempo-contrast power and the ski-specific lateral work from the old Athletic day. Re-ordered so the lateral/ski moves come right after the power block — they kept getting skipped at the end. Keep it tight (superset by station), 55–75 min. The Optional block is only if you\'re under time.',
     blocks: [
       {
-        label: 'Warmup — 10 min (open floor + mat)',
+        label: 'Warmup — 8 min (open floor + mat)',
         exercises: [
           { id:'c1', name:'Stationary Bike (easy)', sets:'5 min', tempo:'low resist', tags:[], cue:'Warm up the joint. Not a workout.' },
           { id:'c2', name:'Standing Quad Stretch', sets:'2×30 sec/side', tempo:'static', tags:['knee'], cue:'Pull heel to glute, hip forward. Feel the stretch at the front of the thigh, not the knee.' },
@@ -898,39 +898,39 @@ const WORKOUT_PLAN = [
       {
         label: 'Block 1 — Power / DBs (work e4 + e5 in together)',
         exercises: [
-          { id:'e4', name:'Goblet Squat (Tempo Contrast)', sets:'4×6', tempo:'4-0-X', tags:['power'], targetSets:4, cue:'NEW here — start LIGHT, this is a baseline. 4 seconds down, then EXPLODE up. Slow eccentric = deceleration (skiing), explosive up = fast-twitch. Pain-free depth only, no heel rise. Grab DBs/KB and alternate with e5.' },
-          { id:'e5', name:'DB Deadlift (Tempo Contrast)', sets:'4×5', tempo:'3-0-X', tags:['power'], targetSets:4, cue:'NEW — light baseline. 3 seconds to lower, explosive hip snap up (think hips, not the arm pull). Same DBs as e4.' }
+          { id:'e4', name:'Goblet Squat (Tempo Contrast)', sets:'4×6', tempo:'4-0-X', tags:['power'], targetSets:4, cue:'Hold your 25 baseline. 4 seconds down, then EXPLODE up. Slow eccentric = deceleration (skiing), explosive up = fast-twitch. Pain-free depth only, no heel rise. Grab DBs/KB and alternate with e5.' },
+          { id:'e5', name:'DB Deadlift (Tempo Contrast)', sets:'4×5', tempo:'3-0-X', tags:['power'], targetSets:4, cue:'25/arm. 3 seconds to lower, explosive hip snap up (think hips, not the arm pull). Same DBs as e4.' }
         ]
       },
       {
-        label: 'Block 2 — Quad Strength / Leg Machines (work c5 + c6 in together)',
+        label: 'Block 2 — Quad Strength (Leg Press)',
         exercises: [
-          { id:'c5', name:'Single-Leg Leg Press', sets:'4×10/side', tempo:'2-1-3', tags:['knee'], targetSets:4, cue:'3-count eccentric, stay at/under 90°, foot tripod. Start the LEFT leg each set. +5–10 lb if clean — this is a Phase II gate lift. Alternate with c6 at the leg machines.' },
-          { id:'c6', name:'Single-Leg Leg Extension', sets:'3×12–15/side', tempo:'2-2-3', tags:['knee'], targetSets:3, cue:'2-sec hold at full extension (VMO), 3-sec slow down, toe slightly out. Lead left, note if the left VMO still lags. Pair with c5.' }
+          { id:'c5', name:'Single-Leg Leg Press', sets:'4×10/side', tempo:'2-1-3', tags:['knee'], targetSets:4, cue:'3-count eccentric, stay at/under 90°, foot tripod. Start the LEFT leg each set. This is the Phase II gate lift — return week at 80, back to 90 next week.' }
         ]
       },
       {
         label: 'Block 3 — Lateral & Knee / Box (work e9 + c7 in together)',
         exercises: [
-          { id:'e9', name:'Lateral Step-Up', sets:'3×8/side', tempo:'controlled up, slow lower', tags:['power'], targetSets:3, cue:'Step up SIDEWAYS onto a 4–6in box. Push through the working leg, don\'t pull with the top foot, slow lower. Ski-turn force production. Same box as c7.' },
+          { id:'e9', name:'Lateral Step-Up', sets:'3×8/side', tempo:'controlled up, slow lower', tags:['power'], targetSets:3, cue:'MOVED EARLIER (right after power) so it stops getting skipped. Step SIDEWAYS onto a 4–6in box, push through the working leg, slow lower. Ski-turn force production. Same box as c7.' },
           { id:'c7', name:'Box Step-Up (eccentric step-down focus)', sets:'3×8/side', tempo:'4-sec lower', tags:['knee'], targetSets:3, cue:'Step UP normal, step DOWN 4 full seconds — the down phase is therapeutic. Knee over 2nd toe, kill the left wobble. Same box as e9. Add weight before height.' }
         ]
       },
       {
-        label: 'Block 4 — Posterior & Core (floor/mat circuit)',
+        label: 'Block 4 — Ski & Core Finisher (floor/mat)',
         exercises: [
-          { id:'e7', name:'Lateral Band Walk + Squat', sets:'3×10 reps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'Yellow band at the ankles: 2 steps sideways, squat, 2 back. Toes forward, full tripod. Most ski-specific pattern in the program.' },
-          { id:'e8', name:'Single-Leg Balance Reach (Star Excursion)', sets:'2×5 reaches each dir/side', tempo:'slow', tags:['knee'], targetSets:2, cue:'Stand on one leg, reach the other foot forward/side/back. LEFT leg is priority. Retrains landing mechanics — close eyes if easy.' },
-          { id:'e11', name:'Copenhagen Plank (modified)', sets:'3×20 sec/side', tempo:'isometric', tags:['hip','core'], targetSets:3, cue:'Side plank, top foot on bench, bottom knee down (Phase 1). Integrates adduction into core stability. PT-recommended.' },
-          { id:'c11', name:'Romanian Deadlift (DB)', sets:'3×10', tempo:'3-1-1', tags:['hip'], targetSets:3, cue:'20/hand conventional — it\'s earlier in the session now, so stop skipping it. Weight through the big-toe side, hinge to a hamstring stretch, soft knees.' }
+          { id:'e7', name:'Lateral Band Walk + Squat', sets:'3×10 reps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'MOVED EARLIER. Yellow band at the ankles: 2 steps sideways, squat, 2 back. Toes forward, full tripod. Most ski-specific pattern in the program.' },
+          { id:'e11', name:'Copenhagen Plank (modified)', sets:'3×20 sec/side', tempo:'isometric', tags:['hip','core'], targetSets:3, cue:'Side plank, top foot on bench, bottom knee down (Phase 1). Quick core finisher. Integrates adduction into core stability. PT-recommended.' }
         ]
       },
       {
-        label: 'Optional / rotate — pick 1–2 or skip',
+        label: 'Optional / rotate — only if under time',
         exercises: [
+          { id:'c6', name:'Single-Leg Leg Extension', sets:'3×12–15/side', tempo:'2-2-3', tags:['knee'], targetSets:3, cue:'Optional now (c5 + goblet cover the quad, and the SAQ hits the VMO on Monday). 2-sec hold at full extension, lead left.' },
+          { id:'e8', name:'Single-Leg Balance Reach (Star Excursion)', sets:'2×5 reaches each dir/side', tempo:'slow', tags:['knee'], targetSets:2, cue:'Optional. Stand on one leg, reach the other foot forward/side/back. LEFT leg priority. Close eyes if easy.' },
+          { id:'c11', name:'Romanian Deadlift (DB)', sets:'3×10', tempo:'3-1-1', tags:['hip'], targetSets:3, cue:'Optional — Monday\'s kickstand RDL already covers the posterior chain. 20/hand, big-toe-side pressure, soft knees.' },
           { id:'c8', name:'Shallow Wall Sit', sets:'3×30–45 sec', tempo:'isometric', tags:['knee'], targetSets:3, cue:'Optional. Isometric quad loading at 60° (not full depth). Progress 5° deeper/week. Pain-free is mandatory.' },
           { id:'c9', name:'Reverse Lunge', sets:'3×10/side', tempo:'2-1-2', tags:['knee'], targetSets:3, cue:'Optional. Knee-friendly (force goes backward). Torso upright, front foot on the tripod.' },
-          { id:'c10', name:'Banded Lateral Walk (monster walk)', sets:'3×12 steps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'Optional — covered by e7 above, do it too if the hips need more. Don\'t let knees cave, deliberate full steps.' },
+          { id:'c10', name:'Banded Lateral Walk (monster walk)', sets:'3×12 steps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'Optional — covered by e7 above, add it if the hips need more. Don\'t let knees cave, deliberate full steps.' },
           { id:'e6', name:'Medicine Ball Slam', sets:'3×8', tempo:'max effort', tags:['power'], targetSets:3, cue:'Optional power finisher. Full overhead reach, slam with full force, hinge to pick up. No jumping.' },
           { id:'e10', name:'Pallof Press (cable or band)', sets:'3×10/side', tempo:'2-sec hold each', tags:['core'], targetSets:3, cue:'Optional anti-rotation core. Perpendicular to the cable, press out, hold 2 sec. Spine resists rotation.' },
           { id:'e12', name:'Stir the Pot (Swiss ball)', sets:'3×8 circles each way', tempo:'slow', tags:['core'], targetSets:3, cue:'Optional. Forearms on the ball, plank, small circles. Hips level, don\'t rock side to side.' }
@@ -943,7 +943,7 @@ const WORKOUT_PLAN = [
     name: 'Upper B',
     subtitle: 'Push, Chest & Shoulders',
     day: 'Fri',
-    duration: '70–80 min',
+    duration: '55–70 min',
     type: 'upper',
     focus: 'Push-dominant day targets the chest and shoulder development you\'re after. Cable and dumbbell variations that are solo-safe with better range for chest activation. Shoulders get volume through lateral raises and overhead pressing.',
     blocks: [

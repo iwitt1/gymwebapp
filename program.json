@@ -1,151 +1,158 @@
 {
   "start_date": "2026-06-09",
-  "week": 7,
-  "updated": "2026-07-27",
-  "coaching_note": "Now 4 days: Mon Lower A (rehab), Tue Upper A, Thu Lower B + power/ski, Fri Upper B — Sat/Sun off. Big fix: your knee rehab (TKE, step-downs, eccentric curl) and banded hip abduction moved to the FRONT of Lower A (a6 is now warmup activation), because those skips — not pain — are what's holding you out of Phase II. Zero pain flags in weeks, nice. Confirm 32.5 on the RDL before 35. Pressing's been quiet ~4 weeks, so Friday we carefully test-drive the overhead tricep extension (d11) again — light cable, stop at the FIRST tendon signal and flag it. Sessions are re-sequenced by station: superset same-equipment moves (cable rack, box, DB+bench) and keep Thursday under ~75 min.",
+  "week": 11,
+  "updated": "2026-08-24",
+  "coaching_note": "Back from ~3.5 weeks off (Italy — some biking incl. Vesuvius, no lifting). RETURN WEEK: all loads cut ~10%, RIR 2–3, zero PR chasing — back to your pre-trip loads next week if pain-free. Tendons lose load tolerance faster than strength over a layoff, so ease the eccentric leg curl and RDL especially. Wins from the pre-trip block that stuck: a6 in the warmup and the step-down reorder both got done, and you PR'd (pulldown 120, leg press 90, ham curl 50, face pull 60). Two fixes this week: (1) TKE is swapped for the Short-Arc Quad (a11) — same VMO/terminal-extension work but on a bench with an ankle weight, no band-on-a-post needed; please actually do it (2 sets). (2) Thursday was running long and its ski/lateral work got skipped, so it's trimmed and re-ordered — lateral step-ups and band walks come right after the power block now. Aim every session at 50–75 min; the Optional block is only if you're under time.",
   "targets": {
     "a5": {
       "weight": "20",
-      "reps": "12-15",
-      "note": "Lead LEFT every set (weak stance leg). Hold 20 — chase 15 clean reps before adding load. Now paired at the cable rack with a11 TKE: alternate sets, don't fully rest."
+      "reps": "12",
+      "note": "Lead LEFT every set. Hold 20 — and actually FINISH all sets (logged incomplete your last two Lower A's)."
     },
     "a6": {
-      "note": "MOVED to warmup as glute activation — medium band, 2x15, hips stacked, toes forward. This is why it kept getting skipped; doing it up front on the mat fixes that."
+      "note": "Warmup activation — medium band, 2x15, hips stacked, toes forward. Keep doing it here; it's finally sticking."
     },
     "a7": {
       "weight": "32.5",
       "reps": "10",
-      "note": "Confirm last week's new load (32.5) is clean before going to 35. BRACE before each rep — left low-back soreness was hinge form, not load. Soft standing knee. DBs — pair with a9 hip thrust (same DBs + bench)."
+      "note": "Down from 40 (the KB single) for the return week. BRACE first — left low-back. Back to 40 next week if clean."
     },
     "a8": {
       "weight": "45",
-      "reps": "10-12",
-      "note": "Chase 12 both sides, then 50. 3-sec eccentric. Straight into the eccentric-curl (a10) on the same machine — no rest."
+      "reps": "10",
+      "note": "Down from 50 for the return week. 3-sec eccentric. Back to 50 next week if clean. Stay on the machine for a10."
     },
     "a9": {
-      "weight": "45",
-      "reps": "12",
-      "note": "You hit 12 on the right last week — match the left, then move to 50. Squeeze the glute to lock, don't just reach extension. Pair with a7 (same DBs + bench)."
+      "weight": "40",
+      "reps": "10",
+      "note": "Down from 45. Start left leg, squeeze to lock at the top. Pair with a7 (same DBs + bench)."
     },
     "a10": {
-      "note": "SWAP the Nordic for an accentuated-eccentric machine leg curl (no anchor needed): lift with both legs, lower slow with ONE, 3-4 sec, 3x6-8/side. Do it right after a8 on the same machine. Ball/slider curl on the mat is the alternative if you'd rather keep it floor work. Rebuild eccentric tolerance slowly."
+      "weight": "65",
+      "reps": "6",
+      "note": "Eccentric leg curl (accentuated) — down from 80 for the return week. Lift with both legs, lower slow with ONE (3–4 sec). Ease the eccentric back in — this detrains fastest. Back toward 80 next week."
     },
     "a11": {
-      "note": "MOVED UP — do it fresh at the cable rack, supersetted with a5. 3x15/side, 2-sec hold at full extension. This is your VMO/patellar tracking work — DO NOT SKIP."
+      "reps": "2x15",
+      "note": "NEW — Short-Arc Quad replaces the band TKE (no post needed). Sit on a bench, knee bent over a rolled towel/foam roller, straighten to full lockout, 2-sec hold, slow down. Add an ankle weight or loop a light DB over your foot. (Machine alt: leg-extension top-third only, 2-sec hold.) 2 sets — please DO them; the old TKE got skipped every session."
     },
     "a12": {
-      "note": "MOVED UP — 3x8/side, 4-sec lower, knee tracks over the 2nd toe. Watch the left knee for valgus. Pair on the box with a13. DO NOT SKIP."
+      "note": "3x8/side, 4-sec lower, knee over the 2nd toe. You nailed these last time — keep it. Box/bench area with a11 + a13."
     },
     "a13": {
       "weight": "25",
       "reps": "12",
-      "note": "Progressed to 25 last week — hold and own it. 3-sec slow lower, below platform if pain-free. Same box as a12."
+      "note": "3-sec slow lower. Add the 25 back if a machine/step with load is free (was bodyweight last time)."
     },
     "b4": {
       "weight": "115",
       "reps": "11",
-      "note": "→ 120 if all 4 sets are clean. Max pull-ups are a fine sub when the machine's busy (you did 6/6/5). Alternate at the pull machines with b5."
+      "note": "Down from your 120x12 PR for the return week. → back to 120 next week. Alternate at the pull machines with b5."
     },
     "b5": {
-      "weight": "115",
+      "weight": "110",
       "reps": "12",
-      "note": "Lead LEFT — it fatigues first; match the right to the left, don't let it run ahead. Full retraction."
+      "note": "Lead LEFT — it fatigues first. Down slightly for the return week."
     },
     "b6": {
-      "weight": "35",
+      "weight": "32.5",
       "reps": "10-12",
-      "note": "Settled here per your call — ELBOWS OUT (rear-delt row, not lat). Chase 12 before 40. Bench + DBs, pair with b9 curls."
+      "note": "ELBOWS OUT (rear-delt row). You settled at 32.5x12 clean — hold it. Bench + DBs, pair with b9."
     },
     "b7": {
       "weight": "55",
       "reps": "15",
-      "note": "2-sec hold at the ears. → 60 only if 15 is clean. Cable rack — pair with b8."
+      "note": "Down from your 60 PR for the return week. 2-sec hold at the ears. → 60 next week. Cable rack with b8."
     },
     "b8": {
-      "weight": "75",
+      "weight": "85",
       "reps": "12",
-      "note": "Pick one load and own it — it's been bouncing 70-100. Sweep to overhead range; do the lat stretch (b10) after for the top range. Pair with b7 at the cable rack."
+      "note": "Down slightly for the return week. Overhead range, then the lat stretch (b10) after. Cable rack with b7."
     },
     "b9": {
       "weight": "20",
       "reps": "12",
-      "note": "Earn 12 clean at 20, then 25. Brace the core (back twinge at 25 before). Bench + DBs, pair with b6."
+      "note": "Brace the core. Left was harder last time — match it. Same DBs as b6."
     },
     "c5": {
       "weight": "80",
       "reps": "10",
-      "note": "3-sec eccentric, stay at/under 90deg, lead left. +5-10 lb if clean — this is a Phase II gate lift. Leg machines — alternate with c6."
+      "note": "Down from your 90x10 PR for the return week. 3-sec eccentric, at/under 90deg, lead left. Phase II gate lift — back to 90 next week."
     },
     "c6": {
       "weight": "45",
       "reps": "12",
-      "note": "2-sec hold at top, toe slightly out, lead left. Note if left VMO still lags. Pair with c5."
+      "note": "OPTIONAL now (quads are covered by c5 + the goblet squat, and the SAQ hits the VMO on Monday). Do it if you're under time. 2-sec hold, lead left."
     },
     "c7": {
       "weight": "0",
       "reps": "8",
-      "note": "18in box, 4-sec lower. Priority is killing the left-knee wobble — slow, not loaded. Same box as e9 (lateral step-up) — do them back to back."
+      "note": "18in box, 4-sec lower. Kill the left-knee wobble. Same box as e9 — do them back to back."
     },
     "c11": {
       "weight": "20",
       "reps": "10",
-      "note": "Conventional DB RDL, 20/hand — it's earlier in the session now, so stop skipping it. Weight through the big-toe side, soft knees."
+      "note": "OPTIONAL now — Monday's kickstand RDL already covers the posterior chain. Do it if you're under time. Big-toe-side pressure, soft knees."
     },
     "e4": {
-      "note": "NEW to Thursday — Goblet Squat, tempo contrast 4x6. Start LIGHT, this is a baseline. 4-sec down, then EXPLODE up. Pain-free depth only (no heel rise). DBs/KB — pair with e5."
+      "weight": "25",
+      "reps": "6",
+      "note": "Goblet Squat, tempo contrast 4x6. Hold the 25 baseline you set. 4-sec down, EXPLODE up, pain-free depth. DBs/KB — pair with e5."
     },
     "e5": {
-      "note": "NEW — DB Deadlift, tempo contrast 4x5. Light baseline. 3-sec lower, explosive hip snap (not an arm pull). Same DBs as e4."
+      "weight": "25",
+      "reps": "5",
+      "note": "DB Deadlift, tempo contrast 4x5, 25/arm. 3-sec lower, explosive hip snap. Same DBs as e4."
     },
     "e7": {
-      "note": "Lateral Band Walk + Squat, yellow band, 3x10/side. Most ski-specific pattern in the program — toes forward, full tripod. Floor finisher with e8/e11."
+      "note": "Lateral Band Walk + Squat, yellow band, 3x10/side. MOVED EARLIER so it stops getting skipped — most ski-specific pattern in the program. Toes forward, full tripod."
     },
     "e8": {
-      "note": "Single-Leg Balance Reach, 2x5 reaches each direction/side. LEFT leg priority. Retrains landing mechanics — close eyes if easy."
+      "note": "Single-Leg Balance Reach, 2x5 reaches each direction/side. LEFT leg priority. Close eyes if easy."
     },
     "e9": {
-      "note": "NEW — Lateral Step-Up, 4-6in box, 3x8/side. Push through the working leg, slow lower. Ski turn force production. Same box as c7."
+      "note": "Lateral Step-Up, 4-6in box, 3x8/side. MOVED EARLIER (right after the power block). Push through the working leg, slow lower. Ski-turn force production. Same box as c7."
     },
     "e11": {
-      "note": "Copenhagen Plank (modified, bottom knee down), 3x20s/side. Core finisher on the mat with e7/e8."
+      "note": "Copenhagen Plank (modified, bottom knee down), 3x20s/side. Quick core finisher."
     },
     "d4": {
-      "weight": "32.5",
-      "reps": "10-12",
-      "note": "Do it FIRST, fresh. No tendon signal in 4 weeks — chase 12, then 35. Stop the set at ANY tendon signal. Bench + DBs, pair with d7."
+      "weight": "30",
+      "reps": "10",
+      "note": "Down from 32.5 for the return week. Do it FIRST, fresh. Stop the set at ANY tendon signal. Bench + DBs, pair with d7."
     },
     "d5": {
       "weight": "35",
       "reps": "12",
-      "note": "CABLE fly, 35/arm. Pec-fly machine is a fine sub for availability but DON'T log it as the cable PR (per your note). Cable rack cluster with d9/d10/d11."
+      "note": "CABLE fly, 35/arm. Pec-fly machine is a fine sub but DON'T log it as the cable PR (your note). Cable rack cluster."
     },
     "d6": {
       "weight": "0",
       "reps": "10",
-      "note": "2 sets, feet elevated on the same bench as d4/d7 — work them in."
+      "note": "2 sets, feet elevated on the same bench as d4/d7."
     },
     "d7": {
       "weight": "12.5",
       "reps": "15",
-      "note": "Fix the left shrug — long neck, lead with the elbow. Load comes after control. Bench + DBs, pair with d4."
+      "note": "Fix the LEFT shrug — long neck, lead the elbow. Same DBs as d4."
     },
     "d8": {
       "weight": "40",
       "reps": "10",
-      "note": "Converging machine, NEUTRAL grip only (tendon-protective), combined weight. DBs made you arch last time — machine is the primary; DB seated only if the machine's taken. Do it between the DB and cable clusters."
+      "note": "Converging machine, NEUTRAL grip only (tendon-protective). DBs made you arch — machine is primary, DB seated only if it's taken."
     },
     "d9": {
       "weight": "20",
       "reps": "10",
-      "note": "Lead LEFT (weaker), match reps right to left. Cable rack cluster."
+      "note": "Lead LEFT, match reps right to left. Cable rack cluster."
     },
     "d10": {
       "weight": "45",
-      "reps": "13-15",
-      "note": "Pain-free — free to progress. Chase 15, then 50. Cable rack cluster."
+      "reps": "13",
+      "note": "Pain-free — but this is the return week, so hold 45. Cable rack cluster."
     },
     "d11": {
-      "note": "REINTRODUCE carefully — light CABLE (constant tension, gentler than DB), 3x12. You've earned it with ~4 pain-free weeks. Stop at the FIRST tendon signal and hit the Skipped/Pain flag if it twinges. Cable rack cluster, last."
+      "note": "First real test on the new program — light CABLE (constant tension), 3x12. Stop at the FIRST tendon signal and hit the Skipped/Pain flag if it twinges. Cable rack cluster, last."
     }
   }
 }

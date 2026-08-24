@@ -1,7 +1,7 @@
 # Isaac's Training Plan
 
 **Living document — updated at each Claude check-in.**
-Last updated: July 27, 2026 (Week 7 check-in → move to 4 days/week + session re-sequencing)
+Last updated: August 24, 2026 (Week 11 — return from Italy layoff; TKE→Short-Arc Quad, Thursday trimmed, 50–75 min target)
 
 ---
 
@@ -35,7 +35,9 @@ Primary objectives this phase:
 
 **Change from the original 5-day split:** the standalone Saturday Athletic day (never trained in 7 weeks) was dissolved. Its ski-relevant pieces — tempo-contrast power (goblet squat, DB deadlift), lateral step-up, lateral band walk, balance reach, Copenhagen — were folded into Thursday. The remaining Athletic movements (med ball slam, Pallof, stir-the-pot, wall sit, reverse lunge, monster walk) live in Thursday's "Optional / rotate" block so nothing is lost.
 
-**Session re-sequencing (all days):** exercises are now grouped by equipment station so setup happens once — supersets are marked in the app cues ("work X + Y in together"): cable rack, box/step, DBs+bench, leg machines. Mat/floor work is clustered (Lower A opens and closes on the mat; a6 banded abduction moved into the warmup so it stops getting skipped). Nordic curl swapped for an accentuated-eccentric machine leg curl (no anchor needed at the gym).
+**Session re-sequencing (all days):** exercises are grouped by equipment station so setup happens once — supersets are marked in the app cues ("work X + Y in together"): cable rack, box/step, DBs+bench, leg machines. Mat/floor work is clustered (Lower A opens and closes on the mat; a6 banded abduction moved into the warmup so it stops getting skipped). Nordic curl swapped for an accentuated-eccentric machine leg curl (a10); band TKE swapped for the **Short-Arc Quad** (a11) since the gym has no good post for a band — both are equipment fixes, not exercise changes.
+
+**Target session length: 50–75 min** (as of Week 11). Thursday was the long one — trimmed so leg-extension, RDL, and balance-reach are Optional and the ski/lateral work is front-loaded. Optional blocks only get done if you're under time.
 
 Schedule is flexible week-to-week — use the swap feature in the app if travel or life requires it. (The Athletic day was fully dissolved into Thursday, so it's no longer a separate swap option — if a dedicated 5th day is ever wanted, re-add `dayE`.)
 
@@ -87,6 +89,23 @@ Start conservatively. 10% week-over-week rule enforced by the app.
 ## Coaching Notes History
 
 *(Newest at top — this section updated at each check-in)*
+
+**Week 11 → return from Italy (August 24, 2026)**
+
+*Context:* ~3.5 weeks off traveling in Italy — some biking (incl. Vesuvius), no lifting. Before the trip (Jul 29–30) Isaac ran the new 4-day program for the first time and it went well. This is a return/deload week: loads cut ~10%, RIR 2–3, no PR attempts, back to pre-trip loads next week if pain-free.
+
+*What worked pre-trip (keep):* The two Week-7 fixes stuck — `a6` banded abduction got completed from the warmup slot, and step-downs (`a12`) got done after moving up. The eccentric leg-curl swap (`a10`) worked at 80×7. PRs: lat pulldown **120×12**, SL leg press **90×10**, SL hamstring curl **50×12**, face pull **60×15**, kickstand RDL 40 (single KB). Baselines set for the new power work: goblet 25×6, DB deadlift 25/arm×5.
+
+*Two problems fixed this week:*
+- **TKE still skipped every session.** Root cause per Isaac: the gym has no good vertical post for a band TKE. Swapped `a11` to the **Short-Arc Quad (SAQ)** — same VMO / terminal-extension target, done on a bench with an ankle weight or a light DB over the foot (machine alt: leg-extension top-third with a 2-sec hold). Cut to 2 sets to raise completion odds. Regrouped into the Monday knee block (a11+a12+a13) so it shares the box/bench area.
+- **Thursday ran long and its ski/lateral work got fully skipped** (only power + leg machines got done Jul 30). Trimmed and re-ordered: lateral step-up (`e9`) and band walk (`e7`) now come right after the power block; leg extension (`c6`), RDL (`c11`), and balance reach (`e8`) moved to Optional. Leg press stays as the gate lift.
+
+*Session length:* target set to **50–75 min** for every day (durations updated in-app). Optional blocks are only if under time.
+
+*Still open:* `d11` overhead tricep extension reintroduction hasn't actually been tested yet (no Upper B logged since the reintroduction shipped) — first real test is this Friday, light cable, stop at the first signal.
+
+**Coaching note (in-app, Week 11):**
+> Back from ~3.5 weeks off (Italy — some biking incl. Vesuvius, no lifting). RETURN WEEK: all loads cut ~10%, RIR 2–3, zero PR chasing — back to your pre-trip loads next week if pain-free. Tendons lose load tolerance faster than strength over a layoff, so ease the eccentric leg curl and RDL especially. Two fixes: TKE is swapped for the Short-Arc Quad (a11) — same VMO work on a bench with an ankle weight, no band-on-a-post; please actually do it (2 sets). And Thursday's trimmed/re-ordered so the lateral step-ups and band walks come right after the power block. Aim every session at 50–75 min; the Optional block is only if you're under time.
 
 **Week 7 → 4-day restructure (July 27, 2026)**
 
