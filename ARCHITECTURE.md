@@ -59,7 +59,7 @@ Four pages toggled by `showPage(name)`:
 
 ### Key Constants
 
-- `WORKOUT_PLAN` — the program, hardcoded. **4 default days** as of Jul 2026: `dayA` Lower A, `dayB` Upper A, `dayC` Lower B + Power, `dayD` Upper B. (`dayE` Athletic was removed when the program went 5→4 days — its exercises were folded into `dayC`, mostly a new Optional block; `dayE`'s only fully-dropped exercise was `e2` Hip 90/90, a duplicate of `a2`.) Each day has `id`, `name`, `subtitle`, `type`, `focus`, and `blocks` (exercise groups). Each exercise has `id`, `name`, `sets`, `tempo`, `tags`, `targetSets`, and `cue`. Blocks are sequenced by equipment station, with supersets flagged in the block labels/cues. **Do not simplify or replace this data — it was built from a PT assessment.**
+- `WORKOUT_PLAN` — the program, hardcoded. Four day definitions, **3 scheduled days** as of Sept 2026: `dayA` Lower A (Mon), `dayB` Upper A / `dayD` Upper B (alternating Wed), `dayC` Lower B — Ski Core-5 (Fri). (`dayE` Athletic was removed when the program went 5→4 days — its exercises were folded into `dayC`, mostly a new Optional block; `dayE`'s only fully-dropped exercise was `e2` Hip 90/90, a duplicate of `a2`.) Each day has `id`, `name`, `subtitle`, `type`, `focus`, and `blocks` (exercise groups). Each exercise has `id`, `name`, `sets`, `tempo`, `tags`, `targetSets`, and `cue`. Blocks are sequenced by equipment station, with supersets flagged in the block labels/cues. **Do not simplify or replace this data — it was built from a PT assessment.**
 
 ### Global State
 
@@ -85,12 +85,13 @@ Weekly overrides stored in `localStorage` under key `week_sched_YYYY-MM-DD` (Mon
 - `'dayA'`–`'dayE'`: overrides to that workout
 - `'active'`: active/rest day with activity logging
 - `'rest'`: rest day, no logging
-- Key absent: falls back to `DEFAULT_DAY_MAP` (or null for Wed/Sun)
+- Key absent: falls back to `DEFAULT_DAY_MAP`, resolved via `resolveDayAssignment()` (null for Tue/Thu/Sat/Sun, which render as Conditioning or Rest)
 
 Overrides are week-scoped and auto-expire when the week changes (old keys remain in localStorage but are never read).
 
 ### Constants
-- `DEFAULT_DAY_MAP` — `{ 1:'dayA', 2:'dayB', 4:'dayC', 5:'dayD' }` — base workout schedule (4 days; Sat/Sun default to rest/active)
+- `DEFAULT_DAY_MAP` — `{ 1:'dayA', 3:'upper', 5:'dayC' }` — base workout schedule (3 days as of Sept 2026). The `'upper'` value is a **sentinel**, not a workout id: it is resolved to `dayB` or `dayD` by `resolveDayAssignment()` based on program-week parity, so the single Wednesday upper slot alternates pull/push without a manual swap. Any code reading `DEFAULT_DAY_MAP` directly must pass the value through `resolveDayAssignment()`.
+- `UPPER_ROTATION` — `['dayB','dayD']` — odd program weeks get index 0 (pull), even get index 1 (push)
 - `KNEE_EX_IDS` — Set of exercise IDs tagged `knee`, used for the rehab completion chart
 
 `activeSession.completed` is used for non-weighted exercises (warmup/mobility) that have no sets to log — tapping their status circle toggles the entry here instead.
@@ -137,12 +138,21 @@ Overrides are week-scoped and auto-expire when the week changes (old keys remain
 | `renderCardioSection()` | Renders recent cardio logs + 10% run ramp guard in the Progress cardio section |
 | `openAddCardioModal(dateStr?)` / `saveCardioEntry()` | Opens and saves cardio entries (type/minutes/miles) to `run_logs`; optional `dateStr` pre-fills a day (used from the Home day sheet) |
 | `getCardioLogs()` / `saveCardioLog(entry)` | Cached read/write for the `run_logs` table (cache key `run_logs`) |
+| `saveCardioLogsBulk(entries)` | Bulk variant for the importer — one Supabase upsert with an array instead of N calls |
+| `importGarminCsv()` | Settings → Import Garmin CSV. Parses a Garmin Connect activities export, maps types, dedupes, bulk-writes to `run_logs` |
+| `parseCsvLine(line)` | Quote-aware CSV field splitter (Garmin quotes numbers with thousands separators, e.g. `"2,434"`) |
+| `garminTypeToCardio(raw)` | Maps a Garmin "Activity Type" to a `CARDIO_TYPES` id via `GARMIN_TYPE_MAP`; returns `null` for non-cardio (strength, yoga) so those rows are skipped |
+| `hmsToMinutes(s)` / `csvNum(s)` | `"01:15:26"` → minutes; tolerant number parse that handles `--` and commas |
+| `cardioKey(date, type, minutes)` | Dedupe key — makes re-pasting the same export a no-op |
 | `cardioTypeLabel(entry)` / `cardioAmount(entry)` | Display helpers — modality label and "30 min · 3.1 mi" string |
 | `drawBarChart(canvasId, labels, data, color, maxVal)` | Custom canvas bar chart — used for knee completion % |
 | `makeId()` | Generates a UUID (crypto.randomUUID with fallback) for new log entries |
 | `getAppConfig()` / `refreshAppConfig()` | Reads `app_config` table into a keyed object; cached in localStorage |
 | `saveAppConfigKey(key, value)` | Upserts a single key in `app_config` and updates cache |
-| `getProgramWeek(config)` | Computes current week number from `program_start_date` |
+| `getProgramWeek(config)` | Computes current week number from `program_start_date` (needs an awaited config) |
+| `getProgramWeekSync()` | Same calculation, but reads the start date straight from the `program_json` / `app_config` localStorage caches — needed because `renderHome()` resolves day assignments before `getAppConfig()` resolves |
+| `getUpperDayForWeek()` | Returns `dayB` (odd program weeks) or `dayD` (even) for the shared Wednesday slot |
+| `resolveDayAssignment(val)` | Turns a raw assignment into a real one — maps the `'upper'` sentinel to `getUpperDayForWeek()`, passes everything else through. Called by `getEffectiveDayAssignment()` and `openSwapModal()` |
 | `parseTargets(config)` | Parses `program_targets` JSON from app_config into a `{exId: {weight,reps,note}}` map; returns `{}` on missing/invalid. Result held in the `weekTargets` global, loaded in `openWorkout` |
 | `openSettings()` / `saveSettings()` | Settings modal — edit coaching note and program start date |
 
@@ -195,6 +205,10 @@ created_at  timestamptz default now()
 ```
 Legacy rows predate `type`/`minutes`; code treats missing `type` as `'run'`. The 10% ramp guard runs on `type='run'` miles only.
 
+Cardio types (`CARDIO_TYPES`): `run`, `cycle`, `hike`, `stair`, `row`, `elliptical`, `incline_walk`, `swim`, `sup`, `hiit`, `other`. The last three were added Sept 2026 for the Garmin importer.
+
+**Garmin import (Sept 2026).** Settings has an *Import Garmin CSV* box: paste the Garmin Connect activities export and `importGarminCsv()` bulk-loads it. Deliberately **no schema change** — avg HR and total ascent are appended to the `notes` string (`"Seattle Road Cycling · avg HR 131 · 860 ft · Garmin"`) rather than given columns. If HR ever needs to be queried or charted, that's the migration to make. Distances are taken in the export's own unit (miles, per Isaac's Garmin setting).
+
 **`activity_logs`** — one row per active/rest day entry
 ```
 id          uuid (PK — gen_random_uuid())
@@ -236,16 +250,18 @@ Same pattern for `getExLogs()` / `saveExLogs()`. The app always feels fast; Supa
 
 ## Workout Program
 
-4-day split (was 5-day through Jul 2026), days keyed by JS `getDay()` index:
+3-day split (5-day → 4-day Jul 2026 → 3-day Sept 2026), days keyed by JS `getDay()` index:
 
 | Key | Day | Name | Focus |
 |---|---|---|---|
-| `dayA` | Monday (1) | Lower A | Posterior chain, hip abduction, knee rehab (front-loaded) |
-| `dayB` | Tuesday (2) | Upper A | Pull, rear delt |
-| `dayC` | Thursday (4) | Lower B + Power | Quad/knee strength merged with tempo power + lateral stability (ski) |
-| `dayD` | Friday (5) | Upper B | Push, chest, shoulders |
+| `dayA` | Monday (1) | Lower A | Posterior chain, hip abduction, knee rehab |
+| `dayB` | Wednesday (3), odd weeks | Upper A | Pull, rear delt |
+| `dayD` | Wednesday (3), even weeks | Upper B | Push, chest, shoulders (volume cut ~30% Sept 2026) |
+| `dayC` | Friday (5) | Lower B — Ski Core-5 | Quad/eccentric/lateral ski prep; hard 6-movement priority order |
 
-`dayE` (Saturday Athletic) removed Jul 2026 — folded into `dayC`. Saturday now defaults to rest/active. Since `dayE` is gone from `WORKOUT_PLAN`, it is no longer a swap option (the swap picker maps over `WORKOUT_PLAN`); re-add `dayE` if a dedicated Athletic day is wanted again.
+Wednesday holds a single upper slot that alternates by program week — see `resolveDayAssignment()` below. Tuesday and Thursday default to a Conditioning prompt (not a workout); Sat/Sun to rest.
+
+`dayE` (Saturday Athletic) removed Jul 2026 — folded into `dayC`. Since `dayE` is gone from `WORKOUT_PLAN` it is no longer a swap option (the swap picker maps over `WORKOUT_PLAN`); re-add `dayE` if a dedicated Athletic day is wanted again. `e2` (Hip 90/90) was the only fully-dropped exercise and its id is retired — **do not reuse it**; `e13` (Skater Bound, added Sept 2026) is the highest id in use.
 
 Exercise tags: `knee`, `hip`, `upper`, `power`, `mob`, `core`
 

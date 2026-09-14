@@ -8,6 +8,12 @@ Ideas and open questions that aren't scheduled yet. Nothing here is committed. I
 
 **Running ramp guard** ✓ Shipped in Phase 4 — `run_logs` Supabase table, 10% week-over-week check, displayed on Progress tab.
 
+**HR / ascent as real columns on `run_logs`**
+The Garmin importer packs avg HR and total ascent into the `notes` string to avoid a schema change. That's fine for reading, useless for analysis — an intensity-distribution chart (time in Zone 1–5) would have caught the grey-zone training pattern months earlier, and it's the single most useful cardio view for ski prep. Needs `avg_hr`, `max_hr`, `ascent` columns plus a max-HR setting to compute zones from. Worth doing if the importer becomes a habit.
+
+**Garmin auto-sync instead of CSV paste**
+The CSV paste is ~30 seconds a week, which is probably fine. Garmin has an OAuth API but it needs a server-side component to hold the secret — incompatible with the no-backend design. Alternatives: Garmin's scheduled email export, or a Health Connect / Apple Health bridge. Not worth it unless the paste starts getting skipped.
+
 **Bodyweight logging**
 Periodic weigh-ins to track "lean athletic build" goal over time. Probably just a number + date, shown as a trend line on the progress tab. Low priority — the training data matters more.
 
@@ -35,6 +41,15 @@ Push or local notifications to remind on workout days. Requires a service worker
 ---
 
 ## Technical Debt & Open Questions
+
+**Program weeks run Tue–Mon**
+`program_start_date` is 2026-06-09, which was a Tuesday, so `getProgramWeek()` rolls the week number over on Tuesdays rather than Mondays. Harmless but mildly confusing — on Mon Sept 14 the home screen showed Week 14 while the `program.json` plan for that training week was labelled Week 15. Options: (a) leave it, (b) snap the week boundary to Monday regardless of start date, (c) change the start date to 2026-06-08. Only matters cosmetically, and it now also shifts the Wednesday upper-day rotation boundary (which is fine, since Wednesday always falls in the same program week as the Friday after it).
+
+**Hip abduction (`a5`) never progressed**
+Sat at 20 lbs from June to September — the one unmet Phase I gate, and the cause was simply that the target was never raised, not readiness. Committed to 25 in Week 15. Worth watching: Isaac's note that the *standing* leg is the limiter means the cable version is functionally a stance-stability drill. If 25 → 30 stalls again, consider a seated abduction machine for direct loading alongside keeping the cable version for stability.
+
+**`c7` / `a12` PR records will jump when load is added**
+Both step-down variants have logged `weight: "0"` since June and now get DBs (15 and 10 lbs). `saveExLogs()` will record that as a new PR, which is correct but makes the progress chart look like a step change rather than a progression. No action needed; noting it so the chart isn't misread later.
 
 **Anon key in source**
 The Supabase anon key is embedded in `index.html`, which is public. For a personal single-user app with only anon access, this is low risk — but Row Level Security (RLS) should be reviewed on the Supabase side to ensure only appropriate operations are possible with the anon key.

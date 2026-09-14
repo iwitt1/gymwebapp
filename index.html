@@ -469,7 +469,18 @@ canvas { width: 100% !important; border-radius: 6px; }
   text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
 }
 .coaching-note-week { color: var(--accent-dim); }
-.coaching-note-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.coaching-note-text {
+  font-size: 13px; color: var(--text-dim); line-height: 1.6;
+  /* Clamp so a long check-in note can't push the day cards off screen.
+     Full text is one tap away (the block opens Settings). */
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+.coaching-note-text.expanded { -webkit-line-clamp: unset; }
+.coaching-note-more {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent-dim); margin-top: 8px;
+}
 
 /* ── SKI COUNTDOWN ── */
 .ski-banner {
@@ -592,12 +603,13 @@ canvas { width: 100% !important; border-radius: 6px; }
         <div class="ski-sub">Nov 1 target — train accordingly</div>
       </div>
     </div>
-    <div class="coaching-note-block" id="coachingNoteBlock" style="display:none" onclick="openSettings()">
+    <div class="coaching-note-block" id="coachingNoteBlock" style="display:none" onclick="toggleCoachingNote()">
       <div class="coaching-note-label">
         <span>Coaching Note</span>
         <span class="coaching-note-week" id="coachingWeekLabel"></span>
       </div>
       <div class="coaching-note-text" id="coachingNoteText"></div>
+      <div class="coaching-note-more" id="coachingNoteMore" style="display:none">Read more ›</div>
     </div>
     <div class="section-head" style="margin-top:16px">This Week</div>
     <div class="day-list" id="dayList"></div>
@@ -702,6 +714,12 @@ canvas { width: 100% !important; border-radius: 6px; }
     <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Paste the targets JSON Claude gives you. Shows a 🎯 target on each exercise and pre-fills the recommended load. Leave blank to keep the current targets.</div>
     <div id="settingsTargetsStatus" style="font-size:11px;color:var(--accent-dim);margin-bottom:6px"></div>
     <textarea class="ex-notes-area" id="settingsTargets" placeholder='{"week":2,"targets":{"b4":{"weight":"100","reps":"12","note":"..."}}}' style="min-height:100px;margin-bottom:20px;font-family:DM Mono,monospace;font-size:11px"></textarea>
+
+    <div class="stat-label" style="margin-bottom:6px">Import Garmin CSV</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Garmin Connect → Activities → the export icon (top right) → paste the whole CSV here. Duplicates are skipped, so re-pasting the same export is safe. Strength/weight-training rows are ignored.</div>
+    <div id="settingsImportStatus" style="font-size:11px;color:var(--text-muted);margin-bottom:6px"></div>
+    <textarea class="ex-notes-area" id="settingsGarminCsv" placeholder="Activity Type,Date,Favorite,Title,Distance,Calories,Time,Avg HR,..." style="min-height:80px;margin-bottom:8px;font-family:DM Mono,monospace;font-size:10px"></textarea>
+    <button class="modal-btn" onclick="importGarminCsv()" style="width:100%;margin-bottom:20px">Import Activities</button>
 
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('settingsModal')">Cancel</button>
@@ -832,10 +850,10 @@ const WORKOUT_PLAN = [
     id: 'dayB',
     name: 'Upper A',
     subtitle: 'Pull & Rear Delt',
-    day: 'Tue',
-    duration: '55–70 min',
+    day: 'Wed',
+    duration: '50–60 min',
     type: 'upper',
-    focus: 'Pull-dominant day: builds upper back and rear deltoids essential for shoulder health, posture, and the broad-shouldered look. Strong pulling also protects the shoulder joint for overhead mobility work.',
+    focus: 'Pull-dominant day: builds upper back and rear deltoids essential for shoulder health, posture, and the broad-shouldered look. Strong pulling also protects the shoulder joint for overhead mobility work. On the 3-day week this alternates with Upper B (push) — this is the ODD program-week session. Rear-delt row and curls moved ahead of the cable block so they stop getting cut.',
     blocks: [
       {
         label: 'Warmup — 8 min',
@@ -853,17 +871,17 @@ const WORKOUT_PLAN = [
         ]
       },
       {
-        label: 'Block 2 — Cable Rack (work b7 + b8 in together)',
+        label: 'Block 2 — DBs + Bench (work b6 + b9 in together)',
         exercises: [
-          { id:'b7', name:'Face Pull (cable, rope)', sets:'3×15', tempo:'1-2-1', tags:['upper'], targetSets:3, cue:'End position: hands beside ears, elbows high. 2-sec hold. Shoulder health insurance. Light load, perfect form. Alternate at the rack with b8.' },
-          { id:'b8', name:'Cable Straight-Arm Pulldown', sets:'3×12', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Hinge slightly at the hips, arms start overhead. Sweep down like closing a cape. Great lat isolation that also trains the overhead lengthened position. Do the lat stretch (b10) after for the top range.' }
+          { id:'b6', name:'DB Chest-Supported Row', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'MOVED AHEAD OF THE CABLE BLOCK — this got cut at the end of your last two short sessions, and it is the rear-delt work you asked me to protect. ELBOWS OUT (wider than a standard row) — rear delt, not lats. Don\'t shrug. Grab DBs + bench, alternate with b9.' },
+          { id:'b9', name:'DB Hammer Curl', sets:'3×12', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Neutral grip (thumbs up), full range. Brace the core (back twinged at 25 before). Same DBs as b6.' }
         ]
       },
       {
-        label: 'Block 3 — DBs + Bench (work b6 + b9 in together)',
+        label: 'Block 3 — Cable Rack (work b7 + b8 in together)',
         exercises: [
-          { id:'b6', name:'DB Chest-Supported Row', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'ELBOWS OUT (wider than a standard row) — hits rear delt, not lats. Don\'t shrug. Settled at 35 per your call; chase 12 clean before 40. Grab DBs + bench, alternate with b9.' },
-          { id:'b9', name:'DB Hammer Curl', sets:'3×12', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Neutral grip (thumbs up), full range. Brace the core (back twinged at 25 before). Same DBs as b6.' }
+          { id:'b7', name:'Face Pull (cable, rope)', sets:'3×15', tempo:'1-2-1', tags:['upper'], targetSets:3, cue:'End position: hands beside ears, elbows high. 2-sec hold. Shoulder health insurance. Light load, perfect form. Alternate at the rack with b8.' },
+          { id:'b8', name:'Cable Straight-Arm Pulldown', sets:'3×12', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Hinge slightly at the hips, arms start overhead. Sweep down like closing a cape. Great lat isolation that also trains the overhead lengthened position. Do the lat stretch (b10) after for the top range.' }
         ]
       },
       {
@@ -878,61 +896,62 @@ const WORKOUT_PLAN = [
   {
     id: 'dayC',
     name: 'Lower B',
-    subtitle: 'Quad, Knee & Power (Ski)',
-    day: 'Thu',
-    duration: '55–75 min',
+    subtitle: 'Ski Prep — Quad & Lateral',
+    day: 'Fri',
+    duration: '45–55 min',
     type: 'lower',
-    focus: 'Quad strength for the PT torque goal (leg press) + tempo-contrast power and the ski-specific lateral work from the old Athletic day. Re-ordered so the lateral/ski moves come right after the power block — they kept getting skipped at the end. Keep it tight (superset by station), 55–75 min. The Optional block is only if you\'re under time.',
+    focus: 'PHASE II (ski prep). This day failed three times in a row on the old structure — the leg press and all the lateral work got cut at the end. So it is now a hard CORE 5: short warmup, then bounds → leg press → lateral step-up → step-down → wall sit → band walk, in that order. Do those and the day is a success; everything else is Optional and genuinely optional. The four demands of a ski day are eccentric quad, frontal-plane strength, quad endurance, and aerobic capacity — this session covers the first three.',
     blocks: [
       {
-        label: 'Warmup — 8 min (open floor + mat)',
+        label: 'Warmup — 5 min (keep it short, the session is the point)',
         exercises: [
-          { id:'c1', name:'Stationary Bike (easy)', sets:'5 min', tempo:'low resist', tags:[], cue:'Warm up the joint. Not a workout.' },
-          { id:'c2', name:'Standing Quad Stretch', sets:'2×30 sec/side', tempo:'static', tags:['knee'], cue:'Pull heel to glute, hip forward. Feel the stretch at the front of the thigh, not the knee.' },
-          { id:'c3', name:'Ankle Dorsiflexion — Knee to Wall', sets:'2×10/side', tempo:'slow', tags:['knee'], cue:'Same as Lower A. Track progress with tape marks on floor.' },
-          { id:'c4', name:'Half-Kneeling Hip Flexor Stretch', sets:'2×45 sec/side', tempo:'breathe', tags:['hip'], cue:'Back knee on pad. Tuck pelvis slightly. Don\'t lean forward — push the hip forward instead. Stretches hip flexors that pull the patella upward.' },
+          { id:'e1', name:'Lateral Shuffle (bodyweight)', sets:'3×30 sec', tempo:'controlled', tags:['power'], cue:'Low athletic stance, 5 steps each direction. Stay low, don\'t cross feet. Raises heart rate AND primes the frontal plane — this replaces the bike here.' },
           { id:'e3', name:'World\'s Greatest Stretch', sets:'5/side', tempo:'slow and reaching', tags:['mob'], cue:'Lunge + rotation + overhead reach. Best single warmup drill for your sports. Integrates hip flexor, thoracic rotation, and ankle.' },
-          { id:'e1', name:'Lateral Shuffle (bodyweight)', sets:'3×30 sec', tempo:'controlled', tags:['power'], cue:'Low athletic stance, 5 steps each direction. Stay low, don\'t cross feet. Reactivates lateral movement for skiing.' }
+          { id:'c3', name:'Ankle Dorsiflexion — Knee to Wall', sets:'2×10/side', tempo:'slow', tags:['knee'], cue:'Drive knee past pinky toe. Keep the tape marks — ankle range is what lets the knee track. Bare feet or thin soles.' }
         ]
       },
       {
-        label: 'Block 1 — Power / DBs (work e4 + e5 in together)',
+        label: 'CORE 1 — Ski Power (open floor)',
         exercises: [
-          { id:'e4', name:'Goblet Squat (Tempo Contrast)', sets:'4×6', tempo:'4-0-X', tags:['power'], targetSets:4, cue:'Hold your 25 baseline. 4 seconds down, then EXPLODE up. Slow eccentric = deceleration (skiing), explosive up = fast-twitch. Pain-free depth only, no heel rise. Grab DBs/KB and alternate with e5.' },
-          { id:'e5', name:'DB Deadlift (Tempo Contrast)', sets:'4×5', tempo:'3-0-X', tags:['power'], targetSets:4, cue:'25/arm. 3 seconds to lower, explosive hip snap up (think hips, not the arm pull). Same DBs as e4.' }
+          { id:'e13', name:'Skater Bound (lateral hop + stick)', sets:'3×6/side', tempo:'explode, stick 1 sec', tags:['power','knee'], targetSets:3, cue:'NEW — replaces the goblet squat / DB deadlift power block. Push off one leg, land SIDEWAYS on the other, stick the landing for a full second with the knee over the 2nd toe. This is the closest thing in the program to an actual ski turn: lateral force production plus eccentric landing control, with zero load on your spine. Start with a short hop and only go wider once every landing is silent and stable. Bodyweight — never add load. If a landing wobbles, shorten the hop.' }
         ]
       },
       {
-        label: 'Block 2 — Quad Strength (Leg Press)',
+        label: 'CORE 2 — Quad Strength (leg press)',
         exercises: [
-          { id:'c5', name:'Single-Leg Leg Press', sets:'4×10/side', tempo:'2-1-3', tags:['knee'], targetSets:4, cue:'3-count eccentric, stay at/under 90°, foot tripod. Start the LEFT leg each set. This is the Phase II gate lift — return week at 80, back to 90 next week.' }
+          { id:'c5', name:'Single-Leg Leg Press', sets:'3×10/side', tempo:'2-1-3', tags:['knee'], targetSets:3, cue:'THE gate lift — if you only get one thing done today, this is it. Cut to 3 sets so it actually happens. 3-count eccentric (that slow lower IS the ski adaptation), stay at/under 90°, foot tripod, start the LEFT leg every set.' }
         ]
       },
       {
-        label: 'Block 3 — Lateral & Knee / Box (work e9 + c7 in together)',
+        label: 'CORE 3 — Box (work e9 + c7 in together, same box)',
         exercises: [
-          { id:'e9', name:'Lateral Step-Up', sets:'3×8/side', tempo:'controlled up, slow lower', tags:['power'], targetSets:3, cue:'MOVED EARLIER (right after power) so it stops getting skipped. Step SIDEWAYS onto a 4–6in box, push through the working leg, slow lower. Ski-turn force production. Same box as c7.' },
-          { id:'c7', name:'Box Step-Up (eccentric step-down focus)', sets:'3×8/side', tempo:'4-sec lower', tags:['knee'], targetSets:3, cue:'Step UP normal, step DOWN 4 full seconds — the down phase is therapeutic. Knee over 2nd toe, kill the left wobble. Same box as e9. Add weight before height.' }
+          { id:'e9', name:'Lateral Step-Up', sets:'3×8/side', tempo:'controlled up, slow lower', tags:['power'], targetSets:3, cue:'Step SIDEWAYS onto a 4–6in box, drive through the working leg, slow lower. Ski-turn force production. Alternate sets with c7 on the same box.' },
+          { id:'c7', name:'Box Step-Up (eccentric step-down focus)', sets:'3×8/side', tempo:'4-sec lower', tags:['knee'], targetSets:3, cue:'Step UP normal, step DOWN 4 full seconds — the down phase is the therapeutic part. Knee over the 2nd toe, kill the left wobble. Same box as e9. You have held 18in bodyweight since June and it is clean — time to add load, not height.' }
         ]
       },
       {
-        label: 'Block 4 — Ski & Core Finisher (floor/mat)',
+        label: 'CORE 4 — Quad Endurance + Hip (wall + floor)',
         exercises: [
-          { id:'e7', name:'Lateral Band Walk + Squat', sets:'3×10 reps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'MOVED EARLIER. Yellow band at the ankles: 2 steps sideways, squat, 2 back. Toes forward, full tripod. Most ski-specific pattern in the program.' },
-          { id:'e11', name:'Copenhagen Plank (modified)', sets:'3×20 sec/side', tempo:'isometric', tags:['hip','core'], targetSets:3, cue:'Side plank, top foot on bench, bottom knee down (Phase 1). Quick core finisher. Integrates adduction into core stability. PT-recommended.' }
+          { id:'c8', name:'Shallow Wall Sit', sets:'3×45–60 sec', tempo:'isometric', tags:['knee'], targetSets:3, cue:'PROMOTED out of Optional — you have not done this since July 10 and it is the most ski-specific thing you own. A ski run is a sustained flexed-knee isometric; this trains exactly that. Hold 60°, build toward 60 sec, then go 5° deeper. Pain-free is mandatory.' },
+          { id:'e7', name:'Lateral Band Walk + Squat', sets:'3×10 reps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'Yellow band at the ankles: 2 steps sideways, squat, 2 back. Toes forward, full tripod. Glute med — the fix for the left-knee wobble. Last of the Core 5, so this is the one to drop if you are truly out of time.' }
         ]
       },
       {
         label: 'Optional / rotate — only if under time',
         exercises: [
-          { id:'c6', name:'Single-Leg Leg Extension', sets:'3×12–15/side', tempo:'2-2-3', tags:['knee'], targetSets:3, cue:'Optional now (c5 + goblet cover the quad, and the SAQ hits the VMO on Monday). 2-sec hold at full extension, lead left.' },
+          { id:'e11', name:'Copenhagen Plank (modified)', sets:'3×20 sec/side', tempo:'isometric', tags:['hip','core'], targetSets:3, cue:'Optional. Side plank, top foot on bench, bottom knee down. Adduction + core stability. PT-recommended — best of the optional block if you have 3 minutes.' },
+          { id:'c6', name:'Single-Leg Leg Extension', sets:'3×12–15/side', tempo:'2-2-3', tags:['knee'], targetSets:3, cue:'Optional (c5 covers the quad and the Short-Arc Quad hits the VMO on Monday). 2-sec hold at full extension, lead left.' },
+          { id:'e4', name:'Goblet Squat (Tempo Contrast)', sets:'4×6', tempo:'4-0-X', tags:['power'], targetSets:4, cue:'MOVED TO OPTIONAL. At 25–30 lbs this was not a leg stimulus for someone who leg-presses 90/side — you logged "incredibly easy for legs" — and the limiter was your mid-back, not your quads. The skater bound (e13) now covers the power slot without loading your spine. Keep this as a hinge/squat pattern refresher at light load if you want it.' },
+          { id:'e5', name:'DB Deadlift (Tempo Contrast)', sets:'4×5', tempo:'3-0-X', tags:['power'], targetSets:4, cue:'MOVED TO OPTIONAL — same reason as e4 (you felt it in the mid-back at 25/arm while the legs were unchallenged). Monday\'s kickstand RDL is your hinge work now. If you do it, brace hard first and keep the DBs close to the shins.' },
+          { id:'c2', name:'Standing Quad Stretch', sets:'2×30 sec/side', tempo:'static', tags:['knee'], cue:'Moved out of the warmup — long static holds before lifting blunt force output. Better here as a cooldown. Pull heel to glute, hip forward, stretch at the thigh not the knee.' },
+          { id:'c4', name:'Half-Kneeling Hip Flexor Stretch', sets:'2×45 sec/side', tempo:'breathe', tags:['hip'], cue:'Moved out of the warmup for the same reason — use it as a cooldown. Back knee on pad, tuck the pelvis, push the hip forward instead of leaning.' },
+          { id:'c1', name:'Stationary Bike (easy)', sets:'5 min', tempo:'low resist', tags:[], cue:'Optional now — the lateral shuffle warms you up faster. Better used as a 20–30 min Zone 2 cooldown ride, which also gets your cardio logged.' },
           { id:'e8', name:'Single-Leg Balance Reach (Star Excursion)', sets:'2×5 reaches each dir/side', tempo:'slow', tags:['knee'], targetSets:2, cue:'Optional. Stand on one leg, reach the other foot forward/side/back. LEFT leg priority. Close eyes if easy.' },
           { id:'c11', name:'Romanian Deadlift (DB)', sets:'3×10', tempo:'3-1-1', tags:['hip'], targetSets:3, cue:'Optional — Monday\'s kickstand RDL already covers the posterior chain. 20/hand, big-toe-side pressure, soft knees.' },
-          { id:'c8', name:'Shallow Wall Sit', sets:'3×30–45 sec', tempo:'isometric', tags:['knee'], targetSets:3, cue:'Optional. Isometric quad loading at 60° (not full depth). Progress 5° deeper/week. Pain-free is mandatory.' },
           { id:'c9', name:'Reverse Lunge', sets:'3×10/side', tempo:'2-1-2', tags:['knee'], targetSets:3, cue:'Optional. Knee-friendly (force goes backward). Torso upright, front foot on the tripod.' },
           { id:'c10', name:'Banded Lateral Walk (monster walk)', sets:'3×12 steps/side', tempo:'controlled', tags:['hip'], targetSets:3, cue:'Optional — covered by e7 above, add it if the hips need more. Don\'t let knees cave, deliberate full steps.' },
           { id:'e6', name:'Medicine Ball Slam', sets:'3×8', tempo:'max effort', tags:['power'], targetSets:3, cue:'Optional power finisher. Full overhead reach, slam with full force, hinge to pick up. No jumping.' },
-          { id:'e10', name:'Pallof Press (cable or band)', sets:'3×10/side', tempo:'2-sec hold each', tags:['core'], targetSets:3, cue:'Optional anti-rotation core. Perpendicular to the cable, press out, hold 2 sec. Spine resists rotation.' },
+          { id:'e10', name:'Pallof Press (cable or band)', sets:'3×10/side', tempo:'2-sec hold each', tags:['core'], targetSets:3, cue:'Optional anti-rotation core. Perpendicular to the cable, press out, hold 2 sec. Spine resists rotation — directly relevant to your recurring low-back complaints.' },
           { id:'e12', name:'Stir the Pot (Swiss ball)', sets:'3×8 circles each way', tempo:'slow', tags:['core'], targetSets:3, cue:'Optional. Forearms on the ball, plank, small circles. Hips level, don\'t rock side to side.' }
         ]
       }
@@ -942,10 +961,10 @@ const WORKOUT_PLAN = [
     id: 'dayD',
     name: 'Upper B',
     subtitle: 'Push, Chest & Shoulders',
-    day: 'Fri',
-    duration: '55–70 min',
+    day: 'Wed',
+    duration: '45–55 min',
     type: 'upper',
-    focus: 'Push-dominant day targets the chest and shoulder development you\'re after. Cable and dumbbell variations that are solo-safe with better range for chest activation. Shoulders get volume through lateral raises and overhead pressing.',
+    focus: 'Push-dominant day targets the chest and shoulder development you\'re after. Cable and dumbbell variations that are solo-safe with better range. SHOULDER VOLUME CUT ~30% this block: lateral raise to 3 sets, cable lateral raise and overhead tricep extension both moved to Optional, overhead press capped at 40 with a 2-set stop rule. Three shoulder complaints in one session is the signal to back off, not push. On the 3-day week this alternates with Upper A (pull) — this is the EVEN program-week session.',
     blocks: [
       {
         label: 'Warmup — 8 min',
@@ -958,24 +977,29 @@ const WORKOUT_PLAN = [
       {
         label: 'Block 1 — DBs + Bench (work d4 + d7 + d6 in together)',
         exercises: [
-          { id:'d4', name:'Incline DB Press', sets:'4×10–12', tempo:'2-1-2', tags:['upper'], targetSets:4, cue:'Do it FIRST, fresh. Upper chest + front delt, full range, elbows ~45°. No tendon signal in 4 weeks — chase 12, then 35. STOP the set at any tendon signal. Grab DBs + bench; work d7 and d6 in on the same setup.' },
-          { id:'d7', name:'DB Lateral Raise', sets:'4×15', tempo:'2-1-2', tags:['upper'], targetSets:4, cue:'Fix the LEFT shrug — long neck, lead with the elbow, pinky slightly high. Load comes after control. Same DBs as d4.' },
+          { id:'d4', name:'Incline DB Press', sets:'4×10–12', tempo:'2-1-2', tags:['upper'], targetSets:4, cue:'Do it FIRST, fresh. Upper chest + front delt, full range, elbows ~45°. You hit 35×12 across all 4 sets with no tendon signal — that is a clean PR, hold it and add reps before load. STOP the set at any tendon signal. Grab DBs + bench; work d7 and d6 in on the same setup.' },
+          { id:'d7', name:'DB Lateral Raise', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'CUT from 4 sets to 3 — your shoulder was giving you three separate complaints last session. Fix the LEFT shrug: long neck, lead with the elbow, pinky slightly high. You already found that fewer reps fixed the shrug, so stop the set when form breaks rather than grinding to 15. Same DBs as d4.' },
           { id:'d6', name:'Push-Up (feet elevated)', sets:'2×max', tempo:'controlled', tags:['upper'], targetSets:2, cue:'Feet on the same bench, hands on floor = upper chest. Full range, elbows ~45°. Add a vest when you clear 20. Work these in between d4/d7 sets.' }
         ]
       },
       {
         label: 'Block 2 — Machine',
         exercises: [
-          { id:'d8', name:'Shoulder Press (converging machine, neutral grip)', sets:'3×10', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'NEUTRAL/hammer grip only — protects the left tricep tendon. Combined machine load. DBs made you arch last time, so machine is the primary; DB seated only if it\'s taken. Don\'t arch or shrug. Slot this in between the DB and cable clusters.' }
+          { id:'d8', name:'Shoulder Press (converging machine, neutral grip)', sets:'2–3×10', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'HARD STOP RULE: at 45 you got left lower-trap and right-elbow-at-the-tendon in the same session. Hold 40 and stop at 2 sets the moment you feel either. Getting 2 clean sets is a better outcome than 3 with a signal. NEUTRAL/hammer grip only. Machine is primary; DB seated only if it is taken (DBs made you arch).' }
         ]
       },
       {
-        label: 'Block 3 — Cable Rack (work d5 + d9 + d10 + d11 in together)',
+        label: 'Block 3 — Cable Rack (work d5 + d10 in together)',
         exercises: [
-          { id:'d5', name:'Cable Chest Fly (low cable)', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'CABLE, 35/arm. Slight fixed elbow bend, squeeze like hugging a tree. Pec-fly machine is a fine sub for availability but DON\'T log it as the cable PR. Just swap the attachment for d9/d10/d11.' },
-          { id:'d9', name:'Cable Lateral Raise (single arm)', sets:'3×12/side', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Constant tension — harder at the bottom than the DB version. Elbow slightly bent throughout. Lead LEFT, match reps right to left.' },
-          { id:'d10', name:'Tricep Pushdown (cable, rope)', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Elbows pinned, full extension, split the rope at the bottom. Pain-free — chase 15, then 50.' },
-          { id:'d11', name:'Overhead Tricep Extension (cable or DB)', sets:'3×12', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'REINTRODUCING carefully — light CABLE (constant tension, gentler than DB). You\'ve earned it with ~4 pain-free weeks. Long head of the triceps, elbows close. STOP at the first tendon signal and hit the Skipped/Pain flag if it twinges.' }
+          { id:'d5', name:'Cable Chest Fly (low cable)', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'CABLE, 30/arm. Slight fixed elbow bend, squeeze like hugging a tree. Pec-fly machine is a fine sub for availability but DON\'T log it as the cable PR. Swap the attachment for d10.' },
+          { id:'d10', name:'Tricep Pushdown (cable, rope)', sets:'3×12–15', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'Your most reliable lift — 50×15 clean, zero tendon signal, ever. Elbows pinned, full extension, split the rope at the bottom. This is now your ONLY direct tricep work and that is fine. Chase 55.' }
+        ]
+      },
+      {
+        label: 'Optional / rotate — only if under time and the shoulder is quiet',
+        exercises: [
+          { id:'d9', name:'Cable Lateral Raise (single arm)', sets:'2×12/side', tempo:'2-1-2', tags:['upper'], targetSets:2, cue:'MOVED TO OPTIONAL and cut to 2 sets — d7 already covers lateral delt, and stacking both is what left your shoulder "beat". Only do this if the shoulder felt good all session. Constant tension, elbow slightly bent, lead LEFT.' },
+          { id:'d11', name:'Overhead Tricep Extension (cable or DB)', sets:'3×12', tempo:'2-1-2', tags:['upper'], targetSets:3, cue:'RETIRED to Optional. This has not been completed once since May 30 — skipped or dropped every session for four months — and it is the movement that started the tendon problem. Pushdowns (d10) cover the triceps fine, including the long head well enough for your goals. Leaving it here so the history is intact; try it again only after a long quiet stretch, light cable, and stop at the first signal.' }
         ]
       }
     ]
@@ -1191,6 +1215,21 @@ async function refreshCardioLogs() {
   }
 }
 
+// Bulk variant for the Garmin importer — one round trip instead of N.
+async function saveCardioLogsBulk(entries) {
+  const cached = cacheGet('run_logs') || [];
+  cacheSet('run_logs', [...entries, ...cached]);
+  try {
+    await db.upsert('run_logs', entries.map(e => ({
+      id: e.id, date: e.date, type: e.type,
+      miles: e.miles ?? null, minutes: e.minutes ?? null, notes: e.notes || null
+    })));
+  } catch(e) {
+    console.error('Bulk cardio import failed to sync:', e);
+    showToast('⚠ Imported locally — sync failed');
+  }
+}
+
 async function saveCardioLog(entry) {
   const cached = cacheGet('run_logs') || [];
   cached.unshift(entry);
@@ -1363,8 +1402,40 @@ let restTotal = 0;
 // WEEK SCHEDULE FLEXIBILITY
 // ═══════════════════════════════════════════════
 
-// Default mapping: JS day index → workout ID
-const DEFAULT_DAY_MAP = { 1:'dayA', 2:'dayB', 4:'dayC', 5:'dayD' };
+// Default mapping: JS day index → workout ID.
+// 3-day week (Phase II, Week 15): Mon Lower A, Wed Upper (alternating), Fri Lower B.
+// The 'upper' sentinel is resolved per program week by resolveDayAssignment()
+// so pull (dayB) and push (dayD) each get trained every other week without a
+// manual swap. Both lower days are ski-critical, so they stay weekly.
+const DEFAULT_DAY_MAP = { 1:'dayA', 3:'upper', 5:'dayC' };
+
+// Upper-day rotation for the shared Wednesday slot. Odd program weeks pull,
+// even program weeks push.
+const UPPER_ROTATION = ['dayB', 'dayD'];
+
+// Synchronous program-week read. getProgramWeek() needs an awaited config, but
+// the home render resolves day assignments before that resolves — so read the
+// start date straight out of the localStorage caches instead.
+function getProgramWeekSync() {
+  const p = cacheGet('program_json');
+  const cfg = cacheGet('app_config') || {};
+  const startStr = (p && p.start_date) || cfg.program_start_date || '2026-06-09';
+  const start = new Date(startStr + 'T00:00:00');
+  const diffDays = Math.floor((new Date() - start) / 86400000);
+  if (diffDays < 0) return null;
+  return Math.floor(diffDays / 7) + 1;
+}
+
+function getUpperDayForWeek() {
+  const wk = getProgramWeekSync();
+  if (wk === null) return UPPER_ROTATION[0];
+  return UPPER_ROTATION[(wk - 1) % UPPER_ROTATION.length];
+}
+
+// Turns a raw assignment (which may be the 'upper' sentinel) into a real value.
+function resolveDayAssignment(val) {
+  return val === 'upper' ? getUpperDayForWeek() : val;
+}
 
 // Knee & hip exercise ID sets (for rehab cards)
 const KNEE_EX_IDS = new Set(['a3','a7','a8','a10','a11','a12','a13','c2','c3','c5','c6','c7','c8','c9','e8']);
@@ -1392,9 +1463,9 @@ function setWeekScheduleDay(dayIndex, val) {
 // Returns: workout ID string, 'active', 'rest', or null (null = default rest)
 function getEffectiveDayAssignment(dayIndex) {
   const sched = getWeekSchedule();
-  if (String(dayIndex) in sched) return sched[String(dayIndex)];
-  if (dayIndex in sched) return sched[dayIndex];
-  return DEFAULT_DAY_MAP[dayIndex] || null;
+  if (String(dayIndex) in sched) return resolveDayAssignment(sched[String(dayIndex)]);
+  if (dayIndex in sched) return resolveDayAssignment(sched[dayIndex]);
+  return resolveDayAssignment(DEFAULT_DAY_MAP[dayIndex] || null);
 }
 
 // ═══════════════════════════════════════════════
@@ -1458,7 +1529,14 @@ async function renderHome() {
   const coachingNote = config.coaching_note;
   const noteBlock = document.getElementById('coachingNoteBlock');
   if (coachingNote) {
-    document.getElementById('coachingNoteText').textContent = coachingNote;
+    const noteEl = document.getElementById('coachingNoteText');
+    noteEl.textContent = coachingNote;
+    noteEl.classList.remove('expanded');
+    // Only offer "Read more" if the text is actually being clipped
+    requestAnimationFrame(() => {
+      const clipped = noteEl.scrollHeight > noteEl.clientHeight + 2;
+      document.getElementById('coachingNoteMore').style.display = clipped ? 'block' : 'none';
+    });
     document.getElementById('coachingWeekLabel').textContent = week ? `Week ${week}` : '';
     noteBlock.style.display = 'block';
   } else {
@@ -1541,7 +1619,11 @@ async function renderHome() {
       card.onclick = () => openWorkout(workout.id);
     } else {
       // Active or rest day
-      const defaultDesc = wd.d === 3 ? 'Active Recovery — Bike or Walk + Mobility' : 'Rest Day — Easy Walk OK';
+      // Tue/Thu are the between-lift conditioning slots on the 3-day week —
+      // ski prep needs aerobic work and none has been logged in two months.
+      const defaultDesc = (wd.d === 2 || wd.d === 4)
+        ? 'Conditioning — Zone 2 bike / stairs (log it)'
+        : 'Rest Day — Easy Walk OK';
       const displayDesc = latestActivity ? latestActivity.activity : defaultDesc;
       const extraCount = dayActivities.length > 1 ? `<div class="activity-logged">+${dayActivities.length - 1} more logged</div>` : '';
       card.innerHTML = `
@@ -1561,6 +1643,17 @@ async function renderHome() {
     }
     list.appendChild(card);
   });
+}
+
+// Coaching notes from a check-in can run long, so the home-screen block clamps
+// to 4 lines. Tapping it expands/collapses in place (the gear icon is still the
+// way to Settings, where the note is editable).
+function toggleCoachingNote() {
+  const noteEl = document.getElementById('coachingNoteText');
+  const moreEl = document.getElementById('coachingNoteMore');
+  const expanded = noteEl.classList.toggle('expanded');
+  moreEl.textContent = expanded ? 'Show less ›' : 'Read more ›';
+  moreEl.style.display = 'block';
 }
 
 function isThisWeek(date) {
@@ -1865,7 +1958,7 @@ function openSwapModal(dayIndex, dayLabel, dateStr, event) {
 
   const current = getEffectiveDayAssignment(dayIndex);
   const isOverridden = String(dayIndex) in getWeekSchedule() || dayIndex in getWeekSchedule();
-  const defaultVal = DEFAULT_DAY_MAP[dayIndex] || null;
+  const defaultVal = resolveDayAssignment(DEFAULT_DAY_MAP[dayIndex] || null);
   const defaultWorkout = defaultVal ? WORKOUT_PLAN.find(w => w.id === defaultVal) : null;
 
   const opts = [
@@ -1983,6 +2076,16 @@ async function openSettings() {
     statusEl.textContent = 'No targets loaded yet';
     statusEl.style.color = 'var(--text-muted)';
   }
+
+  // Garmin import box starts clean each time, with a count of what's stored
+  document.getElementById('settingsGarminCsv').value = '';
+  const impEl = document.getElementById('settingsImportStatus');
+  getCardioLogs().then(logs => {
+    impEl.style.color = 'var(--text-muted)';
+    impEl.textContent = logs.length
+      ? `${logs.length} cardio session${logs.length === 1 ? '' : 's'} logged`
+      : 'No cardio logged yet';
+  });
 
   document.getElementById('settingsModal').classList.add('open');
   setTimeout(() => document.getElementById('settingsCoachingNote').focus(), 250);
@@ -2638,11 +2741,14 @@ function drawBarChart(canvasId, labels, data, color, maxVal) {
 const CARDIO_TYPES = [
   { id: 'run',          label: 'Run' },
   { id: 'cycle',        label: 'Cycle' },
+  { id: 'hike',         label: 'Hike' },
   { id: 'stair',        label: 'Stair Stepper' },
   { id: 'row',          label: 'Row' },
   { id: 'elliptical',   label: 'Elliptical' },
   { id: 'incline_walk', label: 'Incline Walk' },
   { id: 'swim',         label: 'Swim' },
+  { id: 'sup',          label: 'Paddleboard' },
+  { id: 'hiit',         label: 'HIIT' },
   { id: 'other',        label: 'Other' }
 ];
 
@@ -2709,6 +2815,151 @@ async function saveCardioEntry() {
   await saveCardioLog(entry);
   closeModal('addCardioModal');
   showToast('Cardio logged ✓');
+  renderCardioSection();
+  if (currentPage === 'home') renderHome();
+}
+
+// ═══════════════════════════════════════════════
+// GARMIN CSV IMPORT
+// ═══════════════════════════════════════════════
+// Isaac tracks everything in Garmin, so manual double-entry was never going to
+// happen — the cardio log sat empty for two months while he trained 26 hours.
+// Paste the Garmin Connect activities export and it lands in run_logs.
+
+// Garmin activity type → our cardio type. First match wins, so order matters.
+// A null target means "not cardio, skip it" (lifts are logged as workouts).
+const GARMIN_TYPE_MAP = [
+  [/strength|weight ?training|yoga|pilates|breath/i, null],
+  [/stand ?up ?paddl|paddleboard/i, 'sup'],
+  [/hiit|interval|functional|cardio/i, 'hiit'],
+  [/hik/i, 'hike'],
+  [/stair/i, 'stair'],
+  [/elliptical/i, 'elliptical'],
+  [/cycl|bik/i, 'cycle'],
+  [/row/i, 'row'],
+  [/swim/i, 'swim'],
+  [/run/i, 'run'],
+  [/walk/i, 'incline_walk']
+];
+
+function garminTypeToCardio(raw) {
+  const s = (raw || '').trim();
+  if (!s) return null;
+  for (const [re, target] of GARMIN_TYPE_MAP) {
+    if (re.test(s)) return target;
+  }
+  return 'other';
+}
+
+// CSV line parser that respects quoted fields — Garmin quotes numbers with
+// thousands separators ("2,434"), which a naive split(',') would mangle.
+function parseCsvLine(line) {
+  const out = [];
+  let cur = '', inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      out.push(cur); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out.map(s => s.trim());
+}
+
+// Garmin writes '--' for missing values and commas in big numbers.
+function csvNum(s) {
+  const v = parseFloat(String(s == null ? '' : s).replace(/,/g, ''));
+  return isNaN(v) ? null : v;
+}
+
+// "01:15:26" or "00:07:07.1" → minutes
+function hmsToMinutes(s) {
+  const parts = String(s || '').split(':').map(parseFloat);
+  if (parts.some(isNaN) || !parts.length) return null;
+  let mins = 0;
+  if (parts.length === 3) mins = parts[0] * 60 + parts[1] + parts[2] / 60;
+  else if (parts.length === 2) mins = parts[0] + parts[1] / 60;
+  else mins = parts[0];
+  return mins > 0 ? mins : null;
+}
+
+function cardioKey(date, type, minutes) {
+  return `${date}|${type}|${Math.round(minutes || 0)}`;
+}
+
+async function importGarminCsv() {
+  const raw = document.getElementById('settingsGarminCsv').value.trim();
+  const statusEl = document.getElementById('settingsImportStatus');
+  const setStatus = (msg, color) => { statusEl.textContent = msg; statusEl.style.color = color; };
+
+  if (!raw) { setStatus('Paste the CSV contents first.', 'var(--amber)'); return; }
+
+  const lines = raw.split(/\r?\n/).filter(l => l.trim());
+  const header = parseCsvLine(lines[0]).map(h => h.toLowerCase());
+  const col = n => header.indexOf(n);
+  const iType = col('activity type'), iDate = col('date'), iTime = col('time'),
+        iTitle = col('title'), iDist = col('distance'),
+        iHr = col('avg hr'), iAsc = col('total ascent');
+
+  if (iType < 0 || iDate < 0 || iTime < 0) {
+    setStatus('⚠ Doesn\'t look like a Garmin activities export — no Activity Type / Date / Time columns.', 'var(--amber)');
+    return;
+  }
+
+  const existing = await getCardioLogs();
+  const seen = new Set(existing.map(e => cardioKey(e.date, e.type || 'run', e.minutes)));
+
+  const toAdd = [];
+  let dupes = 0, nonCardio = 0, unparsed = 0;
+
+  for (let i = 1; i < lines.length; i++) {
+    const f = parseCsvLine(lines[i]);
+    if (f.length < 3) continue;
+
+    const type = garminTypeToCardio(f[iType]);
+    if (!type) { nonCardio++; continue; }
+
+    const date = (f[iDate] || '').slice(0, 10);
+    const minutes = hmsToMinutes(f[iTime]);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !minutes) { unparsed++; continue; }
+
+    const key = cardioKey(date, type, minutes);
+    if (seen.has(key)) { dupes++; continue; }
+    seen.add(key);
+
+    const miles = iDist < 0 ? null : csvNum(f[iDist]);
+    const hr = iHr < 0 ? null : csvNum(f[iHr]);
+    const asc = iAsc < 0 ? null : csvNum(f[iAsc]);
+
+    // No schema change, so the useful Garmin extras ride along in the note.
+    const bits = [];
+    if (iTitle >= 0 && f[iTitle]) bits.push(f[iTitle]);
+    if (hr) bits.push(`avg HR ${Math.round(hr)}`);
+    if (asc && asc > 0) bits.push(`${Math.round(asc)} ft`);
+    bits.push('Garmin');
+
+    toAdd.push({
+      id: makeId(), date, type,
+      miles: (miles && miles > 0) ? miles : null,
+      minutes: Math.round(minutes),
+      notes: bits.join(' · ')
+    });
+  }
+
+  const tail = `${dupes} already logged, ${nonCardio} non-cardio${unparsed ? `, ${unparsed} unreadable` : ''}.`;
+  if (!toAdd.length) { setStatus(`Nothing new to import — ${tail}`, 'var(--text-muted)'); return; }
+
+  toAdd.sort((a, b) => (a.date < b.date ? 1 : -1)); // newest first, matches the cache order
+  await saveCardioLogsBulk(toAdd);
+
+  document.getElementById('settingsGarminCsv').value = '';
+  setStatus(`✓ Imported ${toAdd.length} activit${toAdd.length === 1 ? 'y' : 'ies'} — ${tail}`, 'var(--accent-dim)');
+  showToast(`Imported ${toAdd.length} activities ✓`);
   renderCardioSection();
   if (currentPage === 'home') renderHome();
 }

@@ -1,94 +1,172 @@
 # Isaac's Training Plan
 
 **Living document — updated at each Claude check-in.**
-Last updated: August 24, 2026 (Week 11 — return from Italy layoff; TKE→Short-Arc Quad, Thursday trimmed, 50–75 min target)
+Last updated: September 14, 2026 (Week 15 — **Phase II transition**: 3-day split, Thursday→Friday Core-5, skater bounds replace the goblet/deadlift power block, shoulder deload, d11 retired)
 
 ---
 
 ## Where You Are
 
-**Phase I — Foundation**
+**Phase II — Ski Prep** (entered Week 15, Sept 14 2026)
 Program start: June 9, 2026 (Week 1)
-Goal phase duration: 8–10 weeks
+Phase I ran Weeks 1–14.
+
+**Ski season target: November 1, 2026 — 7 weeks out.**
 
 Primary objectives this phase:
-- Eliminate PFPS/patellar tendinitis symptoms under load
-- Raise quad torque-to-bodyweight from ~2.3 → 3.0 Nm/kg (PT benchmark)
-- Correct left hip abduction deficit (single-leg stability under load)
-- Build an aerobic/structural base before introducing sport-specific power
+- **Eccentric quad capacity** — the #1 physical demand of a ski day (moguls, long descents, absorbing terrain)
+- **Frontal-plane strength and power** — ski turns are lateral force production, not sagittal
+- **Quad endurance under sustained flexion** — a ski run is a long isometric
+- **Aerobic + repeat-effort capacity** — a ski day is 4–6 hours of intermittent work. Base is already solid (26 hrs / 12,747 ft since July, per Garmin); the job is consistency and one long eccentric-loaded day per week, not more volume
+- Maintain the Phase I rehab dose (knee, hip abduction) rather than building it
 
-**Ski season target: November 1, 2026** (~21 weeks from program start)
+Phase I objectives, closed out:
+- ~~Eliminate PFPS/patellar tendinitis symptoms under load~~ — **done.** Zero pain flags on any knee-tagged exercise across 14 weeks.
+- Quad torque-to-bodyweight ~2.3 → 3.0 Nm/kg — not directly measured, but single-leg press went 70 → 90×10/side. Needs a PT re-test to confirm.
+- Left hip abduction deficit — **partially closed.** `a5` finally moved 20 → 25; still the weakest link.
+- Aerobic base — **met** (confirmed Sept 14 from Garmin: 20 sessions / 26.4 hrs / 12,747 ft since Jul 4). It was invisible because none of it was in the app, not because it wasn't happening.
 
 ---
 
-## Phase I Structure
+## Phase II Structure
 
-### Weekly split (default — 4 days, as of Week 7 / Jul 27, 2026)
+### Weekly split (3 days, as of Week 15 / Sept 14, 2026)
 | Day | Session | Focus |
 |-----|---------|-------|
-| Monday | Lower A | Posterior chain, hip abduction, knee rehab (re-sequenced to the front) |
-| Tuesday | Upper A | Pull, rear delt, shoulder health |
-| Wednesday | Active recovery | Easy bike or walk, mobility — log in app |
-| Thursday | Lower B + Power | Quad/knee strength **merged with** tempo-contrast power + lateral stability (ski prep) |
-| Friday | Upper B | Push, chest, shoulder development |
-| Sat / Sun | Rest / Active | Off, or an easy bike/walk — log if active |
+| Monday | Lower A | Posterior chain, hip abduction, knee rehab maintenance |
+| Tuesday | **Conditioning** | Zone 2, 45 min (bike / stairs / row) — log it |
+| Wednesday | Upper — **alternates** | Odd program weeks → Upper A (pull). Even → Upper B (push). Automatic, no swap needed. |
+| Thursday | **Conditioning** | Intervals, ~25 min: 6×2 min hard / 2 min easy |
+| Friday | Lower B — **Ski Core-5** | Skater bounds → leg press → lateral step-up → step-down → wall sit → band walk |
+| Sat / Sun | Rest / Active | Off, or an easy ride/walk — log if active |
 
-**Change from the original 5-day split:** the standalone Saturday Athletic day (never trained in 7 weeks) was dissolved. Its ski-relevant pieces — tempo-contrast power (goblet squat, DB deadlift), lateral step-up, lateral band walk, balance reach, Copenhagen — were folded into Thursday. The remaining Athletic movements (med ball slam, Pallof, stir-the-pot, wall sit, reverse lunge, monster walk) live in Thursday's "Optional / rotate" block so nothing is lost.
+**Why 3 days, and why 2 of them are lower:** actual frequency over Weeks 12–14 was 4, 2, 2 — the 4-day plan wasn't the real schedule. Programming for 3 honest days beats programming for 4 aspirational ones, because on the 4-day plan the *ski work* was always the session that got dropped. Both lower days are ski-critical so they stay weekly; upper body is maintenance in this phase (he's PR'ing without needing more, and the shoulder actively benefits from less), so it alternates push/pull at one session per week. Reduced frequency with preserved weekly stimulus per movement pattern is the correct trade at 1 upper day.
 
-**Session re-sequencing (all days):** exercises are grouped by equipment station so setup happens once — supersets are marked in the app cues ("work X + Y in together"): cable rack, box/step, DBs+bench, leg machines. Mat/floor work is clustered (Lower A opens and closes on the mat; a6 banded abduction moved into the warmup so it stops getting skipped). Nordic curl swapped for an accentuated-eccentric machine leg curl (a10); band TKE swapped for the **Short-Arc Quad** (a11) since the gym has no good post for a band — both are equipment fixes, not exercise changes.
+**Upper-day rotation is automatic.** `DEFAULT_DAY_MAP` maps Wednesday to an `'upper'` sentinel, resolved by program-week parity in `resolveDayAssignment()`. Over the 7 weeks to Nov 1 that yields 4 pull / 3 push — a deliberate bias given the current shoulder irritation. If a 4th day materialises, swap Thursday to whichever upper day isn't scheduled that week.
 
-**Target session length: 50–75 min** (as of Week 11). Thursday was the long one — trimmed so leg-extension, RDL, and balance-reach are Optional and the ski/lateral work is front-loaded. Optional blocks only get done if you're under time.
+*Note on week numbering:* June 9 2026 was a Tuesday, so program weeks run Tue–Mon. The home screen shows Week 14 on Mon Sept 14 and rolls to Week 15 on Tue Sept 15; the Week 15 plan is the week of Sept 15–21.
 
-Schedule is flexible week-to-week — use the swap feature in the app if travel or life requires it. (The Athletic day was fully dissolved into Thursday, so it's no longer a separate swap option — if a dedicated 5th day is ever wanted, re-add `dayE`.)
+**Friday is a hard Core-5.** Thursday/Lower B collapsed three consecutive times on the Phase I structure (Jul 30, Aug 27, Sept 10) — the Sept 10 session was 30 minutes and `c5`, the explicitly-labelled gate lift, went undone while an *Optional* exercise got completed. Trimming it at Week 11 did not work. So the day is now six committed movements in strict priority order, with a 5-minute warmup:
 
-### Phase I progressive overload targets
-- **Weeks 1–2**: Establish baseline weights. Prioritize form and pain-free range over load.
-- **Weeks 3–4**: Add 5 lbs where sets feel easy (RPE 6–7 → target RPE 8). Knee exercises: don't chase load — chase range and quality.
-- **Weeks 5–6**: Progressive range targets hit on key rehab exercises (Nordic, Step-Down). Reassess hip abduction symmetry.
-- **Weeks 7–8**: Evaluate for deload. If consistent, consider Phase II readiness.
+1. `e13` Skater Bound — ski power, bodyweight
+2. `c5` Single-Leg Leg Press — 3 sets, not 4 (traded a set for it actually happening)
+3. `e9` Lateral Step-Up — frontal plane
+4. `c7` Box Step-Down — eccentric knee, now loaded
+5. `c8` Shallow Wall Sit — quad endurance, promoted out of Optional
+6. `e7` Lateral Band Walk — glute med (the one to drop if truly out of time)
 
-### Deload (Week 9 or as needed)
-Drop all set volumes by ~40%. No new PRs — just move. Then assess Phase II.
+Everything else on that day is Optional and genuinely optional. The warmup dropped from 6 items to 3: the bike and both static stretches (`c2`, `c4`) moved to Optional — the bike was eating 5 of 30 minutes, and long static holds before lifting transiently reduce force output, so they belong at the end anyway.
+
+**Power block replaced (Week 15).** `e4` goblet squat and `e5` DB deadlift moved to Optional. At 25–30 lbs they were not a training stimulus for someone single-leg-pressing 90/side — Isaac's own note was *"incredibly easy for legs"* — while the limiting factor was mid-back discomfort on both. Replaced by `e13` **Skater Bound** (lateral hop + 1-sec stick): the same deceleration/power quality, far more ski-specific, and zero spinal load. Bodyweight only, permanently. Justified by 14 weeks of pain-free knee work, clean step-downs, and a 90 lb single-leg press.
+
+**Session re-sequencing (all days):** exercises are grouped by equipment station so setup happens once — supersets are marked in the app cues ("work X + Y in together"): cable rack, box/step, DBs+bench, leg machines. Mat/floor work is clustered. `a6` banded abduction sits in the Lower A warmup. Nordic curl → accentuated-eccentric machine leg curl (`a10`); band TKE → **Short-Arc Quad** (`a11`). Week 15 adds: `b6`/`b9` moved ahead of the cable block on Upper A (they were cut 2 of the last 3 sessions).
+
+**Target session length: 45–60 min.** Down from 50–75. Recent real durations were 30–49 min; the plan now matches.
+
+Schedule is flexible week-to-week — use the swap feature if travel or life requires it.
+
+### Phase II progressive overload (Weeks 15–21)
+- **Weeks 15–17 — build.** Return to and exceed pre-layoff loads. Add load to the two movements that have sat at bodyweight since June (`a12` step-down, `c7` step-down — approved this check-in). Wall sit rebuilds 45 → 60 sec. Skater bounds: quality only, no progression of distance until landings are silent.
+- **Weeks 18–19 — ski-specific peak.** Wall sit goes 5° deeper. Skater bounds widen if landings are clean. Add a second weekly interval session. Re-test single-leg press for the PT torque benchmark.
+- **Weeks 20–21 — taper into the season.** Hold loads, cut volume ~30%, keep frequency. No PR attempts inside 10 days of the first ski day. Priority shifts to mobility and aerobic top-up.
+
+### Deload
+Any week with a pain flag on two or more exercises, or a 3rd consecutive sub-40-min session, is an automatic deload: cut sets ~40%, hold loads, no PRs.
 
 ---
 
-## Key Rehab Benchmarks (Phase I → II gate)
+## Phase I → II Gate: **PASSED** (Week 15 read)
 
-Before progressing to Phase II (more loaded, some impact work):
-- [ ] Step-Down: 3×8/side pain-free at full height (8–10" box) — *inconsistent; keeps getting skipped, now moved to front of Lower A*
-- [ ] Nordic / eccentric hamstring: controlled full-range lowering — *swapped to accentuated-eccentric machine curl for equipment; rebuild range*
-- [x] Single-Leg Leg Press: 4×10/side pain-free — **met** (80×10 clean, Jul 10)
-- [ ] Hip Abduction: left ≥ right symmetry — *not yet; left still fatigues first as stance leg*
-- [x] 4+ consecutive weeks, no knee **pain** flags — **met** (skips have been time/fatigue, not pain)
+- [x] Step-Down 3×8/side pain-free at full height — **met** (done clean Jul 14, Jul 29, Aug 25, Sep 2)
+- [x] Nordic / eccentric hamstring, controlled full-range lowering — **met** via the accentuated-eccentric machine curl at 80×6×3
+- [x] Single-Leg Leg Press 4×10/side pain-free — **met** (90×10, Jul 30)
+- [ ] Hip Abduction: left ≥ right symmetry — **not met.** `a5` sat at 20 lbs from June to September, touching 25 only on the last set of Sep 2. The one open item.
+- [x] 4+ consecutive weeks, no knee **pain** flags — **met, emphatically** — 14 weeks, zero
 
-**Gate read (Week 7):** the blockers are no longer pain — they're the rehab work (step-downs, eccentric curl, banded abduction) getting cut at the end of long sessions, and left/right hip symmetry. The 4-day restructure exists to *guarantee* that work happens (front-loaded + supersetted), which is the real path to the Phase II gate.
+**Decision: advance to Phase II with 4 of 5 gates met.** Holding the whole program back for hip symmetry would burn the entire 7-week ski window, and the abduction work isn't gated by readiness — it's gated by the load never being increased. It progresses *inside* Phase II: `a5` is committed to 25 lbs this week, and `e7`/`e13` both load the frontal plane harder than anything in Phase I did.
 
 ---
 
-## Conditioning / Stamina (added Week 2)
+## Conditioning / Stamina — rebuilt on real data (Sept 14)
 
-Knee isn't ready for impact, so we build the aerobic base on the **bike** (zero/low impact) plus the pool as a backup. Isaac already rides real distance (25 mi on Jun 12), so this is base-*building*, not starting from zero.
+**Correction to the Week 15 check-in:** that check-in stated cardio was zero. That was wrong — it was zero *in the app*. A Garmin export (Jul 4 – Sep 11) shows **20 sessions, 26.4 hours, 12,747 ft of climbing, 11,650 kcal**. The aerobic base is real and was never the gap.
 
-- **Modality:** mostly stationary/road bike. Garmin auto HR zones.
-- **Intensity:** strict **Zone 2** for the base block — conversational pace, nasal-breathing possible, RPE 3–4/10. If HR drifts into Zone 3, ease off. Hold pure Zone 2 for ~2–3 weeks before introducing any intervals.
-- **Knee protection on the bike:** high cadence (85–95 rpm), saddle high enough that the knee stays only slightly bent at the bottom, no grinding big gears / steep climbs yet.
-- **Frequency (Week 2):** 3–4 sessions — one long ride (Sun, 75–90 min), short easy spins after upper days (Tue/Fri, 25–30 min), and a steady 45 min on Wed.
-- **Progression:** keep weekly volume increases sane (~10% guideline). Recomposition benefit comes from consistency in Zone 2, not from going harder.
+### What the Garmin data actually shows
+
+| Week of | Sessions | Minutes | Ascent |
+|---|---|---|---|
+| Jun 29 | 1 | 33 | 194 |
+| Jul 6 | 2 | 98 | 737 |
+| Jul 13 | 1 | 65 | 717 |
+| Jul 20 | 4 | 338 | 2,352 |
+| Jul 27 | 1 | 28 | 348 |
+| Aug 3 | 1 | 217 | 3,377 |
+| Aug 10 | 0 | 0 | 0 |
+| Aug 17 | 3 | 142 | 471 |
+| Aug 24 | 3 | 160 | 81 |
+| Aug 31 | 3 | 430 | 3,610 |
+| Sep 7 | 1 | 75 | 860 |
+
+Modalities: 13 rides, 3 paddleboard, 2 commute runs, 1 HIIT, 1 long hike.
+
+**Intensity distribution is the real finding.** Using the observed max HR of 191: ~50% of time easy (Z1–Z2), **32% in Zone 3**, 18% Zone 4. Only **3 of 13 rides** averaged Zone 2 or easier; ten averaged Zone 3. That is the textbook grey-zone pattern — hard enough to cost recovery, easy enough to miss top-end adaptation.
+
+**That's a prescription error, not an execution error.** The plan asked for "strict Zone 2" from someone riding 860–1,176 ft of climbing on 16–22 mile Seattle routes. Zone 2 is not holdable on those gradients. Aerobic TE has been 2.0–3.3 (maintaining to improving) with one 5.0 on the Naples ride, so the training has been productive — just not what the plan called it.
+
+### The prescription (deliberately loose, per Isaac's call Sept 14)
+
+No zone targets. They didn't survive contact with the terrain, and friction is what kept the log empty.
+
+- **~3 sessions a week, one of them long.** Ride/hike how you feel.
+- **Log it.** Settings → *Import Garmin CSV*, paste the export, done. That is the whole compliance ask.
+- **Knee protection on the bike:** high cadence (85–95 rpm), saddle high, don't grind big gears.
+
+### The hike is the headline
+
+**Sept 6: 8.99 mi, 4h42, 2,434 ft ascent / 2,420 ft descent, avg HR 88.** Hours of sustained eccentric quad loading under accumulating fatigue — a closer match to the demand of a ski day than anything in the gym, and the knee stayed silent through that week's lifting. Treat this as a **functional Phase II gate passed**, and as the single most valuable conditioning session available. One weekly long hike with 2,000+ ft of descent is worth more for Nov 1 than any interval protocol.
+
+**Schedule it on Saturday, not Sunday.** Monday is Lower A (posterior chain + knee); descending 2,400 ft the day before means loading hiked-out legs. Note the likely precedent: the Sept 6 hike was a Sunday, and the Sept 10 Lower B came in at 30 minutes with the gate lift skipped.
 
 ---
 
 ## Running Integration
 
-Start conservatively. 10% week-over-week rule enforced by the app.
-- Weeks 1–4: Optional easy runs only. Max 2 miles/run, 1–2×/week if knee is quiet.
-- Weeks 5–8: Can introduce up to 3×/week if symptom-free. Track in app.
-- Phase II: structured run progression alongside training if knee benchmarks are met.
+Knee is cleared, but running isn't required for skiing and competes for the same recovery.
+- Current volume is two ~1.2 mi commute runs (Aug 25, Aug 26) — nowhere near the ramp guard. No concern.
+- Commute runs are a good pattern ("ran .75 miles to gym instead" of the bike warmup, Aug 25).
+- Don't add running volume in Weeks 20–21; the taper applies to cardio too.
 
 ---
 
 ## Coaching Notes History
 
 *(Newest at top — this section updated at each check-in)*
+
+**Week 15 → PHASE II TRANSITION (September 14, 2026)**
+
+*Context:* Covers Weeks 12–14. Session counts were 4, 2, 2 — the 4-day plan is not the real schedule. Durations: 87/73/78/35, then 78/49, then 30/46. Sessions are getting shorter, and the back half of each one is what dies. Ski season is 7 weeks out. This check-in moves to Phase II and rebuilds the week around 3 honest days.
+
+*The knee is closed.* Zero pain flags on any knee-tagged exercise in 14 weeks. Step-downs clean and consistent; leg press to 90×10/side; box step-up held at 18" bodyweight with no complaint since June. Four of five Phase II gates met — advancing with hip abduction still open, because that gate is limited by the load never being raised, not by readiness.
+
+*What worked (keep):* Monday is genuinely fixed — 78 min, nearly everything completed, and all three Week 11 interventions stuck (`a11` Short-Arc Quad done both sessions, `a12` step-downs done, `a6` completed from the warmup). Real PRs this block: lat pulldown **125×12×4**, single-arm row **120×10**, incline DB press **35×12 across all 4 sets** with no tendon signal, tricep pushdown **50×15**, SL hamstring curl **50**, eccentric leg curl back to **80×6×3**, and `a5` hip abduction finally touched **25**.
+
+*Problem 1 — Thursday failed a third straight time.* Sept 10 was 30 minutes: `c5` (the labelled gate lift) undone, the entire power block undone, `e7`/`e11` undone — and yet `c6`, an *Optional* exercise, got completed. That last detail says he works from whatever machine is free rather than from the top of the list, so priority has to be enforced by structure, not by labels. Fix: moved to **Friday**, warmup cut 6→3 items, and a hard **Core-5** (see Phase II Structure). Nothing deleted; the rest is Optional.
+
+*Problem 2 — shoulder, and it is bilateral now.* Sept 13 produced three separate complaints in one session: `d8` at 45 → left lower trap **and right elbow at the tricep tendon** (3rd set dropped); `d9` skipped, *"shoulder is beat"*; `d7` left shrug returning at 15. Friday was carrying 3 pressing movements plus 7 sets of lateral raise. Fix: volume cut ~30% — `d7` to 3 sets at 12.5, `d9` to Optional at 2 sets, `d8` held at **40 with a hard 2-set stop rule**. Note the tendon signal has now appeared on the **right** side; the original problem was left, so this is load/volume-driven rather than a one-sided structural issue.
+
+*Problem 3 — third lumbar episode on a loaded hinge.* `a9` single-leg hip thrust, Sep 2: *"Felt in lower back quite a bit after set one. Switching to two legs for today. Likely form."* Prior: `a7` Aug 25 (flagged skipped, *"lower back pain from form"*), `a7` Jun 15. Plus goblet squat and DB deadlift on Aug 27, both *"feel it in middle back even when bracing."* Every loaded hinge/bridge pattern produces it; his self-diagnosis is correct. Fix: `a9` **regressed to two-leg hip thrust for 3 weeks** with a 2-sec top squeeze — removes the pelvic rotation he's compensating for while keeping the glute work. `a7` holds at 40 rather than progressing. `a14` dead bug (anti-extension) and `e10` Pallof (anti-rotation) called out as directly relevant.
+
+*Power block replaced.* `e4`/`e5` retired to Optional; `e13` **Skater Bound** added. Reasoning in Phase II Structure above — the short version is that 25–30 lbs wasn't loading his legs and was loading his spine, and a lateral hop with a stuck landing is both more ski-specific and spine-free.
+
+*`d11` retired.* Not completed once since May 30 — four months of skips across every single Upper B — and it's the movement that started the tendon problem. Parked in Optional with history intact. Pushdowns at 50×15 cover the triceps.
+
+*Two movements finally progressed off bodyweight:* `a12` step-down (+10 lb DBs) and `c7` box step-down (+15 lb DBs). Both have been clean bodyweight since June; "add weight before height" now applies.
+
+*Cardio — I got this wrong, corrected same day.* The first pass of this check-in said cardio was zero and called it the biggest ski-readiness gap. Isaac then supplied a Garmin export: **20 sessions, 26.4 hours, 12,747 ft of climbing since Jul 4.** It was zero *in the app only*. The real finding is intensity distribution (32% of time in Zone 3, only 3 of 13 rides actually Zone 2) — and that traces back to a prescription that asked for Zone 2 on 1,000 ft Seattle climbs, which isn't possible. Zone targets dropped entirely; see the Conditioning section. Lesson for future check-ins: **an empty table in this app means "not logged," never "not done"** — ask before concluding.
+
+*App changes shipped:* 3-day `DEFAULT_DAY_MAP` with an automatic push/pull alternation on Wednesday by program-week parity (4 pull / 3 push over the 7 weeks — a deliberate bias given the shoulder). Rest-day copy on Tue/Thu changed to a Conditioning prompt. **Garmin CSV importer** in Settings — paste the Garmin Connect activities export, it maps activity types, skips duplicates and non-cardio rows, and packs avg HR + ascent into the note field. Three new cardio types added (`hike`, `sup`, `hiit`). This removes the manual double-entry that caused the empty-log problem in the first place.
+
+**Coaching note (in-app, Week 15):** see `program.json` — Phase II summary, the Core-5 rationale, the three fixes, and the cardio prescription.
 
 **Week 11 → return from Italy (August 24, 2026)**
 
@@ -169,8 +247,9 @@ When Isaac pastes his export here, review:
 1. **Knee signals** — any skipped/pain flags on knee exercises, notes mentioning pain, asymmetry in left vs right loads
 2. **Progressive overload** — are weights moving? Any stalls 2+ sessions in a row?
 3. **Hip abduction** — is the cable hip abduction weight tracking up? Is a6 (banded) being completed?
-4. **Running volume** — is the 10% ramp being respected? Any knee correlation?
-5. **Qualitative notes** — equipment issues, fatigue, life stress, wanting to adjust
+4. **Cardio / conditioning** — check `run_logs`. **An empty or thin table means "not logged," not "not done"** — ask for a Garmin export before drawing any conclusion. (This mistake was made on Sept 14: cardio was declared zero when 26 hours had actually been trained.) If a CSV is supplied, Settings → Import Garmin CSV loads it.
+5. **Session completion, not just load** — a `done: false` set or an undone exercise at the *end* of a session is a time/structure signal, not a motivation one. If the same tail-end exercises keep dying, re-sequence rather than re-prescribe. Check duration too: sub-40-min sessions mean the plan is too long for the life.
+6. **Qualitative notes** — equipment issues, fatigue, life stress, wanting to adjust. Isaac's self-diagnoses have been reliable; take them at face value.
 
 Then produce:
 - **A coaching note** (1–3 sentences) to paste into the app settings. Practical and specific — what to focus on this week.

@@ -19,7 +19,8 @@ A personal mobile-first workout tracking web app. Built to support a PT-assessed
 - Finish workout confirmation: shows sets logged, duration, and flagged exercises before saving
 - Progress tab: exercise dropdown with per-exercise charts — max weight over time for weighted exercises, dot completion timeline for non-weighted
 - Log tab: recent workout history with tap-to-expand exercise breakdown
-- Cardio logging on any day: pick a modality (run, cycle, stair stepper, row, elliptical, incline walk, swim, other), log minutes and optional miles — from the Progress tab or any Home day card's swap sheet. Runs still feed the 10% weekly ramp guard.
+- Cardio logging on any day: pick a modality (run, cycle, hike, stair stepper, row, elliptical, incline walk, swim, paddleboard, HIIT, other), log minutes and optional miles — from the Progress tab or any Home day card's swap sheet. Runs still feed the 10% weekly ramp guard.
+- **Garmin CSV import** (Settings): paste the Garmin Connect activities export and it bulk-loads into the cardio log — activity types are mapped automatically, duplicates and strength-training rows are skipped, and avg HR + total ascent are kept in the note. Re-pasting the same export is safe.
 - Export for Claude check-in: weekly summary with sets, PRs hit, flags, and notes
 
 ---
@@ -38,16 +39,17 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for full technical detail.
 
 ## Training Program
 
-4-day split (moved from 5-day in Jul 2026), hardcoded from a PT assessment. Do not simplify or replace the exercise data.
+**Phase II — Ski Prep** (entered Sept 2026, Week 15). 3-day split, hardcoded from a PT assessment. Do not simplify or replace the exercise data.
 
 | Day | Workout | Focus |
 |---|---|---|
-| Monday | Lower A | Posterior chain, hip abduction, knee rehab |
-| Tuesday | Upper A | Pull, rear delt |
-| Thursday | Lower B + Power | Quad/knee strength + tempo power & lateral stability (ski prep) |
-| Friday | Upper B | Push, chest, shoulders |
+| Monday | Lower A | Posterior chain, hip abduction, knee rehab maintenance |
+| Tuesday | Conditioning | Zone 2, 45 min — logged via cardio logging |
+| Wednesday | Upper A **or** Upper B | Alternates automatically: pull on odd program weeks, push on even |
+| Thursday | Conditioning | Intervals, 6×2 min hard / 2 min easy |
+| Friday | Lower B — Ski Core-5 | Skater bounds, leg press, lateral step-up, step-down, wall sit, band walk |
 
-The former Saturday Athletic day was folded into Thursday (its power/lateral/core work is now in the Thursday session and its Optional block).
+History: 5-day → 4-day in Jul 2026 (the never-trained Saturday Athletic day folded into Thursday), then 4-day → 3-day in Sept 2026 to match actual training frequency. Nothing was deleted at either step — displaced exercises live in each day's "Optional / rotate" block. Wednesday's push/pull alternation is resolved from the program week, so no manual swapping is needed.
 
 ---
 
